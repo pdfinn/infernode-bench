@@ -1,0 +1,814 @@
+# fs_concepts — expansion_v4
+# 30 items authored fresh; goldens validated.
+
+items:
+- id: fs_styx_versus_9p2000_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    What is the practical difference between 'Styx' (Inferno's 9P implementation) and '9P2000' (the Plan 9 version)?
+    A) Styx uses a 64-bit message size field; 9P2000 uses 32-bit
+    B) Styx is the same wire protocol with minor message-layout tweaks; the Tversion handshake declares which dialect is in use
+    C) They are completely incompatible protocols
+    D) Styx uses TCP; 9P2000 uses Unix sockets
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_msize_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    After Tversion negotiation, the negotiated `msize` is:
+    A) The smaller of the client's request and the server's reply
+    B) The server's preferred size, regardless of client request
+    C) The client's request, regardless of server reply
+    D) The sum of the two
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: A
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_tauth_purpose_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    The 9P `Tauth` message is used for:
+    A) Establishing an auxiliary fid for authentication; subsequent Tattach references it via `afid`
+    B) Encrypting the channel
+    C) Authorising a Twrite
+    D) Audit logging
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: A
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_afid_nofid_v1
+  category: fs_concepts
+  difficulty: hard
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    If a Tattach is sent with `afid = NOFID` (0xFFFFFFFF), it means:
+    A) No authentication is required for this attach
+    B) Use the previously-stored afid from this connection
+    C) The attach is rejected as malformed
+    D) Authentication will be performed inline
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: A
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_rerror_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    When a 9P server fails to handle any T-message, it responds with:
+    A) An empty reply
+    B) `Rerror` carrying a human-readable error string
+    C) `Rerrno` carrying a numeric errno
+    D) A connection-level reset
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_walk_to_root_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    How does a 9P client walk back to the file tree's root from an interior fid?
+    A) Twalk with name `..` repeatedly
+    B) Tclunk the current fid and Tattach a new one
+    C) Twalk with zero name components, but allocating a new fid via the freshly-attached afid
+    D) Send a special `Treset`
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_tag_uniqueness_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    9P message `tag` values are unique per:
+    A) Server, across all connections
+    B) Connection, per in-flight request — the client picks tags and reuses them once the matching R-message arrives
+    C) Process
+    D) Session, persisting across reconnects
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_flush_purpose_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    The 9P `Tflush` message tells the server:
+    A) To flush its cache to disk
+    B) To stop processing an in-flight request identified by oldtag
+    C) To clear all fids
+    D) To send pending notifications
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_dirread_format_v1
+  category: fs_concepts
+  difficulty: hard
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    Reading from a directory fid in 9P returns:
+    A) A single newline-separated list of names
+    B) A sequence of marshalled Stat structures, each preceded by its two-byte length
+    C) An array of qid values
+    D) An XML representation
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_dirread_partial_v1
+  category: fs_concepts
+  difficulty: hard
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    A Tread on a directory MUST return complete Stat entries — a partial Stat at the end of a Rread is:
+    A) An error condition
+    B) Acceptable; the client must concatenate across multiple Rreads
+    C) Forbidden by the spec — the server must align reads to whole Stats
+    D) Truncated at the next walk
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: C
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_open_for_write_then_read_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    If a fid is opened for OWRITE, attempting to Tread on it:
+    A) Succeeds — open mode is advisory
+    B) Returns Rerror
+    C) Returns zero bytes silently
+    D) Reopens the fid for ORDWR
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_chgrp_via_wstat_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    How does a 9P client change a file's group?
+    A) Send Tchgrp with the new group
+    B) Send Twstat with the Dir's `gid` field modified
+    C) Use the file server's HTTP API
+    D) Not possible in standard 9P
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_rename_via_wstat_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    How does a 9P client rename a file?
+    A) Send Trename(oldname, newname)
+    B) Send Twstat with the Dir's `name` field modified to the new name
+    C) Tclunk then Tcreate with the new name
+    D) Not possible via 9P
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_mtimes_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    The 9P `Dir.mtime` and `Dir.atime` fields are:
+    A) Seconds since the Unix epoch
+    B) Microseconds since the Unix epoch
+    C) Server-local timestamps with no defined epoch
+    D) Strings in ISO 8601 format
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: A
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_qid_version_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    The `Qid.vers` field is:
+    A) The 9P protocol version
+    B) An opaque version counter that the server increments on modification — clients use it to detect changes
+    C) The number of hard links
+    D) The user-id of the most recent writer
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_proc_apid_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: namespace
+  language: none
+  prompt: |-
+    In Inferno, `/prog/$apid` exposes:
+    A) The current shell's program-stack snapshot
+    B) The current process's per-process control directory: ctl, args, status, etc.
+    C) The PID-1 init process
+    D) The kernel's allocation profile
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_apid_vs_pid_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: namespace
+  language: none
+  prompt: |-
+    Inferno distinguishes between `$apid` and `$pid`. They are:
+    A) Identical aliases
+    B) `$apid` is the application (shell) PID; `$pid` is the most recently spawned command's PID
+    C) `$apid` is for Linux compatibility
+    D) `$pid` is the parent of `$apid`
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_chan_close_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    When a file backed by sys-file2chan is closed (clunked), the underlying Limbo channels are:
+    A) Garbage-collected with the file2chan handle
+    B) Implicitly closed by the server, but the channels themselves outlive the file unless the Limbo program also discards them
+    C) Forced to send a final nil
+    D) Reset to their initial state
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_namespace_export_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: namespace
+  language: none
+  prompt: |-
+    `/dis/lib/styxservers.dis` typically:
+    A) Is the export daemon binary
+    B) Is the compiled form of styxservers.m's implementation — loaded as a Limbo module by file servers using its framework
+    C) Is the kernel's namespace file
+    D) Doesn't exist in Inferno
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_export_local_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: namespace
+  language: none
+  prompt: |-
+    `9export /tmp` would:
+    A) Move /tmp's contents to a remote server
+    B) Make /tmp available as a 9P-served namespace export to a remote client (or stdio)
+    C) Reset /tmp's permissions
+    D) Run a backup of /tmp
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_mount_aname_meta_v1
+  category: fs_concepts
+  difficulty: hard
+  subcategory: namespace
+  language: none
+  prompt: |-
+    The optional `aname` argument to mount is most useful for:
+    A) Authentication
+    B) Selecting between multiple file trees the server exposes (e.g. one per user, or one per project)
+    C) Naming the mount point
+    D) Specifying a cache size
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_chmod_via_wstat_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    Change a file's mode (permissions) in 9P by:
+    A) Send Twstat with `mode` mutated
+    B) Send Tchmod (no such op exists)
+    C) Tclunk and Tcreate with new mode
+    D) Out-of-band via `/proc/<pid>/ctl`
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: A
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_qtfile_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    If a Qid has type bit `QTFILE` set (and no QTDIR), the file is:
+    A) A symlink
+    B) A regular file
+    C) An authentication fid
+    D) An exclusive-mode file
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_qtauth_v1
+  category: fs_concepts
+  difficulty: hard
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    A Qid with `QTAUTH` set indicates the file:
+    A) Has been authenticated to the user
+    B) Is an authentication channel — created by Tauth, used for in-band auth negotiation, NOT a regular file
+    C) Requires authentication to read
+    D) Is the auth log
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_dirread_offset_v1
+  category: fs_concepts
+  difficulty: hard
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    A Tread on a directory fid with offset = N expects N to be:
+    A) The byte offset returned by the previous Rread for that fid
+    B) The directory entry index
+    C) Always 0 (Tread on dirs is a single-shot operation)
+    D) Negative numbers are reserved for reverse-direction reads
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: A
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_iounit_zero_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    A Rread's `iounit` value of 0 in the Ropen reply means:
+    A) The server hasn't decided yet
+    B) No restriction; the client may use up to (msize - IOHDRSZ) per Tread/Twrite
+    C) The fid is read-only
+    D) Invalid; treated as a server error
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_chan_protocol_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    How does sys-file2chan present a synthetic 9P file?
+    A) The Limbo program reads from a `read` channel (chan of Sys->Rread) and replies on a paired channel — making the file visible at the chosen mount point
+    B) It writes to a Unix socket and bridges to a 9P file
+    C) It registers the file with the kernel via a syscall
+    D) It's not a real 9P file; it's a wrapper around /tmp
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: A
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_dirread_open_required_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    Reading a directory via 9P requires:
+    A) Opening the dir fid in OREAD mode first
+    B) Opening the dir fid in any mode; the read traversal is implicit
+    C) Sending Tdirread (which doesn't exist)
+    D) Walking to each entry individually
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: A
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_export_dial_v1
+  category: fs_concepts
+  difficulty: hard
+  subcategory: namespace
+  language: none
+  prompt: |-
+    `export /tmp -A /dev/cons` would:
+    A) Serve /tmp via 9P with /dev/cons as the connection
+    B) Move /tmp to /dev/cons
+    C) Set the export's authentication file to /dev/cons
+    D) Exit with an error — flag combination invalid
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: A
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_proc_status_layout_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: namespace
+  language: none
+  prompt: |-
+    `/prog/<pid>/status` contains:
+    A) A binary marshal of process state
+    B) A space-separated text record: pid, name, parent, state, etc. — Inferno's standard text-line data format
+    C) A JSON object
+    D) An XML document
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []

