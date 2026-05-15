@@ -9,7 +9,7 @@ items:
 - id: fs_text_line_format_v1
   category: fs_concepts
   difficulty: easy
-  language: none
+  language: limbo
   prompt: |
     Write a complete, compilable Limbo program that reads
     `/n/fleet/vehicles` (a 9P file in InferNode's text-line
@@ -17,13 +17,10 @@ items:
     spaces) and prints just the first and fourth field of each
     record. Use `sys->tokenize`.
   grader:
-    kind: judge
+    kind: compile_gate
     config:
-      criteria:
-      - accuracy
-      - uses_canonical_terminology
-      - concrete_example
-  needs_golden: true
+      gate_lang: limbo
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -31,23 +28,32 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "implement FsTextLine;\n\ninclude \"sys.m\";\ninclude \"draw.m\"\
+      ;\ninclude \"bufio.m\";\n\nsys: Sys;\nbufio: Bufio;\nIobuf: import bufio;\n\
+      \nFsTextLine: module\n{\n\tinit: fn(nil: ref Draw->Context, argv: list\
+      \ of string);\n};\n\ninit(nil: ref Draw->Context, nil: list of string)\n\
+      {\n\tsys = load Sys Sys->PATH;\n\tbufio = load Bufio Bufio->PATH;\n\n\
+      \tf := bufio->open(\"/n/fleet/vehicles\", Bufio->OREAD);\n\tif (f ==\
+      \ nil)\n\t\treturn;\n\twhile ((line := f.gets('\\n')) != nil) {\n\t\t\
+      (n, fields) := sys->tokenize(line, \" \\t\\n\");\n\t\tif (n >= 4) {\n\
+      \t\t\tf1 := hd fields;\n\t\t\tf4 := hd tl tl tl fields;\n\t\t\tsys->print(\"\
+      %s %s\\n\", f1, f4);\n\t\t}\n\t}\n}\n"
 - id: fs_walk_open_v1
   category: fs_concepts
   difficulty: medium
-  language: none
+  language: limbo
   prompt: |
     Write a complete, compilable Limbo program that walks the
     `/tool/` namespace by opening it as a directory, reading
     its `Dir` entries via `sys->dirread`, and printing each
     entry's name and qid type (file or directory).
   grader:
-    kind: judge
+    kind: compile_gate
     config:
-      criteria:
-      - accuracy
-      - uses_canonical_terminology
-      - concrete_example
-  needs_golden: true
+      gate_lang: limbo
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -55,10 +61,21 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "implement FsWalkOpen;\n\ninclude \"sys.m\";\ninclude \"draw.m\"\
+      ;\n\nsys: Sys;\n\nFsWalkOpen: module\n{\n\tinit: fn(nil: ref Draw->Context,\
+      \ argv: list of string);\n};\n\ninit(nil: ref Draw->Context, nil: list\
+      \ of string)\n{\n\tsys = load Sys Sys->PATH;\n\tfd := sys->open(\"/tool/\"\
+      , Sys->OREAD);\n\tif (fd == nil)\n\t\treturn;\n\tfor (;;) {\n\t\t(n,\
+      \ dirs) := sys->dirread(fd);\n\t\tif (n <= 0)\n\t\t\tbreak;\n\t\tfor\
+      \ (i := 0; i < n; i++) {\n\t\t\tkind := \"file\";\n\t\t\tif (dirs[i].mode\
+      \ & Sys->DMDIR)\n\t\t\t\tkind = \"dir\";\n\t\t\tsys->print(\"%s %s\\\
+      n\", dirs[i].name, kind);\n\t\t}\n\t}\n}\n"
 - id: fs_clone_pattern_v1
   category: fs_concepts
   difficulty: medium
-  language: none
+  language: limbo
   prompt: |
     In Inferno, `/n/llm/new` is a "clone" file: opening it
     allocates a new session and reads return the session id.
@@ -67,13 +84,10 @@ items:
     clone file, reads the id, then writes "what is 9P?" to the
     session's `ask` file and reads the reply.
   grader:
-    kind: judge
+    kind: compile_gate
     config:
-      criteria:
-      - accuracy
-      - uses_canonical_terminology
-      - concrete_example
-  needs_golden: true
+      gate_lang: limbo
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -81,23 +95,33 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "implement FsClone;\n\ninclude \"sys.m\";\ninclude \"draw.m\"\
+      ;\n\nsys: Sys;\n\nFsClone: module\n{\n\tinit: fn(nil: ref Draw->Context,\
+      \ argv: list of string);\n};\n\ninit(nil: ref Draw->Context, nil: list\
+      \ of string)\n{\n\tsys = load Sys Sys->PATH;\n\tclone := sys->open(\"\
+      /n/llm/new\", Sys->ORDWR);\n\tif (clone == nil)\n\t\treturn;\n\tbuf\
+      \ := array[64] of byte;\n\tnb := sys->read(clone, buf, len buf);\n\t\
+      if (nb <= 0)\n\t\treturn;\n\tid := string buf[:nb];\n\task := sys->open(\"\
+      /n/llm/\" + id + \"/ask\", Sys->ORDWR);\n\tif (ask == nil)\n\t\treturn;\n\
+      \tq := array of byte \"what is 9P?\";\n\tsys->write(ask, q, len q);\n\
+      \trep := array[8192] of byte;\n\tn := sys->read(ask, rep, len rep);\n\
+      \tif (n > 0)\n\t\tsys->print(\"%s\\n\", string rep[:n]);\n}\n"
 - id: fs_bind_namespace_v1
   category: fs_concepts
   difficulty: easy
-  language: none
+  language: inferno_sh
   prompt: |
     Write rc that constructs a custom namespace for an agent:
     bind `/n/sensors` (read-only) at the start of `/dev`,
     bind `/n/comms/chat` after `/dev`, and unmount everything
     under `/srv` first to start clean.
   grader:
-    kind: judge
+    kind: compile_gate
     config:
-      criteria:
-      - accuracy
-      - uses_canonical_terminology
-      - concrete_example
-  needs_golden: true
+      gate_lang: rc
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -105,10 +129,16 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: |
+      unmount /srv
+      bind /n/sensors /dev
+      bind -a /n/comms/chat /dev
 - id: fs_ctl_data_status_v1
   category: fs_concepts
   difficulty: medium
-  language: none
+  language: limbo
   prompt: |
     Write the .m interface file (`audio.m`) for a Limbo module
     that wraps a 9P audio device exposing the canonical
@@ -117,13 +147,10 @@ items:
     current state. Define functions to open, send a ctl
     command, read a status field, and stream data.
   grader:
-    kind: judge
+    kind: compile_gate
     config:
-      criteria:
-      - accuracy
-      - uses_canonical_terminology
-      - concrete_example
-  needs_golden: true
+      gate_lang: limbo
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -131,23 +158,39 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "implement Audio;\n\ninclude \"sys.m\";\ninclude \"draw.m\";\n\
+      \nsys: Sys;\n\nAudio: module\n{\n\tPATH:\tcon \"/dis/lib/audio.dis\"\
+      ;\n\n\tOpen:\tfn(svc: string): int;\n\tCtl:\tfn(cmd: string): int;\n\
+      \tStatus:\tfn(key: string): string;\n\tWriteData:\tfn(buf: array of\
+      \ byte): int;\n\tReadData:\tfn(buf: array of byte): int;\n};\n\nctlfd,\
+      \ datafd, statfd: ref Sys->FD;\n\nOpen(svc: string): int\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\tctlfd = sys->open(svc + \"/ctl\", Sys->OWRITE);\n\
+      \tdatafd = sys->open(svc + \"/data\", Sys->ORDWR);\n\tstatfd = sys->open(svc\
+      \ + \"/status\", Sys->OREAD);\n\tif (ctlfd == nil || datafd == nil ||\
+      \ statfd == nil)\n\t\treturn -1;\n\treturn 0;\n}\n\nCtl(cmd: string):\
+      \ int\n{\n\tb := array of byte cmd;\n\treturn sys->write(ctlfd, b, len\
+      \ b);\n}\n\nStatus(nil: string): string\n{\n\tbuf := array[4096] of\
+      \ byte;\n\tn := sys->read(statfd, buf, len buf);\n\tif (n <= 0)\n\t\t\
+      return \"\";\n\treturn string buf[:n];\n}\n\nWriteData(buf: array of\
+      \ byte): int\n{\n\treturn sys->write(datafd, buf, len buf);\n}\n\nReadData(buf:\
+      \ array of byte): int\n{\n\treturn sys->read(datafd, buf, len buf);\n\
+      }\n"
 - id: fs_mountpoint_introspection_v1
   category: fs_concepts
   difficulty: easy
-  language: none
+  language: inferno_sh
   prompt: |
     Write rc that lists every mount point currently in the
     namespace by reading `/proc/$pid/ns` (Inferno exposes the
     current namespace at this path). For the running shell,
     this means `/proc/$pid/ns` where `$pid` is `$apid`.
   grader:
-    kind: judge
+    kind: compile_gate
     config:
-      criteria:
-      - accuracy
-      - uses_canonical_terminology
-      - concrete_example
-  needs_golden: true
+      gate_lang: rc
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -155,3 +198,7 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: |
+      cat /proc/$pid/ns

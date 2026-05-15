@@ -20,7 +20,7 @@ items:
     kind: trace_match
     config:
       max_edit_distance: 0
-  needs_golden: true
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -28,6 +28,14 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    trace:
+    - op: write
+      path: /tool/find/ctl
+      data: '*.b /appl/veltro'
+    - op: read
+      path: /tool/find/ctl
 - id: tool_invoke_grep_rc_v1
   category: 9p_tool_use
   difficulty: trivial
@@ -41,7 +49,7 @@ items:
     kind: trace_match
     config:
       max_edit_distance: 0
-  needs_golden: true
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -49,6 +57,14 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    trace:
+    - op: write
+      path: /tool/grep/ctl
+      data: implement
+    - op: read
+      path: /tool/grep/ctl
 - id: tool_discover_rc_v1
   category: 9p_tool_use
   difficulty: trivial
@@ -62,7 +78,7 @@ items:
     kind: trace_match
     config:
       max_edit_distance: 0
-  needs_golden: true
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -70,6 +86,13 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    trace:
+    - op: read
+      path: /tool/_registry
+    - op: read
+      path: /tool/read/doc
 - id: tool_help_lookup_v1
   category: 9p_tool_use
   difficulty: easy
@@ -84,7 +107,7 @@ items:
     kind: trace_match
     config:
       max_edit_distance: 0
-  needs_golden: true
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -92,6 +115,14 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    trace:
+    - op: write
+      path: /tool/help
+      data: search
+    - op: read
+      path: /tool/help
 - id: tool_invoke_with_argv_v1
   category: 9p_tool_use
   difficulty: easy
@@ -106,7 +137,7 @@ items:
     kind: trace_match
     config:
       max_edit_distance: 0
-  needs_golden: true
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -114,6 +145,14 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    trace:
+    - op: write
+      path: /tool/search/ctl
+      data: hello world
+    - op: read
+      path: /tool/search/ctl
 - id: tool_chain_two_v1
   category: 9p_tool_use
   difficulty: medium
@@ -127,7 +166,7 @@ items:
     kind: trace_match
     config:
       max_edit_distance: 0
-  needs_golden: true
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -135,6 +174,18 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    trace:
+    - op: write
+      path: /tool/find/ctl
+      data: '*.m /appl/veltro'
+    - op: read
+      path: /tool/find/ctl
+    - op: write
+      path: /tool/read/ctl
+    - op: read
+      path: /tool/read/ctl
 - id: tool_invoke_write_v1
   category: 9p_tool_use
   difficulty: easy
@@ -147,7 +198,7 @@ items:
     kind: trace_match
     config:
       max_edit_distance: 0
-  needs_golden: true
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -155,6 +206,13 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    trace:
+    - op: write
+      path: /tool/write/ctl
+    - op: read
+      path: /tool/write/ctl
 - id: tool_registry_check_v1
   category: 9p_tool_use
   difficulty: easy
@@ -167,7 +225,7 @@ items:
     kind: trace_match
     config:
       max_edit_distance: 0
-  needs_golden: true
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -175,6 +233,11 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    trace:
+    - op: read
+      path: /tool/_registry
 - id: tool_translate_json_v1
   category: 9p_tool_use
   difficulty: medium
@@ -190,7 +253,7 @@ items:
     kind: trace_match
     config:
       max_edit_distance: 0
-  needs_golden: true
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -198,6 +261,14 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    trace:
+    - op: write
+      path: /tool/search/ctl
+      data: 9p namespaces
+    - op: read
+      path: /tool/search/ctl
 - id: tool_translate_json_limbo_v1
   category: 9p_tool_use
   difficulty: medium
@@ -213,7 +284,7 @@ items:
     kind: trace_match
     config:
       max_edit_distance: 0
-  needs_golden: true
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -221,6 +292,14 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    trace:
+    - op: write
+      path: /tool/list/ctl
+      data: /appl/veltro
+    - op: read
+      path: /tool/list/ctl
 - id: tool_use_man_v1
   category: 9p_tool_use
   difficulty: easy
@@ -233,7 +312,7 @@ items:
     kind: trace_match
     config:
       max_edit_distance: 0
-  needs_golden: true
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -241,6 +320,14 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    trace:
+    - op: write
+      path: /tool/man/ctl
+      data: sys-print(2)
+    - op: read
+      path: /tool/man/ctl
 - id: tool_use_shell_v1
   category: 9p_tool_use
   difficulty: easy
@@ -252,7 +339,7 @@ items:
     kind: trace_match
     config:
       max_edit_distance: 0
-  needs_golden: true
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -260,6 +347,14 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    trace:
+    - op: write
+      path: /tool/shell/ctl
+      data: ls /appl
+    - op: read
+      path: /tool/shell/ctl
 - id: tool_capture_result_v1
   category: 9p_tool_use
   difficulty: medium
@@ -273,7 +368,7 @@ items:
     kind: trace_match
     config:
       max_edit_distance: 0
-  needs_golden: true
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -281,6 +376,13 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    trace:
+    - op: write
+      path: /tool/find/ctl
+    - op: read
+      path: /tool/find/ctl
 - id: tool_error_handling_v1
   category: 9p_tool_use
   difficulty: medium
@@ -295,7 +397,7 @@ items:
     kind: trace_match
     config:
       max_edit_distance: 0
-  needs_golden: true
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -303,6 +405,11 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    trace:
+    - op: open
+      path: /tool/nonexistent/ctl
 - id: tool_doc_then_invoke_v1
   category: 9p_tool_use
   difficulty: medium
@@ -316,7 +423,7 @@ items:
     kind: trace_match
     config:
       max_edit_distance: 0
-  needs_golden: true
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -324,3 +431,12 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    trace:
+    - op: read
+      path: /tool/grep/doc
+    - op: write
+      path: /tool/grep/ctl
+    - op: read
+      path: /tool/grep/ctl

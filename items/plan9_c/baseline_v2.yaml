@@ -19,7 +19,7 @@ items:
     kind: compile_gate
     config:
       gate_lang: c
-  needs_golden: true
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -27,6 +27,10 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tprint(\"hello, plan 9\\n\");\n\texits(0);\n}\n"
 - id: c_sysfatal_v1
   category: plan9_c
   difficulty: easy
@@ -40,7 +44,7 @@ items:
     kind: compile_gate
     config:
       gate_lang: c
-  needs_golden: true
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -48,6 +52,13 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int argc, char\
+      \ **argv)\n{\n\tint fd;\n\n\tif(argc < 2)\n\t\tsysfatal(\"usage: %s\
+      \ file\", argv[0]);\n\tfd = open(argv[1], OREAD);\n\tif(fd < 0)\n\t\t\
+      sysfatal(\"open %s: %r\", argv[1]);\n\tprint(\"ok\\n\");\n\tclose(fd);\n\
+      \texits(0);\n}\n"
 - id: c_dev_stub_v1
   category: plan9_c
   difficulty: hard
@@ -71,6 +82,10 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  deprecated: true
+  notes: InferNode kernel-style 9P device driver; not testable via plan9port
+    `9c -c` (kernel headers absent). Needs an InferNode-side gate variant
+    — tracked separately.
 - id: c_bio_read_v1
   category: plan9_c
   difficulty: medium
@@ -84,7 +99,7 @@ items:
     kind: compile_gate
     config:
       gate_lang: c
-  needs_golden: true
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -92,6 +107,14 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n#include <bio.h>\n\nvoid\n\
+      main(int argc, char **argv)\n{\n\tBiobuf *bp;\n\tchar *line;\n\n\tif(argc\
+      \ < 2)\n\t\tsysfatal(\"usage: %s file\", argv[0]);\n\tbp = Bopen(argv[1],\
+      \ OREAD);\n\tif(bp == nil)\n\t\tsysfatal(\"Bopen: %r\");\n\twhile((line\
+      \ = Brdline(bp, '\\n')) != nil)\n\t\twrite(1, line, Blinelen(bp));\n\
+      \tBterm(bp);\n\texits(0);\n}\n"
 - id: c_fmt_install_v1
   category: plan9_c
   difficulty: medium
@@ -105,7 +128,7 @@ items:
     kind: compile_gate
     config:
       gate_lang: c
-  needs_golden: true
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -113,6 +136,14 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\ntypedef struct Point Point;\n\
+      struct Point {\n\tint x;\n\tint y;\n};\n\nint\nmypoint_fmt(Fmt *f)\n\
+      {\n\tPoint p;\n\n\tp = va_arg(f->args, Point);\n\treturn fmtprint(f,\
+      \ \"(%d,%d)\", p.x, p.y);\n}\n\nvoid\nmain(int, char**)\n{\n\tPoint\
+      \ p;\n\n\tfmtinstall('P', mypoint_fmt);\n\tp.x = 3;\n\tp.y = 4;\n\t\
+      print(\"%P\\n\", p);\n\texits(0);\n}\n"
 - id: c_errstr_pattern_v1
   category: plan9_c
   difficulty: easy
@@ -126,7 +157,7 @@ items:
     kind: compile_gate
     config:
       gate_lang: c
-  needs_golden: true
+  needs_golden: false
   provenance:
     authored_by: human
     spdx: MIT
@@ -134,3 +165,11 @@ items:
     derived_from: eval/scenarios/baseline_v2.yaml
   tags:
   - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nint\nsafe_open(char *name,\
+      \ int mode)\n{\n\tint fd;\n\tchar buf[ERRMAX];\n\n\tfd = open(name,\
+      \ mode);\n\tif(fd < 0) {\n\t\terrstr(buf, sizeof buf);\n\t\twerrstr(\"\
+      safe_open %s: %s\", name, buf);\n\t\treturn -1;\n\t}\n\treturn fd;\n\
+      }\n\nvoid\nmain(int, char**)\n{\n\tsafe_open(\"/no/such/file\", OREAD);\n\
+      \texits(0);\n}\n"

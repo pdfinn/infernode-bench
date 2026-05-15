@@ -24,11 +24,13 @@ def test_subset_resolution_is_deterministic(name):
     assert a == b, "resolve_subset must be deterministic"
 
 
-def test_smoke_yields_exactly_the_baseline_v2_count():
+def test_smoke_yields_the_migrated_baseline_v2_count():
+    # 50 migrated items minus one deprecated (`c_dev_stub_v1` —
+    # InferNode kernel-style 9P driver, not testable under plan9port 9c).
     spec = load_subset("smoke")
     items = resolve_subset(spec)
-    assert len(items) == 50, (
-        f"smoke should contain the 50 migrated baseline_v2 items, got {len(items)}"
+    assert len(items) == 49, (
+        f"smoke should contain the 49 active baseline_v2 items, got {len(items)}"
     )
 
 

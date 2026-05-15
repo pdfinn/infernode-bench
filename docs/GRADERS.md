@@ -18,8 +18,24 @@ Docker equivalent). Multi-language dispatch via `GATE_LANG`:
 The bench repo does NOT duplicate the gate — it shells out. Two backends:
 
 - **subprocess (default).** Set `INFERNODE_OS_LLM` to a checkout path.
-  Fast, no Docker, requires that the checkout has been bootstrapped
-  (`make bootstrap-limbo` once).
+  Fast, no Docker, requires that the checkout has been bootstrapped:
+
+  ```sh
+  # one-time per checkout, per host
+  cd $INFERNODE_OS_LLM
+  git submodule update --init --depth 1 infernode
+  tools/bootstrap-limbo.sh                        # builds infernode/<HOST>/<ARCH>/bin/{limbo,mk}
+  ( cd infernode && ./build-linux-amd64.sh headless )   # builds emu (Linux only)
+  cp infernode/emu/Linux/o.emu infernode/Linux/amd64/bin/emu   # Linux only
+
+  # plan9port for the C gate
+  git clone --depth 1 https://github.com/9fans/plan9port.git ~/plan9port
+  export PLAN9=~/plan9port
+  ```
+
+  IOL's `local.sh` then auto-detects `limbo`, `emu`, and `9c` from those
+  locations. Set `P9_9C` explicitly if `9c` lives elsewhere.
+
 - **docker.** Set `INFERBENCH_GATE_BACKEND=docker`. Image defaults to
   `infernode-os-llm/compile-gate:latest`; override with
   `INFERBENCH_GATE_IMAGE`. IOL is on the hook for publishing tagged
