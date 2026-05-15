@@ -1,0 +1,313 @@
+# 9p_tool_use — expansion_v3
+# 12 items authored fresh; goldens validated.
+
+items:
+- id: tool_doc_first_search_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: discovery
+  language: inferno_sh
+  prompt: Use Veltro's `search` tool — but FIRST read its doc at `/tool/search/doc`
+    to learn the args format, then invoke with args `inferno 9p`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: read
+      path: /tool/search/doc
+    - op: write
+      path: /tool/search/ctl
+      data: inferno 9p
+    - op: read
+      path: /tool/search/ctl
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_paths_then_invoke_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: discovery
+  language: inferno_sh
+  prompt: Read `/tool/paths` to discover where the `wiki` tool lives, then
+    invoke `/tool/wiki/ctl` with the article name `Inferno`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: read
+      path: /tool/paths
+    - op: write
+      path: /tool/wiki/ctl
+      data: Inferno
+    - op: read
+      path: /tool/wiki/ctl
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_budget_check_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: discovery
+  language: inferno_sh
+  prompt: Read `/tool/budget` to inspect the current LLM token budget, then
+    check `/tool/activity` to see active tool calls. Both are read-only meta
+    files in the tool namespace.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: read
+      path: /tool/budget
+    - op: read
+      path: /tool/activity
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_charon_browse_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: 'Use Veltro''s `charon` (web) tool to browse the URL `https://9p.io/`.
+    Tool: `/tool/charon/ctl`.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/charon/ctl
+      data: https://9p.io/
+    - op: read
+      path: /tool/charon/ctl
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_todo_add_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: 'Use Veltro''s `todo` tool to add the task `review PR 42`. Tool:
+    `/tool/todo/ctl`.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/todo/ctl
+      data: add review PR 42
+    - op: read
+      path: /tool/todo/ctl
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_plan_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: 'Use Veltro''s `plan` tool to plan a task: `"refactor harvest pipeline"`.
+    Tool: `/tool/plan/ctl`. Read back the plan.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/plan/ctl
+      data: refactor harvest pipeline
+    - op: read
+      path: /tool/plan/ctl
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_task_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: 'Use Veltro''s `task` tool to record a task with body `"investigate
+    M4 regression"`. Tool: `/tool/task/ctl`.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/task/ctl
+      data: investigate M4 regression
+    - op: read
+      path: /tool/task/ctl
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_xenith_v1
+  category: 9p_tool_use
+  difficulty: hard
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: 'Use Veltro''s `xenith` tool (an experimental sub-agent dispatch
+    tool) with the args `"summarise docs/V3-LEARNINGS.md"`. Tool: `/tool/xenith/ctl`.
+    Read result.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/xenith/ctl
+      data: summarise docs/V3-LEARNINGS.md
+    - op: read
+      path: /tool/xenith/ctl
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_doc_for_each_then_use_v1
+  category: 9p_tool_use
+  difficulty: hard
+  subcategory: chained
+  language: inferno_sh
+  prompt: Read docs for `find`, `grep`, and `read` in turn, then invoke `find`
+    with `*.b /appl/cmd` and pipe (via read of `find` then writes-then-reads
+    on `read`) the first result file's contents.
+  grader:
+    kind: trace_match
+    config:
+      equivalence_classes:
+      - reorder_writes
+      - drop_redundant_read
+  golden:
+    trace:
+    - op: read
+      path: /tool/find/doc
+    - op: read
+      path: /tool/grep/doc
+    - op: read
+      path: /tool/read/doc
+    - op: write
+      path: /tool/find/ctl
+      data: '*.b /appl/cmd'
+    - op: read
+      path: /tool/find/ctl
+    - op: write
+      path: /tool/read/ctl
+    - op: read
+      path: /tool/read/ctl
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_error_partial_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: error_handling
+  language: inferno_sh
+  prompt: Veltro's `mount` tool fails if asked to mount a non-existent /srv
+    endpoint. Write a sequence that attempts to mount `/srv/nonsense` at `/n/x`
+    (this should fail), reads back the error, then succeeds with `/srv/cs`
+    at `/n/cs`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/mount/ctl
+      data: /srv/nonsense /n/x
+    - op: read
+      path: /tool/mount/ctl
+    - op: write
+      path: /tool/mount/ctl
+      data: /srv/cs /n/cs
+    - op: read
+      path: /tool/mount/ctl
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_concurrent_search_browse_v1
+  category: 9p_tool_use
+  difficulty: hard
+  subcategory: concurrent
+  language: inferno_sh
+  prompt: 'Concurrently: fire Veltro''s `websearch` for `9P tutorial` AND
+    Veltro''s `browse` for `https://example.com/`. Read both results.'
+  grader:
+    kind: trace_match
+    config:
+      equivalence_classes:
+      - reorder_writes
+  golden:
+    trace:
+    - op: write
+      path: /tool/websearch/ctl
+      data: 9P tutorial
+    - op: write
+      path: /tool/browse/ctl
+      data: https://example.com/
+    - op: read
+      path: /tool/websearch/ctl
+    - op: read
+      path: /tool/browse/ctl
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_memory_set_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: 'Use Veltro''s `memory` tool to set the key `last_task` to `commit
+    review`. Tool: `/tool/memory/ctl`. Args: `set last_task commit review`.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/memory/ctl
+      data: set last_task commit review
+    - op: read
+      path: /tool/memory/ctl
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []

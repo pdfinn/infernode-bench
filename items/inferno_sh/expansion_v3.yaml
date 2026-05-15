@@ -1,0 +1,94 @@
+# inferno_sh — expansion_v3
+# 4 items authored fresh; goldens validated.
+
+items:
+- id: sh_combine_redirects_v1
+  category: inferno_sh
+  difficulty: medium
+  subcategory: redirect
+  language: inferno_sh
+  prompt: Write an Inferno sh snippet that runs `mk all`, redirecting stdout
+    to `out.log` and stderr to `err.log` using Inferno's `>[2]` syntax.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      mk all > out.log >[2] err.log
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_var_default_v1
+  category: inferno_sh
+  difficulty: easy
+  subcategory: vars
+  language: inferno_sh
+  prompt: Write an Inferno sh snippet that sets `port` to the value of `$PORT`
+    if set, else `9000`. Print the result.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      port=$PORT
+      if {~ $port ''} { port=9000 }
+      echo $port
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_subshell_capture_v1
+  category: inferno_sh
+  difficulty: medium
+  subcategory: vars
+  language: inferno_sh
+  prompt: Write an Inferno sh snippet that captures the output of running
+    `pwd` into a variable `here` via backquote substitution, then prints `cwd
+    is $here`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      here=`{pwd}
+      echo cwd is $here
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_exec_via_dollar_v1
+  category: inferno_sh
+  difficulty: hard
+  subcategory: vars
+  language: inferno_sh
+  prompt: Write an Inferno sh snippet that builds a command in a variable
+    `cmd=(echo hello)`, then executes it via `$cmd`. (Inferno sh executes
+    list-valued vars when expanded as a command.)
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      cmd=(echo hello)
+      $cmd
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate

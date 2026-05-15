@@ -64,12 +64,12 @@ INFERNODE_OS_LLM=/path/to/infernode-os-llm \
 
 | Category          | Smoke | Current | Target (full) | Headline grader |
 |-------------------|------:|--------:|--------------:|-----------------|
-| `limbo_authoring` |  15   |   58    | ~400          | compile-gate (limbo) |
-| `9p_tool_use`     |  15   |   51    | ~150          | trace-match     |
-| `inferno_sh`      |   8   |   32    | ~120          | compile-gate (Inferno sh under emu) |
-| `plan9_c`         |   6   |   27    | ~150          | compile-gate (`9c -c`) |
-| `fs_concepts`     |   6   |   38    | ~250          | MCQ exact match + judge for open-ended |
-| **Total**         | **49** | **206** | **~870**      |                 |
+| `limbo_authoring` |  15   |   73    | ~400          | compile-gate (limbo) |
+| `9p_tool_use`     |  15   |   63    | ~150          | trace-match     |
+| `inferno_sh`      |   8   |   36    | ~120          | compile-gate (Inferno sh under emu) |
+| `plan9_c`         |   6   |   33    | ~150          | compile-gate (`9c -c`) |
+| `fs_concepts`     |   6   |   55    | ~250          | MCQ exact match + judge for open-ended |
+| **Total**         | **49** | **260** | **~870**      |                 |
 
 Plus 20 calibration items at `calibration/v0.yaml` (4 per category, IB-2).
 

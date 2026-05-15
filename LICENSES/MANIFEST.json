@@ -1,29 +1,38 @@
 {
-  "bench_sha": "ed56a7d3f9f4069b14916aea84f6d2166f8d9c9a",
-  "n_items": 207,
+  "bench_sha": "18356bc015a92068f7b9e7b4cb5e282d7228c276",
+  "n_items": 261,
   "by_license": {
-    "MIT": 207
+    "MIT": 261
   },
   "by_category_license": {
     "limbo_authoring": {
-      "MIT": 58
+      "MIT": 73
     },
     "plan9_c": {
-      "MIT": 28
+      "MIT": 34
     },
     "inferno_sh": {
-      "MIT": 32
+      "MIT": 36
     },
     "9p_tool_use": {
-      "MIT": 51
+      "MIT": 63
     },
     "fs_concepts": {
-      "MIT": 38
+      "MIT": 55
     }
   },
   "items": [
     {
       "id": "tool_alt_dispatch_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "tool_budget_check_v1",
       "category": "9p_tool_use",
       "spdx": "MIT",
       "authored_by": "human",
@@ -77,7 +86,25 @@
       "deprecated": false
     },
     {
+      "id": "tool_charon_browse_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
       "id": "tool_concurrent_grep_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "tool_concurrent_search_browse_v1",
       "category": "9p_tool_use",
       "spdx": "MIT",
       "authored_by": "human",
@@ -113,6 +140,24 @@
       "deprecated": false
     },
     {
+      "id": "tool_doc_first_search_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "tool_doc_for_each_then_use_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
       "id": "tool_doc_for_missing_v1",
       "category": "9p_tool_use",
       "spdx": "MIT",
@@ -137,6 +182,15 @@
       "authored_by": "human",
       "derived_from": "eval/scenarios/baseline_v2.yaml",
       "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "tool_error_partial_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
       "deprecated": false
     },
     {
@@ -248,7 +302,34 @@
       "deprecated": false
     },
     {
+      "id": "tool_memory_set_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
       "id": "tool_missing_open_fails_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "tool_paths_then_invoke_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "tool_plan_v1",
       "category": "9p_tool_use",
       "spdx": "MIT",
       "authored_by": "human",
@@ -428,6 +509,24 @@
       "deprecated": false
     },
     {
+      "id": "tool_task_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "tool_todo_add_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
       "id": "tool_translate_json_limbo_v1",
       "category": "9p_tool_use",
       "spdx": "MIT",
@@ -482,6 +581,24 @@
       "deprecated": false
     },
     {
+      "id": "tool_xenith_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "fs_aname_default_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
       "id": "fs_announce_purpose_v1",
       "category": "fs_concepts",
       "spdx": "MIT",
@@ -518,12 +635,30 @@
       "deprecated": false
     },
     {
+      "id": "fs_chan_file_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
       "id": "fs_clone_pattern_v1",
       "category": "fs_concepts",
       "spdx": "MIT",
       "authored_by": "human",
       "derived_from": "eval/scenarios/baseline_v2.yaml",
       "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "fs_clone_session_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
       "deprecated": false
     },
     {
@@ -537,6 +672,15 @@
     },
     {
       "id": "fs_clunk_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "fs_create_perm_v1",
       "category": "fs_concepts",
       "spdx": "MIT",
       "authored_by": "human",
@@ -599,6 +743,15 @@
       "deprecated": false
     },
     {
+      "id": "fs_devssl_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
       "id": "fs_dial_purpose_v1",
       "category": "fs_concepts",
       "spdx": "MIT",
@@ -618,6 +771,15 @@
     },
     {
       "id": "fs_factotum_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "fs_fid_uniqueness_v1",
       "category": "fs_concepts",
       "spdx": "MIT",
       "authored_by": "human",
@@ -653,7 +815,34 @@
       "deprecated": false
     },
     {
+      "id": "fs_kfs_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "fs_logfs_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
       "id": "fs_mount_aname_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "fs_mountfd_v1",
       "category": "fs_concepts",
       "spdx": "MIT",
       "authored_by": "human",
@@ -671,7 +860,70 @@
       "deprecated": false
     },
     {
+      "id": "fs_namespace_dup_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
       "id": "fs_namespace_inherit_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "fs_oexcl_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "fs_oexec_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "fs_open_with_orclose_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "fs_orclose_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "fs_oread_meaning_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "fs_otrunc_v1",
       "category": "fs_concepts",
       "spdx": "MIT",
       "authored_by": "human",
@@ -798,6 +1050,15 @@
     },
     {
       "id": "fs_walk_before_open_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "fs_walk_count_limit_v1",
       "category": "fs_concepts",
       "spdx": "MIT",
       "authored_by": "human",
@@ -941,7 +1202,25 @@
       "deprecated": false
     },
     {
+      "id": "sh_combine_redirects_v1",
+      "category": "inferno_sh",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
       "id": "sh_command_substitution_v1",
+      "category": "inferno_sh",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "sh_exec_via_dollar_v1",
       "category": "inferno_sh",
       "spdx": "MIT",
       "authored_by": "human",
@@ -1067,6 +1346,15 @@
       "deprecated": false
     },
     {
+      "id": "sh_subshell_capture_v1",
+      "category": "inferno_sh",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
       "id": "sh_switch_pattern_v1",
       "category": "inferno_sh",
       "spdx": "MIT",
@@ -1077,6 +1365,15 @@
     },
     {
       "id": "sh_var_assign_print_v1",
+      "category": "inferno_sh",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "sh_var_default_v1",
       "category": "inferno_sh",
       "spdx": "MIT",
       "authored_by": "human",
@@ -1220,6 +1517,15 @@
       "deprecated": false
     },
     {
+      "id": "limbo_break_continue_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
       "id": "limbo_bufio_count_words_v1",
       "category": "limbo_authoring",
       "spdx": "MIT",
@@ -1283,6 +1589,24 @@
       "deprecated": false
     },
     {
+      "id": "limbo_case_int_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "limbo_case_string_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
       "id": "limbo_chan_buffered_v1",
       "category": "limbo_authoring",
       "spdx": "MIT",
@@ -1302,6 +1626,15 @@
     },
     {
       "id": "limbo_done_chan_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "limbo_draw_load_v1",
       "category": "limbo_authoring",
       "spdx": "MIT",
       "authored_by": "human",
@@ -1338,6 +1671,33 @@
     },
     {
       "id": "limbo_fprint_stderr_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "limbo_iter_dirread_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "limbo_keyring_load_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "limbo_list_filter_v1",
       "category": "limbo_authoring",
       "spdx": "MIT",
       "authored_by": "human",
@@ -1454,7 +1814,34 @@
       "deprecated": false
     },
     {
+      "id": "limbo_security_random_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
       "id": "limbo_select_close_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "limbo_self_check_loaded_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "limbo_sha1_hash_v1",
       "category": "limbo_authoring",
       "spdx": "MIT",
       "authored_by": "human",
@@ -1517,7 +1904,34 @@
       "deprecated": false
     },
     {
+      "id": "limbo_styx_msg_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
       "id": "limbo_styxservers_root_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "limbo_sys_bind_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "limbo_sys_chdir_v1",
       "category": "limbo_authoring",
       "spdx": "MIT",
       "authored_by": "human",
@@ -1553,7 +1967,25 @@
       "deprecated": false
     },
     {
+      "id": "limbo_sys_sprint_format_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
       "id": "limbo_sys_stat_size_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "limbo_sys_wstat_v1",
       "category": "limbo_authoring",
       "spdx": "MIT",
       "authored_by": "human",
@@ -1634,7 +2066,25 @@
       "deprecated": false
     },
     {
+      "id": "c_args_parse_v1",
+      "category": "plan9_c",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
       "id": "c_atoi_v1",
+      "category": "plan9_c",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "c_bigbuf_loop_v1",
       "category": "plan9_c",
       "spdx": "MIT",
       "authored_by": "human",
@@ -1671,6 +2121,24 @@
     },
     {
       "id": "c_bio_write_v1",
+      "category": "plan9_c",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "c_chdir_v1",
+      "category": "plan9_c",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "c_create_file_v1",
       "category": "plan9_c",
       "spdx": "MIT",
       "authored_by": "human",
@@ -1734,6 +2202,15 @@
     },
     {
       "id": "c_fprint_stderr_v1",
+      "category": "plan9_c",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "c_getenv_v1",
       "category": "plan9_c",
       "spdx": "MIT",
       "authored_by": "human",
@@ -1815,6 +2292,15 @@
     },
     {
       "id": "c_seek_v1",
+      "category": "plan9_c",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": null,
+      "source_repo": null,
+      "deprecated": false
+    },
+    {
+      "id": "c_sleep_v1",
       "category": "plan9_c",
       "spdx": "MIT",
       "authored_by": "human",

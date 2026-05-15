@@ -3,7 +3,7 @@
 - k-gram size: 13
 - prompt-overlap threshold (flag if ≥): 3
 - golden-overlap threshold (informational): 30
-- items audited: 206
+- items audited: 260
 - items flagged (on prompt overlap): 3
 
 Policy: Flag on prompt overlap only. Goldens share idiomatic boilerplate (include statements, init signatures) with the InferNode tree by construction — that's not contamination.
