@@ -123,6 +123,11 @@ def _cmd_verify(args: argparse.Namespace) -> int:
     return verify_main(argv)
 
 
+def _cmd_calibration(args: argparse.Namespace) -> int:
+    from infernode_bench.calibration import main as calib_main
+    return calib_main(args.calib_args)
+
+
 def _cmd_run(args: argparse.Namespace) -> int:
     from infernode_bench.runners import run_subset
     summary = run_subset(
@@ -169,6 +174,10 @@ def build_parser() -> argparse.ArgumentParser:
     pvf.add_argument("--json", action="store_true",
                      help="emit one JSON line per item")
     pvf.set_defaults(func=_cmd_verify)
+
+    pc = sub.add_parser("calibration", help="Phase-0 calibration set operations")
+    pc.add_argument("calib_args", nargs=argparse.REMAINDER)
+    pc.set_defaults(func=_cmd_calibration)
 
     pr = sub.add_parser("run", help="run a subset against a model")
     pr.add_argument("subset", help="subset name (smoke, mini, full, ...)")
