@@ -1,0 +1,26 @@
+# smoke — 50-item smoke subset. Supersedes the role baseline_v2.yaml
+# played in infernode-os-llm: a quick signal-noise check, not a
+# methodologically-defensible benchmark on its own.
+#
+# Distribution mirrors baseline_v2 exactly, so any IOL leaderboard row
+# tagged `baseline_v2` is directly comparable to a `smoke` row from
+# this repo (modulo grader version).
+
+name: smoke
+description: |
+  50-item smoke subset. One-to-one with infernode-os-llm's
+  baseline_v2.yaml. Use for quick eval signal, not for publication.
+seed: 42
+strata:
+  - category: limbo_authoring
+    n: all
+  - category: 9p_tool_use
+    n: all
+  - category: inferno_sh
+    n: all
+  - category: plan9_c
+    n: all
+  - category: fs_concepts
+    n: all
+pin_ids: []
+exclude_ids: []

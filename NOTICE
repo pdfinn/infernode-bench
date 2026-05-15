@@ -1,0 +1,23 @@
+InferBench — a benchmark for LLMs writing Inferno/InferNode code.
+
+Code in this repository is MIT-licensed (see LICENSE).
+
+Item content is licensed per-item via the `provenance.spdx` field on each
+item record. The mix:
+
+  - Items authored fresh for this benchmark: MIT.
+  - Items derived/transformed from upstream Inferno (Vita Nuova / Lucent)
+    source: declared under the upstream Lucent Public License 1.02 or
+    the applicable upstream license, with `provenance.derived_from`
+    recording the source path.
+  - Items derived from Plan 9 from User Space (`9fans/plan9port`):
+    declared MIT (plan9port's license).
+  - Items grounded in the Inferno Programmer's Manual: prompt phrasings
+    are original; the underlying *concepts* are documented in the IPM.
+
+A per-item license summary is emitted at `LICENSES/MANIFEST.json` by the
+CI pipeline.
+
+This benchmark was bootstrapped from prior work on the
+`infernode-os-llm` companion repository's `eval/scenarios/baseline_v2.yaml`,
+which becomes the `smoke` subset here.

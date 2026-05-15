@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/pdfinn/infernode-bench/schema/subset.schema.json",
+  "title": "InferBench subset",
+  "description": "Deterministic stratified sample of the full item set.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "seed", "strata"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "description": {"type": "string"},
+    "seed": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "strata": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["category"],
+        "properties": {
+          "category": {
+            "enum": [
+              "limbo_authoring",
+              "plan9_c",
+              "inferno_sh",
+              "9p_tool_use",
+              "fs_concepts"
+            ]
+          },
+          "n": {
+            "type": ["integer", "string"],
+            "description": "Either an integer count, or the literal string 'all'."
+          },
+          "by": {"enum": ["difficulty", "subcategory"]},
+          "ratio": {
+            "type": "object",
+            "additionalProperties": {"type": "integer", "minimum": 0}
+          }
+        }
+      }
+    },
+    "pin_ids": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Item IDs always included regardless of sampling."
+    },
+    "exclude_ids": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "resolved_hash": {
+      "type": "string",
+      "description": "sha256 of the sorted resolved item IDs; recorded after resolve. Mutating any item changes this."
+    },
+    "resolved_count": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

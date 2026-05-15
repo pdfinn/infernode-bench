@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/pdfinn/infernode-bench/schema/result.schema.json",
+  "title": "InferBench per-item result",
+  "description": "One row of the JSONL result stream emitted by the runner.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "item_id", "category", "model", "ok", "grader_kind",
+    "run_id", "bench_sha", "subset_name"
+  ],
+  "properties": {
+    "item_id": {"type": "string"},
+    "category": {"type": "string"},
+    "difficulty": {"type": "string"},
+    "model": {"type": "string"},
+    "endpoint": {"type": "string"},
+    "ok": {"type": "boolean"},
+    "score": {"type": ["number", "null"]},
+    "grader_kind": {"type": "string"},
+    "grader_detail": {
+      "type": "object",
+      "description": "Grader-specific fields, e.g. {dis_size, stderr, backend, infernode_sha} for compile_gate."
+    },
+    "completion": {"type": "string"},
+    "completion_chars": {"type": "integer"},
+    "chat_elapsed_ms": {"type": "integer"},
+    "grade_elapsed_ms": {"type": "integer"},
+    "run_id": {"type": "string"},
+    "bench_sha": {"type": "string"},
+    "subset_name": {"type": "string"},
+    "subset_hash": {"type": "string"},
+    "infernode_sha": {"type": "string"},
+    "timestamp": {"type": "string"}
+  }
+}

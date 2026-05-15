@@ -1,0 +1,326 @@
+# Items migrated from infernode-os-llm/eval/scenarios/baseline_v2.yaml
+# Source repo SHA: 801df94d0b83b6146e839016c19049ff96f1edf8
+# Source file last-commit SHA: 35a89fe31945063b5b53aa808db0d2eda3f8cd78
+#
+# Every item is marked needs_golden: true — IB-11..IB-15 will
+# fill in goldens per category.
+
+items:
+- id: tool_invoke_find_v1
+  category: 9p_tool_use
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Veltro exposes its `find` tool via 9P at `/tool/find/ctl`
+    (write the search args, read the result back from the same
+    file). Write a complete, compilable Limbo program that drives
+    `find` with the args `*.b /appl/veltro` and prints whatever
+    the tool returns to stdout.
+  grader:
+    kind: trace_match
+    config:
+      max_edit_distance: 0
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: tool_invoke_grep_rc_v1
+  category: 9p_tool_use
+  difficulty: trivial
+  language: inferno_sh
+  prompt: |
+    Write an rc shell one-liner that drives Veltro's `grep` tool
+    via its 9P interface. The tool lives at `/tool/grep/ctl`;
+    write args to it then read the result back. Search for the
+    pattern `implement` over the args list.
+  grader:
+    kind: trace_match
+    config:
+      max_edit_distance: 0
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: tool_discover_rc_v1
+  category: 9p_tool_use
+  difficulty: trivial
+  language: inferno_sh
+  prompt: |
+    Write a short rc shell snippet that lists every Veltro tool
+    currently mounted in the namespace, then reads the
+    documentation for the `read` tool. Tools live under `/tool/`
+    with each tool exposing `ctl` and `doc` files.
+  grader:
+    kind: trace_match
+    config:
+      max_edit_distance: 0
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: tool_help_lookup_v1
+  category: 9p_tool_use
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo program that uses
+    `/tool/help` to look up the documentation for the `search`
+    tool. The protocol: open `/tool/help` for ORDWR, write the
+    tool name to it, seek back to the start, read the doc back.
+    Print the doc to stdout.
+  grader:
+    kind: trace_match
+    config:
+      max_edit_distance: 0
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: tool_invoke_with_argv_v1
+  category: 9p_tool_use
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo program named `RunTool`
+    that takes the tool name from argv[1] and the args from
+    argv[2..] joined by spaces, drives the tool at
+    `/tool/<name>/ctl`, and prints the result. If the tool
+    doesn't exist, fail with a clear message to stderr.
+  grader:
+    kind: trace_match
+    config:
+      max_edit_distance: 0
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: tool_chain_two_v1
+  category: 9p_tool_use
+  difficulty: medium
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo program that uses two
+    Veltro tools in sequence: first calls `/tool/find/ctl` with
+    `*.m /appl/veltro`, then for each result line, calls
+    `/tool/read/ctl` with that path and prints the file content.
+  grader:
+    kind: trace_match
+    config:
+      max_edit_distance: 0
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: tool_invoke_write_v1
+  category: 9p_tool_use
+  difficulty: easy
+  language: inferno_sh
+  prompt: |
+    Drive the Veltro `write` tool via 9P from rc. The tool
+    writes content to a file given args of the form
+    `<path>\n<content>`. Use `/tool/write/ctl`.
+  grader:
+    kind: trace_match
+    config:
+      max_edit_distance: 0
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: tool_registry_check_v1
+  category: 9p_tool_use
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo program that reads the
+    space-separated tool registry from `/tool/_registry` and
+    prints one tool name per line.
+  grader:
+    kind: trace_match
+    config:
+      max_edit_distance: 0
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: tool_translate_json_v1
+  category: 9p_tool_use
+  difficulty: medium
+  language: inferno_sh
+  prompt: |
+    Convert this JSON tool call to the equivalent rc one-liner
+    that drives the same tool via its 9P interface at
+    `/tool/<name>/ctl`:
+    ```json
+    {"name": "search", "arguments": {"args": "9p namespaces"}}
+    ```
+  grader:
+    kind: trace_match
+    config:
+      max_edit_distance: 0
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: tool_translate_json_limbo_v1
+  category: 9p_tool_use
+  difficulty: medium
+  language: limbo
+  prompt: |
+    Convert this JSON tool call to a complete, compilable Limbo
+    program that drives the same tool via its 9P interface at
+    `/tool/<name>/ctl`:
+    ```json
+    {"name": "list", "arguments": {"args": "/appl/veltro"}}
+    ```
+  grader:
+    kind: trace_match
+    config:
+      max_edit_distance: 0
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: tool_use_man_v1
+  category: 9p_tool_use
+  difficulty: easy
+  language: inferno_sh
+  prompt: |
+    Drive the Veltro `man` tool via 9P from rc to look up the
+    manual page for `sys-print(2)`. The tool is at
+    `/tool/man/ctl`.
+  grader:
+    kind: trace_match
+    config:
+      max_edit_distance: 0
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: tool_use_shell_v1
+  category: 9p_tool_use
+  difficulty: easy
+  language: inferno_sh
+  prompt: |
+    Drive the Veltro `shell` tool via 9P from rc to run the
+    command `ls /appl`. The tool is at `/tool/shell/ctl`.
+  grader:
+    kind: trace_match
+    config:
+      max_edit_distance: 0
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: tool_capture_result_v1
+  category: 9p_tool_use
+  difficulty: medium
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo program that drives the
+    `find` tool, captures the result into an `array of byte`,
+    then uses `sys->tokenize` to split it on newlines and
+    prints `count: <n>` where n is the number of matches.
+  grader:
+    kind: trace_match
+    config:
+      max_edit_distance: 0
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: tool_error_handling_v1
+  category: 9p_tool_use
+  difficulty: medium
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo program that tries to
+    drive `/tool/nonexistent/ctl` and, on failure (sys->open
+    returns nil), prints a clear error to stderr including the
+    `%r` errstr and exits cleanly. On success it would print
+    "unexpectedly worked" to stdout.
+  grader:
+    kind: trace_match
+    config:
+      max_edit_distance: 0
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: tool_doc_then_invoke_v1
+  category: 9p_tool_use
+  difficulty: medium
+  language: inferno_sh
+  prompt: |
+    Write rc that first reads `/tool/grep/doc` to learn the
+    tool's usage, then invokes `/tool/grep/ctl` with the args
+    `pattern files...`. The output should show both the doc
+    header and the tool result.
+  grader:
+    kind: trace_match
+    config:
+      max_edit_distance: 0
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration

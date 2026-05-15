@@ -1,0 +1,30 @@
+# mini — stratified 150-item subset spec. Placeholder until per-category
+# item authoring (IB-11..IB-15) lands; the resolver will only return what's
+# currently available. The strata declare *targets*, not minima.
+#
+# Distribution roughly matches the full-target distribution divided by ~5,
+# with the headline 9p_tool_use category retaining slightly disproportionate
+# weight (per the epic's north-star priority).
+
+name: mini
+description: |
+  150-item stratified subset. Targets each category proportionally to
+  the planned full set, with 9p_tool_use weighted slightly higher.
+  While items are being authored, the resolver returns the items
+  available subject to stratum caps.
+seed: 42
+strata:
+  - category: limbo_authoring
+    n: 60
+    by: difficulty
+    ratio: {trivial: 4, easy: 22, medium: 22, hard: 12}
+  - category: 9p_tool_use
+    n: 40
+  - category: inferno_sh
+    n: 18
+  - category: plan9_c
+    n: 18
+  - category: fs_concepts
+    n: 14
+pin_ids: []
+exclude_ids: []

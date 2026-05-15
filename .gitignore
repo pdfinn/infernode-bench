@@ -1,0 +1,26 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+build/
+dist/
+.coverage
+htmlcov/
+
+# Run artefacts
+runs/
+results/
+*.jsonl
+
+# Decontamination caches
+decontamination/cache/
+decontamination/_corpora/
+
+# Editor leftovers
+.idea/
+.vscode/
+*.swp
+.DS_Store

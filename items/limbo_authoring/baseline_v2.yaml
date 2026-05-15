@@ -1,0 +1,334 @@
+# Items migrated from infernode-os-llm/eval/scenarios/baseline_v2.yaml
+# Source repo SHA: 801df94d0b83b6146e839016c19049ff96f1edf8
+# Source file last-commit SHA: 35a89fe31945063b5b53aa808db0d2eda3f8cd78
+#
+# Every item is marked needs_golden: true — IB-11..IB-15 will
+# fill in goldens per category.
+
+items:
+- id: hello_world_v1
+  category: limbo_authoring
+  difficulty: trivial
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo source file for a command
+    named "Hello" whose `init` function prints `hello, limbo`
+    followed by a newline to stdout, then exits. Use the `sys` module.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: line_count_v1
+  category: limbo_authoring
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo command "Wcl" (word-count
+    lines). It reads from stdin via bufio and prints the number of
+    lines, followed by a newline. Use the canonical
+    `init(nil: ref Draw->Context, argv: list of string)` entry point.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: cat_v1
+  category: limbo_authoring
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo command "Cat" that
+    concatenates each file named in argv to stdout. If argv is
+    empty, copy stdin to stdout. Use sys->open and sys->read /
+    sys->write for the copy.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: alt_demux_v1
+  category: limbo_authoring
+  difficulty: medium
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo source file that defines
+    an `init` function which:
+      - creates two `chan of string` named `a` and `b`
+      - spawns a worker that sends "from a" on `a`
+      - spawns another worker that sends "from b" on `b`
+      - in the main thread, uses an `alt` block to receive from
+        whichever arrives first and print it to stdout
+      - exits after one such receive
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: list_traverse_v1
+  category: limbo_authoring
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo source file with an `init`
+    function that constructs a `list of int` containing 1, 2, 3,
+    4, 5 and prints each element on its own line using sys->print.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: array_sum_v1
+  category: limbo_authoring
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo source file with an `init`
+    function that allocates an `array of int` of length 10 with
+    values 1..10, computes the sum, and prints the sum followed
+    by a newline.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: module_interface_only_v1
+  category: limbo_authoring
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo MODULE INTERFACE FILE
+    (`.m`) for a module named `Counter` exposing:
+      - a `PATH` constant pointing to the canonical install path
+        for a Counter module
+      - a function `inc: fn(by: int): int`
+      - a function `reset: fn()`
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: adt_point_v1
+  category: limbo_authoring
+  difficulty: medium
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo source file that defines an
+    ADT `Point` with `int` fields `x` and `y`, and an `init`
+    function that creates a `ref Point` with x=3 y=4 and prints
+    the two fields in the form `x=3 y=4` followed by a newline.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: pick_message_v1
+  category: limbo_authoring
+  difficulty: medium
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo source file that defines an
+    ADT `Msg` with two pick alternatives `Hello` (carrying a
+    `string` name) and `Goodbye`. The `init` function constructs
+    one `ref Msg.Hello("world")` and uses `pick` to print
+    `hello, world` for Hello or `bye` for Goodbye.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: bufio_read_lines_v1
+  category: limbo_authoring
+  difficulty: medium
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo command "Numlines" that
+    opens a single filename from argv (the first non-program
+    argument) using bufio->open with `bufio->OREAD`, reads it line
+    by line via gets/getb, and prints each line prefixed with its
+    1-based line number followed by a tab and the line content.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: tuple_minmax_v1
+  category: limbo_authoring
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo source file containing a
+    function `minmax(a: array of int): (int, int)` that returns
+    the (min, max) of the array as a tuple, and an `init`
+    function that calls it on `array of int { 7, 2, 9, 4 }` and
+    prints `min=2 max=9` followed by a newline.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: spawn_done_v1
+  category: limbo_authoring
+  difficulty: medium
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo source file in which `init`
+    creates a `chan of int` named `done`, spawns a worker that
+    sleeps briefly (you can use sys->sleep with 100 ms) then sends
+    0 on `done`, and the main thread blocks on `<-done` before
+    printing `worker done` and exiting.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: string_split_v1
+  category: limbo_authoring
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo source file whose `init`
+    uses the `string` module's `splitstrl` (or `splitl`) to split
+    `"a:b:c:d"` on `:` and print each segment on its own line.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: chan_pipeline_v1
+  category: limbo_authoring
+  difficulty: hard
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo source file in which `init`
+    builds a small pipeline of channels: one worker generates the
+    integers 1..5 onto a `chan of int`, a second worker reads
+    them, doubles each, and writes onto a second `chan of int`,
+    and the main thread reads the second channel until EOF
+    (sender closes by sending a sentinel of -1) and prints each
+    doubled value on its own line.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: error_handling_open_v1
+  category: limbo_authoring
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo command "Try" that takes a
+    single filename in argv, attempts to sys->open it for reading,
+    and if open returns nil, prints `cannot open: <name>` to stderr
+    (sys->fprint to sys->fildes(2)) and exits with status "open
+    failed". Otherwise prints `ok` to stdout.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration

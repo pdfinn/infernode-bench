@@ -1,0 +1,157 @@
+# Items migrated from infernode-os-llm/eval/scenarios/baseline_v2.yaml
+# Source repo SHA: 801df94d0b83b6146e839016c19049ff96f1edf8
+# Source file last-commit SHA: 35a89fe31945063b5b53aa808db0d2eda3f8cd78
+#
+# Every item is marked needs_golden: true — IB-11..IB-15 will
+# fill in goldens per category.
+
+items:
+- id: fs_text_line_format_v1
+  category: fs_concepts
+  difficulty: easy
+  language: none
+  prompt: |
+    Write a complete, compilable Limbo program that reads
+    `/n/fleet/vehicles` (a 9P file in InferNode's text-line
+    data convention: one record per line, fields separated by
+    spaces) and prints just the first and fourth field of each
+    record. Use `sys->tokenize`.
+  grader:
+    kind: judge
+    config:
+      criteria:
+      - accuracy
+      - uses_canonical_terminology
+      - concrete_example
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: fs_walk_open_v1
+  category: fs_concepts
+  difficulty: medium
+  language: none
+  prompt: |
+    Write a complete, compilable Limbo program that walks the
+    `/tool/` namespace by opening it as a directory, reading
+    its `Dir` entries via `sys->dirread`, and printing each
+    entry's name and qid type (file or directory).
+  grader:
+    kind: judge
+    config:
+      criteria:
+      - accuracy
+      - uses_canonical_terminology
+      - concrete_example
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: fs_clone_pattern_v1
+  category: fs_concepts
+  difficulty: medium
+  language: none
+  prompt: |
+    In Inferno, `/n/llm/new` is a "clone" file: opening it
+    allocates a new session and reads return the session id.
+    Subsequent operations happen under `/n/llm/<id>/ask`.
+    Write a complete, compilable Limbo program that opens the
+    clone file, reads the id, then writes "what is 9P?" to the
+    session's `ask` file and reads the reply.
+  grader:
+    kind: judge
+    config:
+      criteria:
+      - accuracy
+      - uses_canonical_terminology
+      - concrete_example
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: fs_bind_namespace_v1
+  category: fs_concepts
+  difficulty: easy
+  language: none
+  prompt: |
+    Write rc that constructs a custom namespace for an agent:
+    bind `/n/sensors` (read-only) at the start of `/dev`,
+    bind `/n/comms/chat` after `/dev`, and unmount everything
+    under `/srv` first to start clean.
+  grader:
+    kind: judge
+    config:
+      criteria:
+      - accuracy
+      - uses_canonical_terminology
+      - concrete_example
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: fs_ctl_data_status_v1
+  category: fs_concepts
+  difficulty: medium
+  language: none
+  prompt: |
+    Write the .m interface file (`audio.m`) for a Limbo module
+    that wraps a 9P audio device exposing the canonical
+    ctl/data/status decomposition: `ctl` for write commands,
+    `data` for read/write of audio bytes, `status` for read of
+    current state. Define functions to open, send a ctl
+    command, read a status field, and stream data.
+  grader:
+    kind: judge
+    config:
+      criteria:
+      - accuracy
+      - uses_canonical_terminology
+      - concrete_example
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+- id: fs_mountpoint_introspection_v1
+  category: fs_concepts
+  difficulty: easy
+  language: none
+  prompt: |
+    Write rc that lists every mount point currently in the
+    namespace by reading `/proc/$pid/ns` (Inferno exposes the
+    current namespace at this path). For the running shell,
+    this means `/proc/$pid/ns` where `$pid` is `$apid`.
+  grader:
+    kind: judge
+    config:
+      criteria:
+      - accuracy
+      - uses_canonical_terminology
+      - concrete_example
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
