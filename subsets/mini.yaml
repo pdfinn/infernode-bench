@@ -8,23 +8,23 @@
 
 name: mini
 description: |
-  150-item stratified subset. Targets each category proportionally to
+  ~150-item stratified subset. Targets each category proportionally to
   the planned full set, with 9p_tool_use weighted slightly higher.
   While items are being authored, the resolver returns the items
   available subject to stratum caps.
 seed: 42
 strata:
   - category: limbo_authoring
-    n: 60
-    by: difficulty
-    ratio: {trivial: 4, easy: 22, medium: 22, hard: 12}
-  - category: 9p_tool_use
     n: 40
+    by: difficulty
+    ratio: {trivial: 2, easy: 16, medium: 15, hard: 7}
+  - category: 9p_tool_use
+    n: 39
   - category: inferno_sh
-    n: 18
+    n: 26
   - category: plan9_c
-    n: 18
+    n: 19
   - category: fs_concepts
-    n: 14
+    n: 26
 pin_ids: []
 exclude_ids: []

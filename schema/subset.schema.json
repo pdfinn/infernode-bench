@@ -45,6 +45,10 @@
         }
       }
     },
+    "include_tag": {
+      "type": "string",
+      "description": "If set, restrict the pool to items whose `tags` contains this string before applying strata. Used by `smoke` to lock to baseline_v2 items for leaderboard comparability."
+    },
     "pin_ids": {
       "type": "array",
       "items": {"type": "string"},

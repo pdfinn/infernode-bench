@@ -11,6 +11,10 @@ description: |
   50-item smoke subset. One-to-one with infernode-os-llm's
   baseline_v2.yaml. Use for quick eval signal, not for publication.
 seed: 42
+# Lock the pool to items carrying the baseline_v2_migration tag so
+# leaderboard rows tagged `smoke` stay comparable with IOL's
+# baseline_v2 rows even as items/ grows under IB-11..IB-15.
+include_tag: baseline_v2_migration
 strata:
   - category: limbo_authoring
     n: all

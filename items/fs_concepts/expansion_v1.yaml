@@ -1,0 +1,543 @@
+# fs_concepts — expansion_v1
+# 20 items authored fresh; goldens validated.
+
+items:
+- id: fs_walk_before_open_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    In the 9P protocol, which of the following sequences is correct for opening a file at `/dir/file`?
+    A) Tattach → Topen(/dir/file)
+    B) Tattach → Twalk("dir", "file") → Topen(fid)
+    C) Tattach → Topen("/dir/file") → Twalk(fid)
+    D) Topen(fid) → Tattach → Twalk(fid)
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_qid_type_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    A 9P `Qid.type` field with the bit `QTDIR` set indicates the file is a:
+    A) symlink
+    B) directory
+    C) named pipe
+    D) authentication file
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_clone_walk_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    What does it mean to perform a Twalk with zero name components in 9P?
+    A) It walks to the root
+    B) It is an error — Twalk requires at least one name
+    C) It clones the fid (newfid duplicates oldfid)
+    D) It opens the current fid
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: C
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_attach_purpose_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    The 9P `Tattach` message is used to:
+    A) Authenticate the client to the server
+    B) Begin a session by associating a fid with the file tree root
+    C) Allocate a new fid
+    D) Read directory entries
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_clunk_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    What does the 9P `Tclunk` message do?
+    A) Close and release the resources for a fid
+    B) Flush a pending request
+    C) Reset the connection
+    D) Remove the file from disk
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: A
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_bind_a_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: namespace
+  language: none
+  prompt: |-
+    The `bind -a old new` command in Inferno binds `old` AFTER the existing contents of `new`. Choose the correct effect on lookups under `new`:
+    A) `old` files are searched first; `new` files hidden
+    B) `new` files are searched first; `old` files appear if not in `new`
+    C) `bind -a` is a syntax error
+    D) Equivalent to plain `bind`
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_unmount_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: namespace
+  language: none
+  prompt: |-
+    Which command removes a previously-bound entry from the namespace at path `/n/x`?
+    A) `umount /n/x`
+    B) `unbind /n/x`
+    C) `unmount /n/x`
+    D) `rm -rf /n/x`
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: C
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_proc_pid_ns_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: namespace
+  language: none
+  prompt: |-
+    Inferno exposes a process's current namespace at:
+    A) `/proc/<pid>/namespace`
+    B) `/proc/<pid>/ns`
+    C) `/proc/<pid>/mount`
+    D) `/dev/ns/<pid>`
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_dev_root_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: namespace
+  language: none
+  prompt: |-
+    Which path is the conventional mount point for the local filesystem (the bootstrap root) in an Inferno emu session?
+    A) `/`
+    B) `/dis`
+    C) `/n/local`
+    D) `/srv/boot`
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: C
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_namespace_inherit_v1
+  category: fs_concepts
+  difficulty: hard
+  subcategory: namespace
+  language: none
+  prompt: |-
+    When an Inferno process `spawn`s a child thread, the child's namespace is:
+    A) An empty namespace
+    B) A shared reference to the parent's namespace — mutations in one are visible in the other unless `pctl()` is used to copy-on-write
+    C) A deep snapshot of the parent's namespace, fully decoupled
+    D) The system root, not the parent's namespace
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: Tests `pctl` / NEWNS semantics.
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_ctl_open_mode_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: ctl_data
+  language: none
+  prompt: |-
+    When a device exposes the canonical ctl/data/status decomposition (e.g. `/dev/audio/{ctl,data,status}`), which mode should you open `ctl` in?
+    A) OREAD
+    B) OWRITE
+    C) ORDWR
+    D) OEXEC
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_ctl_send_command_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: ctl_data
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program that opens `/dev/audio/ctl`
+    for writing and writes the command `volume 80` to it. On open failure,
+    print `ctl open: %r` to stderr and exit cleanly.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement F;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      F: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\tfd := sys->open(\"/dev/audio/ctl\", Sys->OWRITE);\n\
+      \tif (fd == nil) {\n\t\tsys->fprint(sys->fildes(2), \"ctl open: %r\\\
+      n\");\n\t\treturn;\n\t}\n\tcmd := array of byte \"volume 80\";\n\tsys->write(fd,\
+      \ cmd, len cmd);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: fs_read_status_lines_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: ctl_data
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that reads `/dev/audio/status`
+    line-by-line using bufio and prints each line. Use bufio->open with bufio->OREAD.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement F;\ninclude \"sys.m\";\ninclude \"draw.m\";\ninclude\
+      \ \"bufio.m\";\nsys: Sys;\nbufio: Bufio;\nIobuf: import bufio;\nF: module\
+      \ { init: fn(nil: ref Draw->Context, argv: list of string); };\ninit(nil:\
+      \ ref Draw->Context, nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\
+      \tbufio = load Bufio Bufio->PATH;\n\tf := bufio->open(\"/dev/audio/status\"\
+      , Bufio->OREAD);\n\tif (f == nil)\n\t\treturn;\n\twhile ((line := f.gets('\\\
+      n')) != nil)\n\t\tsys->print(\"%s\", line);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: fs_srv_export_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: conventions
+  language: none
+  prompt: |-
+    An Inferno service that publishes itself at `/srv/<name>` is expected to:
+    A) Be a regular file containing the service's text-format API
+    B) Be a binary that callers `exec`
+    C) Be a 9P file server endpoint that clients `mount` to attach
+    D) Be a symbolic link to the service's home directory
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: C
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_dev_consensus_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: conventions
+  language: none
+  prompt: |-
+    Plan 9 / Inferno convention: where do raw devices live?
+    A) `/dev/...`
+    B) `/devices/...`
+    C) `/sys/dev/...`
+    D) `/hw/...`
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: A
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_proc_self_args_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: conventions
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that reads `/prog/$apid/args`
+    (the current process's argv file) and prints the contents.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement F;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      F: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\tpid := sys->pctl(0, nil);\n\tpath := sys->sprint(\"\
+      /prog/%d/args\", pid);\n\tfd := sys->open(path, Sys->OREAD);\n\tif (fd\
+      \ == nil)\n\t\treturn;\n\tbuf := array[4096] of byte;\n\tn := sys->read(fd,\
+      \ buf, len buf);\n\tif (n > 0)\n\t\tsys->print(\"%s\\n\", string buf[:n]);\n\
+      }\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: fs_cs_query_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: services
+  language: none
+  prompt: |-
+    What does writing `tcp!example.com!9` to `/srv/cs/data` after opening the cs clone file accomplish?
+    A) It writes to a log file
+    B) It resolves the service to a connection string via the connection server
+    C) It opens a TCP connection to example.com:9
+    D) It registers example.com:9 as a new service
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_factotum_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: services
+  language: none
+  prompt: |-
+    Factotum is Inferno's:
+    A) Process spawning service
+    B) Authentication agent — it holds keys and answers auth challenges on behalf of clients
+    C) Display compositor
+    D) Logging service
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_inferno_vs_plan9_sh_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: inferno_v_plan9
+  language: none
+  prompt: |-
+    Which control flow form is valid in Inferno sh but NOT in Plan 9 rc?
+    A) `for(x in a b c) cmd`
+    B) `for x in a b c { cmd }`
+    C) `if(~ $x foo) cmd`
+    D) None — Inferno sh is fully compatible with Plan 9 rc
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_inferno_vs_plan9_apid_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: inferno_v_plan9
+  language: none
+  prompt: |-
+    Inferno sh's `$apid` is roughly equivalent to Plan 9 rc's:
+    A) `$pid` (the current process id)
+    B) `$ppid` (the parent pid)
+    C) `$status` (the last exit status)
+    D) `$cputype` (the architecture name)
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: A
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []

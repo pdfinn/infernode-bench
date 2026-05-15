@@ -104,11 +104,14 @@ def resolve_subset(
     seed = subset["seed"]
     exclude = set(subset.get("exclude_ids") or ())
     pin = subset.get("pin_ids") or []
+    include_tag = subset.get("include_tag")
 
     # Index by category for fast strata access.
     by_cat: dict[str, list[dict]] = {}
     for item in items:
         if item["id"] in exclude:
+            continue
+        if include_tag and include_tag not in (item.get("tags") or ()):
             continue
         by_cat.setdefault(item["category"], []).append(item)
 

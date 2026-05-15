@@ -27,11 +27,22 @@ def test_subset_resolution_is_deterministic(name):
 def test_smoke_yields_the_migrated_baseline_v2_count():
     # 50 migrated items minus one deprecated (`c_dev_stub_v1` —
     # InferNode kernel-style 9P driver, not testable under plan9port 9c).
+    # Tag filter `include_tag: baseline_v2_migration` locks the pool.
     spec = load_subset("smoke")
     items = resolve_subset(spec)
     assert len(items) == 49, (
         f"smoke should contain the 49 active baseline_v2 items, got {len(items)}"
     )
+    # Every smoke item must carry the lock tag.
+    for it in items:
+        assert "baseline_v2_migration" in (it.get("tags") or [])
+
+
+def test_full_returns_every_non_deprecated_item():
+    spec = load_subset("full")
+    items = resolve_subset(spec)
+    # 150 active items after the IB-11..IB-15 batch-1 expansions.
+    assert len(items) >= 100, f"full subset suspiciously small: {len(items)}"
 
 
 def test_resolved_hash_changes_when_an_item_id_changes():

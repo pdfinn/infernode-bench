@@ -1,0 +1,702 @@
+# limbo_authoring — expansion_v1
+# 25 items authored fresh; goldens validated.
+
+items:
+- id: limbo_chan_buffered_v1
+  category: limbo_authoring
+  difficulty: easy
+  subcategory: channels
+  language: limbo
+  prompt: Write a complete, compilable Limbo program with `init` that creates
+    a *buffered* channel `chan[3] of int`, sends 1, 2, 3 to it without spawning
+    any worker, then reads them back and prints each on its own line.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\tc := chan[3] of int;\n\tc <-= 1; c <-= 2; c\
+      \ <-= 3;\n\tfor (i := 0; i < 3; i++)\n\t\tsys->print(\"%d\\n\", <-c);\n\
+      }\n"
+  notes: Buffered chans are an easy v3-failure source.
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_alt_timeout_v1
+  category: limbo_authoring
+  difficulty: medium
+  subcategory: channels
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program where `init` waits on
+    a channel `c: chan of string` using `alt`. If a value arrives, print it.
+    If 200ms pass first (use a separate goroutine that sleeps 200 then sends
+    on a `timeout: chan of int` channel), print `timeout`.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ntimer(t: chan of int)\n{\n\tsys->sleep(200);\n\tt <-= 1;\n}\n\
+      init(nil: ref Draw->Context, nil: list of string)\n{\n\tsys = load Sys\
+      \ Sys->PATH;\n\tc := chan of string;\n\tt := chan of int;\n\tspawn timer(t);\n\
+      \talt {\n\t\tv := <- c =>\n\t\t\tsys->print(\"%s\\n\", v);\n\t\t<- t\
+      \ =>\n\t\t\tsys->print(\"timeout\\n\");\n\t}\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_fan_out_v1
+  category: limbo_authoring
+  difficulty: medium
+  subcategory: channels
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program that fans out work to
+    three workers. `init` creates a `chan of int` and spawns three `worker(id:
+    int, c: chan of int)` goroutines that each print `worker <id>: <value>`
+    for each value they receive. Send 1..6 to the channel, then send -1 three
+    times as a sentinel for each worker to exit.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\nworker(id: int, c: chan of int)\n{\n\tfor (;;) {\n\t\tv := <-\
+      \ c;\n\t\tif (v < 0)\n\t\t\treturn;\n\t\tsys->print(\"worker %d: %d\\\
+      n\", id, v);\n\t}\n}\ninit(nil: ref Draw->Context, nil: list of string)\n\
+      {\n\tsys = load Sys Sys->PATH;\n\tc := chan of int;\n\tfor (i := 1;\
+      \ i <= 3; i++)\n\t\tspawn worker(i, c);\n\tfor (i = 1; i <= 6; i++)\n\
+      \t\tc <-= i;\n\tfor (i = 0; i < 3; i++)\n\t\tc <-= -1;\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_select_close_v1
+  category: limbo_authoring
+  difficulty: hard
+  subcategory: channels
+  language: limbo
+  prompt: Write a complete, compilable Limbo program where `init` selects
+    from two channels `a` and `b`, each of `chan of int`. Both have a single
+    producer that sends 1..3 then exits. Read from whichever delivers first,
+    until both producers have signalled completion by sending -1. Print each
+    received non-sentinel value.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\nproducer(c: chan of int)\n{\n\tfor (i := 1; i <= 3; i++)\n\t\t\
+      c <-= i;\n\tc <-= -1;\n}\ninit(nil: ref Draw->Context, nil: list of\
+      \ string)\n{\n\tsys = load Sys Sys->PATH;\n\ta := chan of int;\n\tb\
+      \ := chan of int;\n\tspawn producer(a);\n\tspawn producer(b);\n\tdone_a\
+      \ := 0;\n\tdone_b := 0;\n\twhile (!done_a || !done_b) {\n\t\talt {\n\
+      \t\t\tv := <- a =>\n\t\t\t\tif (v < 0) done_a = 1;\n\t\t\t\telse sys->print(\"\
+      a: %d\\n\", v);\n\t\t\tv := <- b =>\n\t\t\t\tif (v < 0) done_b = 1;\n\
+      \t\t\t\telse sys->print(\"b: %d\\n\", v);\n\t\t}\n\t}\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_chan_of_chan_v1
+  category: limbo_authoring
+  difficulty: hard
+  subcategory: channels
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program demonstrating a request/response
+    pattern using a channel of channels. `init` spawns a server that reads
+    from `reqs: chan of chan of string` and, for each request, sends the string
+    `"ok"` on the response channel. `init` creates one request, sends its
+    reply channel on `reqs`, receives the answer, prints it, and signals the
+    server to exit by sending nil on `reqs`.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\nserver(reqs: chan of chan of string)\n{\n\tfor (;;) {\n\t\trep\
+      \ := <- reqs;\n\t\tif (rep == nil)\n\t\t\treturn;\n\t\trep <-= \"ok\"\
+      ;\n\t}\n}\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\t\
+      sys = load Sys Sys->PATH;\n\treqs := chan of chan of string;\n\tspawn\
+      \ server(reqs);\n\trep := chan of string;\n\treqs <-= rep;\n\tsys->print(\"\
+      %s\\n\", <-rep);\n\treqs <-= nil;\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_pick_three_alts_v1
+  category: limbo_authoring
+  difficulty: medium
+  subcategory: adt_pick
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program with an ADT `Event`
+    that has three pick alternatives: `Click(x, y: int)`, `Key(c: int)`, `Quit`.
+    `init` constructs one of each and prints for each: `click X,Y`, `key C`,
+    or `quit`. Use `pick` to dispatch.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\nEvent: adt { pick {\n\tClick => x, y: int;\n\tKey => c: int;\n\
+      \tQuit =>\n} };\nshow(e: ref Event)\n{\n\tpick ee := e {\n\t\tClick\
+      \ => sys->print(\"click %d,%d\\n\", ee.x, ee.y);\n\t\tKey => sys->print(\"\
+      key %d\\n\", ee.c);\n\t\tQuit => sys->print(\"quit\\n\");\n\t}\n}\n\
+      init(nil: ref Draw->Context, nil: list of string)\n{\n\tsys = load Sys\
+      \ Sys->PATH;\n\tshow(ref Event.Click(3, 4));\n\tshow(ref Event.Key(65));\n\
+      \tshow(ref Event.Quit);\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_pick_nested_v1
+  category: limbo_authoring
+  difficulty: hard
+  subcategory: adt_pick
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program with an ADT `Result`
+    with pick alternatives `Ok(value: string)` and `Err(reason: string)`.
+    Define `unwrap(r: ref Result): string` that returns the value on Ok or
+    prepends `error: ` to the reason on Err. `init` constructs one of each,
+    calls unwrap, and prints each result.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\nResult: adt { pick {\n\tOk => value: string;\n\tErr => reason:\
+      \ string;\n} };\nunwrap(r: ref Result): string\n{\n\tpick rr := r {\n\
+      \t\tOk => return rr.value;\n\t\tErr => return \"error: \" + rr.reason;\n\
+      \t}\n\treturn \"\";\n}\ninit(nil: ref Draw->Context, nil: list of string)\n\
+      {\n\tsys = load Sys Sys->PATH;\n\tsys->print(\"%s\\n\", unwrap(ref Result.Ok(\"\
+      got it\")));\n\tsys->print(\"%s\\n\", unwrap(ref Result.Err(\"timeout\"\
+      )));\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_pick_default_v1
+  category: limbo_authoring
+  difficulty: medium
+  subcategory: adt_pick
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program with an ADT `Cmd` that
+    has pick alternatives `Run`, `Stop`, `Status`, `Reset`. Implement `label(c:
+    ref Cmd): string` using `pick` that returns the lowercased name of the
+    alternative, with a default branch returning `unknown`. `init` calls `label`
+    on each kind and prints the result.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\nCmd: adt { pick {\n\tRun =>\n\tStop =>\n\tStatus =>\n\tReset =>\n\
+      } };\nlabel(c: ref Cmd): string\n{\n\tpick cc := c {\n\t\tRun => return\
+      \ \"run\";\n\t\tStop => return \"stop\";\n\t\tStatus => return \"status\"\
+      ;\n\t\t* => return \"unknown\";\n\t}\n\treturn \"\";\n}\ninit(nil: ref\
+      \ Draw->Context, nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\
+      \tsys->print(\"%s\\n\", label(ref Cmd.Run));\n\tsys->print(\"%s\\n\"\
+      , label(ref Cmd.Stop));\n\tsys->print(\"%s\\n\", label(ref Cmd.Status));\n\
+      \tsys->print(\"%s\\n\", label(ref Cmd.Reset));\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_pick_with_methods_v1
+  category: limbo_authoring
+  difficulty: hard
+  subcategory: adt_pick
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program with an ADT `Shape`
+    with pick alternatives `Circle(r: real)`, `Rect(w, h: real)`, and a method
+    `area: fn(s: self ref Shape): real`. `init` constructs a Circle(2.0) and
+    a Rect(3.0, 4.0), and prints each area in the form `%.2f` followed by
+    a newline.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\nShape: adt {\n\tpick {\n\t\tCircle => r: real;\n\t\tRect => w,\
+      \ h: real;\n\t}\n\tarea: fn(s: self ref Shape): real;\n};\nShape.area(s:\
+      \ self ref Shape): real\n{\n\tpick ss := s {\n\t\tCircle => return 3.14159\
+      \ * ss.r * ss.r;\n\t\tRect => return ss.w * ss.h;\n\t}\n\treturn 0.0;\n\
+      }\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys = load\
+      \ Sys Sys->PATH;\n\tc: ref Shape = ref Shape.Circle(2.0);\n\tr: ref\
+      \ Shape = ref Shape.Rect(3.0, 4.0);\n\tsys->print(\"%.2f\\n\", c.area());\n\
+      \tsys->print(\"%.2f\\n\", r.area());\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_string_prefix_v1
+  category: limbo_authoring
+  difficulty: easy
+  subcategory: string_module
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that uses the `string`
+    module's `prefix` function to test whether `"limbo_lang"` starts with
+    `"limbo"`. Print `yes` or `no`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\ninclude\
+      \ \"string.m\";\nsys: Sys;\nstr: String;\nL: module { init: fn(nil:\
+      \ ref Draw->Context, argv: list of string); };\ninit(nil: ref Draw->Context,\
+      \ nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\tstr = load\
+      \ String String->PATH;\n\tif (str->prefix(\"limbo\", \"limbo_lang\"\
+      ))\n\t\tsys->print(\"yes\\n\");\n\telse\n\t\tsys->print(\"no\\n\");\n\
+      }\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_string_tolower_v1
+  category: limbo_authoring
+  difficulty: easy
+  subcategory: string_module
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that uses the `string`
+    module's `tolower` to print `"HELLO"` lowercased.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\ninclude\
+      \ \"string.m\";\nsys: Sys;\nstr: String;\nL: module { init: fn(nil:\
+      \ ref Draw->Context, argv: list of string); };\ninit(nil: ref Draw->Context,\
+      \ nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\tstr = load\
+      \ String String->PATH;\n\tsys->print(\"%s\\n\", str->tolower(\"HELLO\"\
+      ));\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_string_drop_take_v1
+  category: limbo_authoring
+  difficulty: medium
+  subcategory: string_module
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that uses the `string`
+    module's `splitstrl` to split `"key=value"` on `"="` and prints the key
+    and value on separate lines.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\ninclude\
+      \ \"string.m\";\nsys: Sys;\nstr: String;\nL: module { init: fn(nil:\
+      \ ref Draw->Context, argv: list of string); };\ninit(nil: ref Draw->Context,\
+      \ nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\tstr = load\
+      \ String String->PATH;\n\t(k, rest) := str->splitstrl(\"key=value\"\
+      , \"=\");\n\tsys->print(\"%s\\n\", k);\n\tif (rest != nil)\n\t\tsys->print(\"\
+      %s\\n\", rest[1:]);\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_string_in_v1
+  category: limbo_authoring
+  difficulty: medium
+  subcategory: string_module
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that uses the `string`
+    module's `in` to check whether `"a"` is in the character set `"abc"`.
+    Print `yes` or `no`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\ninclude\
+      \ \"string.m\";\nsys: Sys;\nstr: String;\nL: module { init: fn(nil:\
+      \ ref Draw->Context, argv: list of string); };\ninit(nil: ref Draw->Context,\
+      \ nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\tstr = load\
+      \ String String->PATH;\n\tif (str->in('a', \"abc\"))\n\t\tsys->print(\"\
+      yes\\n\");\n\telse\n\t\tsys->print(\"no\\n\");\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_raise_simple_v1
+  category: limbo_authoring
+  difficulty: easy
+  subcategory: error_handling
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program with `init` that always
+    raises the exception `"fail:bad input"`. `init` should have a `{ … } exception
+    e { "*" => sys->print("caught: %s\n", e); }` wrapper that catches it and
+    prints the message.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\t{\n\t\traise \"fail:bad input\";\n\t} exception\
+      \ e {\n\t\t\"*\" => sys->print(\"caught: %s\\n\", e);\n\t}\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_errstr_propagate_v1
+  category: limbo_authoring
+  difficulty: medium
+  subcategory: error_handling
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program that tries to open `/no/such/path`
+    for reading. On nil, it formats and prints `open failed: %r` (where `%r`
+    resolves to sys->errstr) and raises `"fail:open"`. Wrap in an exception
+    handler that catches `"fail:*"` and exits cleanly.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\t{\n\t\tfd := sys->open(\"/no/such/path\", Sys->OREAD);\n\
+      \t\tif (fd == nil) {\n\t\t\tsys->fprint(sys->fildes(2), \"open failed:\
+      \ %r\\n\");\n\t\t\traise \"fail:open\";\n\t\t}\n\t} exception e {\n\t\
+      \t\"fail:*\" => return;\n\t}\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_multiple_exceptions_v1
+  category: limbo_authoring
+  difficulty: hard
+  subcategory: error_handling
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program with `init` that wraps
+    code in an exception block matching three distinct exception patterns:
+    `"fail:parse"`, `"fail:io"`, and a catch-all `"*"`. Inside the block,
+    raise `"fail:parse"`. Each branch prints `<kind>: <message>`.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\t{\n\t\traise \"fail:parse\";\n\t} exception\
+      \ e {\n\t\t\"fail:parse\" => sys->print(\"parse: %s\\n\", e);\n\t\t\"\
+      fail:io\" => sys->print(\"io: %s\\n\", e);\n\t\t\"*\" => sys->print(\"\
+      other: %s\\n\", e);\n\t}\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_fprint_stderr_v1
+  category: limbo_authoring
+  difficulty: trivial
+  subcategory: error_handling
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that prints `something
+    broke` to standard error (fd 2) using sys->fprint with sys->fildes(2).
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\tsys->fprint(sys->fildes(2), \"something broke\\\
+      n\");\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_sys_dup_stdout_v1
+  category: limbo_authoring
+  difficulty: easy
+  subcategory: sys
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that writes `hello via
+    dup` to a copy of stdout obtained via sys->fildes(1).
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\tout := sys->fildes(1);\n\tb := array of byte\
+      \ \"hello via dup\\n\";\n\tsys->write(out, b, len b);\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_sys_stat_size_v1
+  category: limbo_authoring
+  difficulty: medium
+  subcategory: sys
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that takes a filename
+    in argv[1], calls sys->stat on it, and prints `size=<n>` where n is the
+    file's length. On stat failure prints `stat failed`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ninit(nil: ref Draw->Context, argv: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\targv = tl argv;\n\tif (argv == nil)\n\t\treturn;\n\
+      \t(ok, dir) := sys->stat(hd argv);\n\tif (ok < 0) {\n\t\tsys->print(\"\
+      stat failed\\n\");\n\t\treturn;\n\t}\n\tsys->print(\"size=%bd\\n\",\
+      \ dir.length);\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_sys_create_v1
+  category: limbo_authoring
+  difficulty: medium
+  subcategory: sys
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program that creates the file
+    `/tmp/limbo-out` with mode 8r644 using sys->create, writes `created\n`
+    to it, and exits. On failure print `create failed: %r` to stderr.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\tfd := sys->create(\"/tmp/limbo-out\", Sys->OWRITE,\
+      \ 8r644);\n\tif (fd == nil) {\n\t\tsys->fprint(sys->fildes(2), \"create\
+      \ failed: %r\\n\");\n\t\treturn;\n\t}\n\tb := array of byte \"created\\\
+      n\";\n\tsys->write(fd, b, len b);\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_sys_pipe_v1
+  category: limbo_authoring
+  difficulty: hard
+  subcategory: sys
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that creates a pipe with
+    sys->pipe, writes `pipe data\n` to one end, reads it from the other into
+    a buffer, and prints what was read.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\tfds := array[2] of ref Sys->FD;\n\tif (sys->pipe(fds)\
+      \ < 0) {\n\t\tsys->fprint(sys->fildes(2), \"pipe: %r\\n\");\n\t\treturn;\n\
+      \t}\n\tw := array of byte \"pipe data\\n\";\n\tsys->write(fds[0], w,\
+      \ len w);\n\tbuf := array[64] of byte;\n\tn := sys->read(fds[1], buf,\
+      \ len buf);\n\tif (n > 0)\n\t\tsys->print(\"%s\", string buf[:n]);\n\
+      }\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_array_to_list_v1
+  category: limbo_authoring
+  difficulty: easy
+  subcategory: data_structures
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program with a function `tolist(a:
+    array of int): list of int` that returns a list of the array''s elements
+    in the SAME order. `init` calls it on `array of {3, 1, 4}` and prints
+    each element on its own line.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ntolist(a: array of int): list of int\n{\n\tl: list of int = nil;\n\
+      \tfor (i := len a - 1; i >= 0; i--)\n\t\tl = a[i] :: l;\n\treturn l;\n\
+      }\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys = load\
+      \ Sys Sys->PATH;\n\ta := array[] of {3, 1, 4};\n\tfor (l := tolist(a);\
+      \ l != nil; l = tl l)\n\t\tsys->print(\"%d\\n\", hd l);\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_tuple_unpack_v1
+  category: limbo_authoring
+  difficulty: easy
+  subcategory: data_structures
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program with a function `divmod(a,
+    b: int): (int, int)` that returns (a/b, a%b). `init` destructures the
+    call result `(q, r) := divmod(17, 5);` and prints `q=3 r=2` followed by
+    a newline.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ndivmod(a, b: int): (int, int)\n{\n\treturn (a / b, a % b);\n}\n\
+      init(nil: ref Draw->Context, nil: list of string)\n{\n\tsys = load Sys\
+      \ Sys->PATH;\n\t(q, r) := divmod(17, 5);\n\tsys->print(\"q=%d r=%d\\\
+      n\", q, r);\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_list_reverse_v1
+  category: limbo_authoring
+  difficulty: easy
+  subcategory: data_structures
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program with a function `rev(l:
+    list of int): list of int` that returns the list reversed. `init` calls
+    it on `1 :: 2 :: 3 :: nil` and prints each element on its own line.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\nrev(l: list of int): list of int\n{\n\tr: list of int = nil;\n\
+      \tfor (; l != nil; l = tl l)\n\t\tr = hd l :: r;\n\treturn r;\n}\ninit(nil:\
+      \ ref Draw->Context, nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\
+      \tl := 1 :: 2 :: 3 :: nil;\n\tfor (r := rev(l); r != nil; r = tl r)\n\
+      \t\tsys->print(\"%d\\n\", hd r);\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+- id: limbo_array_slice_v1
+  category: limbo_authoring
+  difficulty: medium
+  subcategory: data_structures
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that builds an `array
+    of int` of length 10 with values 0..9, then prints elements [3:7] using
+    slice syntax, one per line.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\ta := array[10] of int;\n\tfor (i := 0; i <\
+      \ 10; i++)\n\t\ta[i] = i;\n\ts := a[3:7];\n\tfor (i = 0; i < len s;\
+      \ i++)\n\t\tsys->print(\"%d\\n\", s[i]);\n}\n"
+  notes: ''
+  tags:
+  - golden_validated_via_iol_gate
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
