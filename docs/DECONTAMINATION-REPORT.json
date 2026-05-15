@@ -1,0 +1,760 @@
+{
+  "k": 13,
+  "prompt_threshold": 3,
+  "golden_threshold": 30,
+  "policy": "Flag on prompt overlap only. Goldens share idiomatic boilerplate (include statements, init signatures) with the InferNode tree by construction \u2014 that's not contamination.",
+  "corpora_checked": [
+    {
+      "name": "infernode",
+      "path": "/home/user/infernode-os-llm/infernode",
+      "status": "ok",
+      "n_kgrams": 6096717
+    },
+    {
+      "name": "plan9port",
+      "path": "/tmp/plan9port",
+      "status": "ok",
+      "n_kgrams": 4206138
+    }
+  ],
+  "corpora_skipped": [
+    {
+      "name": "upstream_inferno_os",
+      "path": null,
+      "status": "skipped (path missing)"
+    },
+    {
+      "name": "ipm",
+      "path": null,
+      "status": "skipped (path missing)"
+    }
+  ],
+  "n_items": 49,
+  "n_flagged": 2,
+  "flagged": [
+    {
+      "id": "line_count_v1",
+      "category": "limbo_authoring",
+      "n_prompt_kgrams": 47,
+      "n_golden_kgrams": 154,
+      "prompt_overlap": {
+        "infernode": 4,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 83,
+        "plan9port": 0
+      },
+      "flagged_against": [
+        "infernode"
+      ],
+      "reason": "prompt k-gram overlap"
+    },
+    {
+      "id": "c_sysfatal_v1",
+      "category": "plan9_c",
+      "n_prompt_kgrams": 52,
+      "n_golden_kgrams": 94,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 4
+      },
+      "golden_overlap": {
+        "infernode": 2,
+        "plan9port": 34
+      },
+      "flagged_against": [
+        "plan9port"
+      ],
+      "reason": "prompt k-gram overlap"
+    }
+  ],
+  "rows": [
+    {
+      "id": "hello_world_v1",
+      "category": "limbo_authoring",
+      "n_prompt_kgrams": 31,
+      "n_golden_kgrams": 75,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 52,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "line_count_v1",
+      "category": "limbo_authoring",
+      "n_prompt_kgrams": 47,
+      "n_golden_kgrams": 154,
+      "prompt_overlap": {
+        "infernode": 4,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 83,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "cat_v1",
+      "category": "limbo_authoring",
+      "n_prompt_kgrams": 37,
+      "n_golden_kgrams": 212,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 103,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "alt_demux_v1",
+      "category": "limbo_authoring",
+      "n_prompt_kgrams": 78,
+      "n_golden_kgrams": 164,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 45,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "list_traverse_v1",
+      "category": "limbo_authoring",
+      "n_prompt_kgrams": 34,
+      "n_golden_kgrams": 114,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 47,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "array_sum_v1",
+      "category": "limbo_authoring",
+      "n_prompt_kgrams": 33,
+      "n_golden_kgrams": 138,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 68,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "module_interface_only_v1",
+      "category": "limbo_authoring",
+      "n_prompt_kgrams": 53,
+      "n_golden_kgrams": 73,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 3,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "adt_point_v1",
+      "category": "limbo_authoring",
+      "n_prompt_kgrams": 57,
+      "n_golden_kgrams": 111,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 44,
+        "plan9port": 2
+      }
+    },
+    {
+      "id": "pick_message_v1",
+      "category": "limbo_authoring",
+      "n_prompt_kgrams": 62,
+      "n_golden_kgrams": 139,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 35,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "bufio_read_lines_v1",
+      "category": "limbo_authoring",
+      "n_prompt_kgrams": 57,
+      "n_golden_kgrams": 178,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 90,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "tuple_minmax_v1",
+      "category": "limbo_authoring",
+      "n_prompt_kgrams": 69,
+      "n_golden_kgrams": 202,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 49,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "spawn_done_v1",
+      "category": "limbo_authoring",
+      "n_prompt_kgrams": 59,
+      "n_golden_kgrams": 115,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 36,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "string_split_v1",
+      "category": "limbo_authoring",
+      "n_prompt_kgrams": 43,
+      "n_golden_kgrams": 154,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 67,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "chan_pipeline_v1",
+      "category": "limbo_authoring",
+      "n_prompt_kgrams": 76,
+      "n_golden_kgrams": 220,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 47,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "error_handling_open_v1",
+      "category": "limbo_authoring",
+      "n_prompt_kgrams": 64,
+      "n_golden_kgrams": 149,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 82,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "c_print_helloworld_v1",
+      "category": "plan9_c",
+      "n_prompt_kgrams": 51,
+      "n_golden_kgrams": 30,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 2,
+        "plan9port": 6
+      }
+    },
+    {
+      "id": "c_sysfatal_v1",
+      "category": "plan9_c",
+      "n_prompt_kgrams": 52,
+      "n_golden_kgrams": 94,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 4
+      },
+      "golden_overlap": {
+        "infernode": 2,
+        "plan9port": 34
+      }
+    },
+    {
+      "id": "c_bio_read_v1",
+      "category": "plan9_c",
+      "n_prompt_kgrams": 39,
+      "n_golden_kgrams": 122,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 11,
+        "plan9port": 17
+      }
+    },
+    {
+      "id": "c_fmt_install_v1",
+      "category": "plan9_c",
+      "n_prompt_kgrams": 43,
+      "n_golden_kgrams": 118,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 17,
+        "plan9port": 26
+      }
+    },
+    {
+      "id": "c_errstr_pattern_v1",
+      "category": "plan9_c",
+      "n_prompt_kgrams": 45,
+      "n_golden_kgrams": 101,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 2,
+        "plan9port": 3
+      }
+    },
+    {
+      "id": "rc_for_loop_v1",
+      "category": "inferno_sh",
+      "n_prompt_kgrams": 16,
+      "n_golden_kgrams": 1,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "rc_function_v1",
+      "category": "inferno_sh",
+      "n_prompt_kgrams": 23,
+      "n_golden_kgrams": 0,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "rc_redirect_v1",
+      "category": "inferno_sh",
+      "n_prompt_kgrams": 40,
+      "n_golden_kgrams": 1,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "rc_pipe_count_v1",
+      "category": "inferno_sh",
+      "n_prompt_kgrams": 17,
+      "n_golden_kgrams": 2,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 2,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "rc_match_v1",
+      "category": "inferno_sh",
+      "n_prompt_kgrams": 43,
+      "n_golden_kgrams": 17,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 3,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "rc_bind_v1",
+      "category": "inferno_sh",
+      "n_prompt_kgrams": 61,
+      "n_golden_kgrams": 10,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "rc_tool_chain_v1",
+      "category": "inferno_sh",
+      "n_prompt_kgrams": 61,
+      "n_golden_kgrams": 21,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "rc_alt_run_v1",
+      "category": "inferno_sh",
+      "n_prompt_kgrams": 39,
+      "n_golden_kgrams": 3,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "tool_invoke_find_v1",
+      "category": "9p_tool_use",
+      "n_prompt_kgrams": 56,
+      "n_golden_kgrams": 0,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "tool_invoke_grep_rc_v1",
+      "category": "9p_tool_use",
+      "n_prompt_kgrams": 45,
+      "n_golden_kgrams": 0,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "tool_discover_rc_v1",
+      "category": "9p_tool_use",
+      "n_prompt_kgrams": 37,
+      "n_golden_kgrams": 0,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "tool_help_lookup_v1",
+      "category": "9p_tool_use",
+      "n_prompt_kgrams": 52,
+      "n_golden_kgrams": 0,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "tool_invoke_with_argv_v1",
+      "category": "9p_tool_use",
+      "n_prompt_kgrams": 59,
+      "n_golden_kgrams": 0,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "tool_chain_two_v1",
+      "category": "9p_tool_use",
+      "n_prompt_kgrams": 48,
+      "n_golden_kgrams": 0,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "tool_invoke_write_v1",
+      "category": "9p_tool_use",
+      "n_prompt_kgrams": 34,
+      "n_golden_kgrams": 0,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "tool_registry_check_v1",
+      "category": "9p_tool_use",
+      "n_prompt_kgrams": 18,
+      "n_golden_kgrams": 0,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "tool_translate_json_v1",
+      "category": "9p_tool_use",
+      "n_prompt_kgrams": 54,
+      "n_golden_kgrams": 0,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "tool_translate_json_limbo_v1",
+      "category": "9p_tool_use",
+      "n_prompt_kgrams": 55,
+      "n_golden_kgrams": 0,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "tool_use_man_v1",
+      "category": "9p_tool_use",
+      "n_prompt_kgrams": 29,
+      "n_golden_kgrams": 0,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "tool_use_shell_v1",
+      "category": "9p_tool_use",
+      "n_prompt_kgrams": 23,
+      "n_golden_kgrams": 0,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "tool_capture_result_v1",
+      "category": "9p_tool_use",
+      "n_prompt_kgrams": 44,
+      "n_golden_kgrams": 0,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "tool_error_handling_v1",
+      "category": "9p_tool_use",
+      "n_prompt_kgrams": 49,
+      "n_golden_kgrams": 0,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "tool_doc_then_invoke_v1",
+      "category": "9p_tool_use",
+      "n_prompt_kgrams": 43,
+      "n_golden_kgrams": 0,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "fs_text_line_format_v1",
+      "category": "fs_concepts",
+      "n_prompt_kgrams": 50,
+      "n_golden_kgrams": 205,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 101,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "fs_walk_open_v1",
+      "category": "fs_concepts",
+      "n_prompt_kgrams": 41,
+      "n_golden_kgrams": 189,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 112,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "fs_clone_pattern_v1",
+      "category": "fs_concepts",
+      "n_prompt_kgrams": 76,
+      "n_golden_kgrams": 254,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 76,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "fs_bind_namespace_v1",
+      "category": "fs_concepts",
+      "n_prompt_kgrams": 48,
+      "n_golden_kgrams": 9,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "fs_ctl_data_status_v1",
+      "category": "fs_concepts",
+      "n_prompt_kgrams": 68,
+      "n_golden_kgrams": 342,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 33,
+        "plan9port": 0
+      }
+    },
+    {
+      "id": "fs_mountpoint_introspection_v1",
+      "category": "fs_concepts",
+      "n_prompt_kgrams": 48,
+      "n_golden_kgrams": 0,
+      "prompt_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      },
+      "golden_overlap": {
+        "infernode": 0,
+        "plan9port": 0
+      }
+    }
+  ]
+}

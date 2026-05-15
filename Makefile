@@ -23,6 +23,18 @@ test:  ## run the pytest suite
 validate:  ## schema-validate every item; non-zero exit on any failure
 	$(PY) -m infernode_bench validate
 
+verify:  ## gate-validate every item's golden via IOL's compile gate
+	$(PY) -m infernode_bench verify
+
+verify-strict:  ## verify + fail on any needs_golden SKIP
+	$(PY) -m infernode_bench verify --strict
+
+licenses:  ## emit LICENSES/MANIFEST.json (per-item SPDX summary)
+	$(PY) -m infernode_bench.licenses
+
+decontamination:  ## run n-gram overlap check against configured corpora
+	$(PY) -m infernode_bench.decontamination.overlap_check
+
 subset-hashes:  ## print the resolved hash for every subset
 	$(PY) -m infernode_bench subset hashes
 

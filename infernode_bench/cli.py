@@ -8,6 +8,7 @@ Subcommands:
     subset resolve <name>  print the deterministic ID list + resolved hash
     subset hashes          print the resolved hash for every subset file
     validate               schema-check every item; non-zero exit on any failure
+    verify [--strict]      gate-validate every item's golden against its grader
     run <subset>           call the model, grade, emit JSONL
 """
 
@@ -108,6 +109,20 @@ def _cmd_validate(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_verify(args: argparse.Namespace) -> int:
+    from infernode_bench.verify import main as verify_main
+    argv = []
+    if args.category:
+        argv += ["--category", args.category]
+    if args.strict:
+        argv.append("--strict")
+    if args.quiet:
+        argv.append("--quiet")
+    if args.json:
+        argv.append("--json")
+    return verify_main(argv)
+
+
 def _cmd_run(args: argparse.Namespace) -> int:
     from infernode_bench.runners import run_subset
     summary = run_subset(
@@ -145,6 +160,15 @@ def build_parser() -> argparse.ArgumentParser:
     pv = sub.add_parser("validate", help="schema-validate every item")
     pv.add_argument("--category", default=None)
     pv.set_defaults(func=_cmd_validate)
+
+    pvf = sub.add_parser("verify", help="gate-validate every item's golden")
+    pvf.add_argument("--category", default=None)
+    pvf.add_argument("--strict", action="store_true",
+                     help="fail on any needs_golden SKIP too")
+    pvf.add_argument("--quiet", action="store_true")
+    pvf.add_argument("--json", action="store_true",
+                     help="emit one JSON line per item")
+    pvf.set_defaults(func=_cmd_verify)
 
     pr = sub.add_parser("run", help="run a subset against a model")
     pr.add_argument("subset", help="subset name (smoke, mini, full, ...)")

@@ -25,3 +25,41 @@ jobs:
         run: python -m pytest tests/ -v
       - name: Lint
         run: python -m ruff check infernode_bench tests
+      - name: License manifest
+        run: python -m infernode_bench.licenses
+
+  verify-goldens:
+    # Gate-validate every golden through IOL's compile gate. Heavier
+    # than the unit tests; lives in its own job so a YAML edit can wait
+    # on it without blocking the rest of CI.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: infernode-bench
+      - uses: actions/checkout@v4
+        with:
+          repository: pdfinn/infernode-os-llm
+          path: infernode-os-llm
+          submodules: recursive
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install bench
+        working-directory: infernode-bench
+        run: pip install -e .
+      - name: Bootstrap limbo
+        working-directory: infernode-os-llm
+        run: |
+          bash tools/bootstrap-limbo.sh
+          ( cd infernode && bash build-linux-amd64.sh headless )
+          cp infernode/emu/Linux/o.emu infernode/Linux/amd64/bin/emu
+      - name: Clone plan9port
+        run: git clone --depth 1 https://github.com/9fans/plan9port.git $HOME/plan9port
+      - name: Verify goldens
+        working-directory: infernode-bench
+        env:
+          INFERNODE_OS_LLM: ${{ github.workspace }}/infernode-os-llm
+          P9_9C: ${{ github.workspace }}/../home/runner/plan9port/bin/9c
+          PLAN9: ${{ github.workspace }}/../home/runner/plan9port
+        run: python -m infernode_bench verify

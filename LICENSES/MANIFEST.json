@@ -1,0 +1,476 @@
+{
+  "bench_sha": "4f51fdb00213a9763ff1a9a7ea25b73cf93720e4",
+  "n_items": 50,
+  "by_license": {
+    "MIT": 50
+  },
+  "by_category_license": {
+    "limbo_authoring": {
+      "MIT": 15
+    },
+    "plan9_c": {
+      "MIT": 6
+    },
+    "inferno_sh": {
+      "MIT": 8
+    },
+    "9p_tool_use": {
+      "MIT": 15
+    },
+    "fs_concepts": {
+      "MIT": 6
+    }
+  },
+  "items": [
+    {
+      "id": "tool_capture_result_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "tool_chain_two_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "tool_discover_rc_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "tool_doc_then_invoke_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "tool_error_handling_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "tool_help_lookup_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "tool_invoke_find_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "tool_invoke_grep_rc_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "tool_invoke_with_argv_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "tool_invoke_write_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "tool_registry_check_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "tool_translate_json_limbo_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "tool_translate_json_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "tool_use_man_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "tool_use_shell_v1",
+      "category": "9p_tool_use",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "fs_bind_namespace_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "fs_clone_pattern_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "fs_ctl_data_status_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "fs_mountpoint_introspection_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "fs_text_line_format_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "fs_walk_open_v1",
+      "category": "fs_concepts",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "rc_alt_run_v1",
+      "category": "inferno_sh",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "rc_bind_v1",
+      "category": "inferno_sh",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "rc_for_loop_v1",
+      "category": "inferno_sh",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "rc_function_v1",
+      "category": "inferno_sh",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "rc_match_v1",
+      "category": "inferno_sh",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "rc_pipe_count_v1",
+      "category": "inferno_sh",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "rc_redirect_v1",
+      "category": "inferno_sh",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "rc_tool_chain_v1",
+      "category": "inferno_sh",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "adt_point_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "alt_demux_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "array_sum_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "bufio_read_lines_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "cat_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "chan_pipeline_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "error_handling_open_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "hello_world_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "line_count_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "list_traverse_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "module_interface_only_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "pick_message_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "spawn_done_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "string_split_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "tuple_minmax_v1",
+      "category": "limbo_authoring",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "c_bio_read_v1",
+      "category": "plan9_c",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "c_dev_stub_v1",
+      "category": "plan9_c",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": true
+    },
+    {
+      "id": "c_errstr_pattern_v1",
+      "category": "plan9_c",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "c_fmt_install_v1",
+      "category": "plan9_c",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "c_print_helloworld_v1",
+      "category": "plan9_c",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    },
+    {
+      "id": "c_sysfatal_v1",
+      "category": "plan9_c",
+      "spdx": "MIT",
+      "authored_by": "human",
+      "derived_from": "eval/scenarios/baseline_v2.yaml",
+      "source_repo": "infernode-os-llm@801df94d0b83",
+      "deprecated": false
+    }
+  ]
+}
