@@ -3,8 +3,8 @@
 - k-gram size: 13
 - prompt-overlap threshold (flag if ≥): 3
 - golden-overlap threshold (informational): 30
-- items audited: 49
-- items flagged (on prompt overlap): 2
+- items audited: 206
+- items flagged (on prompt overlap): 3
 
 Policy: Flag on prompt overlap only. Goldens share idiomatic boilerplate (include statements, init signatures) with the InferNode tree by construction — that's not contamination.
 
@@ -22,4 +22,5 @@ Policy: Flag on prompt overlap only. Goldens share idiomatic boilerplate (includ
 | Item | Category | Flagged against | Top prompt overlap |
 |------|----------|------------------|-------------------:|
 | `line_count_v1` | limbo_authoring | infernode | infernode=4 |
+| `limbo_raise_simple_v1` | limbo_authoring | infernode | infernode=3 |
 | `c_sysfatal_v1` | plan9_c | plan9port | plan9port=4 |

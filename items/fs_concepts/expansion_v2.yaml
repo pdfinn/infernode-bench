@@ -1,0 +1,329 @@
+# fs_concepts — expansion_v2
+# 12 items authored fresh; goldens validated.
+
+items:
+- id: fs_styx_path_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    Inferno's 9P implementation module is conventionally named:
+    A) `proto.m`
+    B) `9p.m`
+    C) `styx.m`
+    D) `srv.m`
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: C
+  notes: Inferno calls 9P 'Styx' in its module naming; the protocol is the
+    same.
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_styxservers_purpose_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: file_servers
+  language: none
+  prompt: |-
+    What is the role of Inferno's `styxservers` module?
+    A) A standalone 9P client library
+    B) A framework that handles 9P message dispatch and lets you supply only the per-file callbacks
+    C) A web server for serving Styx documentation
+    D) A namespace export daemon
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_export_purpose_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: file_servers
+  language: none
+  prompt: |-
+    In Inferno, `export` (or `9export`) is used to:
+    A) Set an environment variable
+    B) Serve a portion of the current namespace as a 9P file server to a remote client
+    C) Export a Limbo module's symbols
+    D) Compile a tarball
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_mount_aname_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: namespace
+  language: none
+  prompt: |-
+    When you `mount /srv/foo /n/foo`, the third optional argument (`aname`, file tree name) is:
+    A) Required; the mount fails without it
+    B) Optional; the empty string selects the default tree
+    C) The remote authentication name
+    D) The locally-visible mount-point name
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_pctl_newns_v1
+  category: fs_concepts
+  difficulty: hard
+  subcategory: namespace
+  language: none
+  prompt: |-
+    After `sys->pctl(Sys->NEWNS, nil)`, what happens to the calling thread's namespace?
+    A) It is cleared to empty
+    B) It becomes a copy-on-write fork of the previous namespace
+    C) It is replaced by the kernel's default namespace
+    D) It is shared with all sibling threads in the same proc
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_pctl_forkns_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: namespace
+  language: none
+  prompt: |-
+    `pctl(Sys->FORKNS, nil)` differs from NEWNS in that it:
+    A) Creates a separate process, not just a namespace
+    B) Forks the namespace immediately rather than copy-on-write
+    C) Is an alias for NEWNS
+    D) Resets the namespace to defaults
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_dial_purpose_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: services
+  language: none
+  prompt: |-
+    Inferno's `sys->dial(addr, lname)` is used to:
+    A) Place a phone call via modem
+    B) Open a connection to a network service via cs (e.g. `tcp!host!port`)
+    C) Look up DNS for a host
+    D) Configure a network interface
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_announce_purpose_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: services
+  language: none
+  prompt: |-
+    Inferno's `sys->announce(addr)` is used to:
+    A) Print a message to stdout
+    B) Listen on a network address for incoming connections
+    C) Broadcast a service via multicast
+    D) Register a service with cs
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_iounit_v1
+  category: fs_concepts
+  difficulty: hard
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    In a 9P `Ropen` reply, the `iounit` field tells the client:
+    A) The maximum block size for I/O on this fid
+    B) The Unix inode number of the underlying file
+    C) The server's preferred read size for directory entries
+    D) The number of references to this fid
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: A
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_tversion_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    The 9P `Tversion`/`Rversion` exchange negotiates:
+    A) The cryptographic protocol version
+    B) The maximum message size (msize) and protocol version
+    C) The user authentication scheme
+    D) The Linux kernel version
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_walk_partial_v1
+  category: fs_concepts
+  difficulty: hard
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    If a 9P `Twalk` with N name components reaches only the first M < N (because, say, the M+1th element doesn't exist), the server responds with:
+    A) `Rerror`
+    B) `Rwalk` carrying M qids (and the client must clean up newfid)
+    C) `Rwalk` with the partial path plus an embedded error string
+    D) Silently drops the message
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_qid_uniqueness_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    Two files on the same 9P file server are guaranteed to have distinct `Qid.path` values if:
+    A) They have distinct names
+    B) They are different files (a server's qid.path uniquely identifies a file in its file tree)
+    C) They were created on different days
+    D) They have different sizes
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []

@@ -1,0 +1,512 @@
+# limbo_authoring — expansion_v2
+# 18 items authored fresh; goldens validated.
+
+items:
+- id: limbo_strings_are_bytes_v1
+  category: limbo_authoring
+  difficulty: medium
+  subcategory: go_vs_limbo
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that indexes the string
+    `"hello"` at position 1 using subscript syntax. Note Limbo strings index
+    as 16-bit *characters* (runes), NOT bytes. Print the decimal value of
+    `s[1]`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\ts := \"hello\";\n\tsys->print(\"%d\\n\", s[1]);\n\
+      }\n"
+  notes: In Limbo `s[1]` for s = "hello" is 101 (lowercase 'e' rune).
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_no_auto_struct_v1
+  category: limbo_authoring
+  difficulty: medium
+  subcategory: go_vs_limbo
+  language: limbo
+  prompt: 'Limbo ADTs are value types unless made `ref`. Write a program that
+    defines `Point: adt { x, y: int; }`. `init` makes a non-ref `p := Point(3,
+    4);`, passes it to a function `move(p: Point, dx, dy: int): Point` that
+    returns a NEW Point — modifying the parameter won''t affect the caller''s.
+    Print the moved point''s x/y.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\nPoint: adt { x, y: int; };\nmove(p: Point, dx, dy: int): Point\n\
+      {\n\tp.x += dx;\n\tp.y += dy;\n\treturn p;\n}\ninit(nil: ref Draw->Context,\
+      \ nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\tp := Point(3,\
+      \ 4);\n\tq := move(p, 10, 20);\n\tsys->print(\"orig=%d,%d  moved=%d,%d\\\
+      n\", p.x, p.y, q.x, q.y);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_big_arithmetic_v1
+  category: limbo_authoring
+  difficulty: easy
+  subcategory: go_vs_limbo
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that demonstrates `big`
+    (64-bit integer) arithmetic. `init` declares two `big` values, multiplies
+    them, and prints the result with `%bd`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\ta : big = big 1000000;\n\tb : big = big 2000;\n\
+      \tsys->print(\"%bd\\n\", a * b);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_real_arithmetic_v1
+  category: limbo_authoring
+  difficulty: easy
+  subcategory: go_vs_limbo
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that converts the integer
+    100 to a `real` (Limbo's float type), divides by 3, and prints the result
+    formatted as `%.4f`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\tx := real 100 / real 3;\n\tsys->print(\"%.4f\\\
+      n\", x);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_nil_check_v1
+  category: limbo_authoring
+  difficulty: easy
+  subcategory: go_vs_limbo
+  language: limbo
+  prompt: 'In Limbo, `nil` is a valid value for any reference. Write a program
+    with a function `safe_len(s: string): int` that returns 0 if s == nil,
+    else `len s`. `init` calls it on `nil` and on `"ok"`, printing each result
+    on its own line.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\nsafe_len(s: string): int\n{\n\tif (s == nil)\n\t\treturn 0;\n\t\
+      return len s;\n}\ninit(nil: ref Draw->Context, nil: list of string)\n\
+      {\n\tsys = load Sys Sys->PATH;\n\tsys->print(\"%d\\n\", safe_len(nil));\n\
+      \tsys->print(\"%d\\n\", safe_len(\"ok\"));\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_bufio_putc_v1
+  category: limbo_authoring
+  difficulty: easy
+  subcategory: bufio
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that wraps stdout in
+    bufio (fopen + Bufio->OWRITE), writes the characters A, B, C using putc,
+    then flushes the buffer.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\ninclude\
+      \ \"bufio.m\";\nsys: Sys;\nbufio: Bufio;\nIobuf: import bufio;\nL: module\
+      \ { init: fn(nil: ref Draw->Context, argv: list of string); };\ninit(nil:\
+      \ ref Draw->Context, nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\
+      \tbufio = load Bufio Bufio->PATH;\n\tout := bufio->fopen(sys->fildes(1),\
+      \ Bufio->OWRITE);\n\tout.putc('A');\n\tout.putc('B');\n\tout.putc('C');\n\
+      \tout.putc('\\n');\n\tout.flush();\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_bufio_seek_v1
+  category: limbo_authoring
+  difficulty: medium
+  subcategory: bufio
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that opens `/etc/inferno`
+    with bufio->open (OREAD), seeks to offset 10 using the .seek method, reads
+    up to 80 bytes via read, and prints the chunk. On open-failure, prints
+    `bufio open failed`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\ninclude\
+      \ \"bufio.m\";\nsys: Sys;\nbufio: Bufio;\nIobuf: import bufio;\nL: module\
+      \ { init: fn(nil: ref Draw->Context, argv: list of string); };\ninit(nil:\
+      \ ref Draw->Context, nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\
+      \tbufio = load Bufio Bufio->PATH;\n\tf := bufio->open(\"/etc/inferno\"\
+      , Bufio->OREAD);\n\tif (f == nil) {\n\t\tsys->print(\"bufio open failed\\\
+      n\");\n\t\treturn;\n\t}\n\tf.seek(big 10, Bufio->SEEKSTART);\n\tbuf\
+      \ := array[80] of byte;\n\tn := f.read(buf, len buf);\n\tif (n > 0)\n\
+      \t\tsys->print(\"%s\\n\", string buf[:n]);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_bufio_count_words_v1
+  category: limbo_authoring
+  difficulty: medium
+  subcategory: bufio
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program that reads stdin via
+    bufio (fopen + Bufio->OREAD) line by line and prints a final count of
+    total words across all lines (use sys->tokenize on each line). Print `words:
+    <N>` at the end.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\ninclude\
+      \ \"bufio.m\";\nsys: Sys;\nbufio: Bufio;\nIobuf: import bufio;\nL: module\
+      \ { init: fn(nil: ref Draw->Context, argv: list of string); };\ninit(nil:\
+      \ ref Draw->Context, nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\
+      \tbufio = load Bufio Bufio->PATH;\n\tin := bufio->fopen(sys->fildes(0),\
+      \ Bufio->OREAD);\n\ttotal := 0;\n\twhile ((line := in.gets('\\n')) !=\
+      \ nil) {\n\t\t(n, nil) := sys->tokenize(line, \" \\t\\n\");\n\t\ttotal\
+      \ += n;\n\t}\n\tsys->print(\"words: %d\\n\", total);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_bufio_putget_roundtrip_v1
+  category: limbo_authoring
+  difficulty: hard
+  subcategory: bufio
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that creates `/tmp/bufio-test`
+    via sys->create with mode 8r644, wraps the fd in bufio (fopen + OWRITE),
+    writes three lines `one`, `two`, `three`, flushes/closes, then re-opens
+    it for reading via bufio->open and prints each line back.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\ninclude\
+      \ \"bufio.m\";\nsys: Sys;\nbufio: Bufio;\nIobuf: import bufio;\nL: module\
+      \ { init: fn(nil: ref Draw->Context, argv: list of string); };\ninit(nil:\
+      \ ref Draw->Context, nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\
+      \tbufio = load Bufio Bufio->PATH;\n\twfd := sys->create(\"/tmp/bufio-test\"\
+      , Sys->OWRITE, 8r644);\n\tif (wfd == nil)\n\t\treturn;\n\tw := bufio->fopen(wfd,\
+      \ Bufio->OWRITE);\n\tw.puts(\"one\\n\");\n\tw.puts(\"two\\n\");\n\t\
+      w.puts(\"three\\n\");\n\tw.flush();\n\tr := bufio->open(\"/tmp/bufio-test\"\
+      , Bufio->OREAD);\n\tif (r == nil)\n\t\treturn;\n\twhile ((line := r.gets('\\\
+      n')) != nil)\n\t\tsys->print(\"got: %s\", line);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_pipeline_three_stage_v1
+  category: limbo_authoring
+  difficulty: medium
+  subcategory: concurrency
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program that builds a three-stage
+    pipeline: stage A produces ints 1..5 on `chan of int a`; stage B reads
+    from a, squares, and writes on `b`; stage C reads from b and prints each
+    value. Use a sentinel -1 to close.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\nstageA(out: chan of int)\n{\n\tfor (i := 1; i <= 5; i++)\n\t\t\
+      out <-= i;\n\tout <-= -1;\n}\nstageB(in: chan of int, out: chan of int)\n\
+      {\n\tfor (;;) {\n\t\tv := <- in;\n\t\tif (v < 0) { out <-= -1; return;\
+      \ }\n\t\tout <-= v * v;\n\t}\n}\ninit(nil: ref Draw->Context, nil: list\
+      \ of string)\n{\n\tsys = load Sys Sys->PATH;\n\ta := chan of int;\n\t\
+      b := chan of int;\n\tspawn stageA(a);\n\tspawn stageB(a, b);\n\tfor\
+      \ (;;) {\n\t\tv := <- b;\n\t\tif (v < 0) return;\n\t\tsys->print(\"\
+      %d\\n\", v);\n\t}\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_fan_in_v1
+  category: limbo_authoring
+  difficulty: hard
+  subcategory: concurrency
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program that demonstrates fan-in:
+    two producers each send three strings on their own channels; a fan-in
+    goroutine reads from both via `alt` and forwards everything to a single
+    `out: chan of string`. `init` prints from out until it has seen 6 messages.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\nproducer(prefix: string, c: chan of string)\n{\n\tfor (i := 1;\
+      \ i <= 3; i++)\n\t\tc <-= sys->sprint(\"%s-%d\", prefix, i);\n}\nfanin(a,\
+      \ b, out: chan of string)\n{\n\tdone_a := 0; done_b := 0;\n\twhile (!done_a\
+      \ || !done_b) {\n\t\talt {\n\t\t\tv := <- a => out <-= v;\n\t\t\tv :=\
+      \ <- b => out <-= v;\n\t\t}\n\t}\n}\ninit(nil: ref Draw->Context, nil:\
+      \ list of string)\n{\n\tsys = load Sys Sys->PATH;\n\ta := chan of string;\n\
+      \tb := chan of string;\n\tout := chan of string;\n\tspawn producer(\"\
+      a\", a);\n\tspawn producer(\"b\", b);\n\tspawn fanin(a, b, out);\n\t\
+      for (i := 0; i < 6; i++)\n\t\tsys->print(\"%s\\n\", <-out);\n}\n"
+  notes: Fan-in pattern is the standard concurrent merge.
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_rate_limit_v1
+  category: limbo_authoring
+  difficulty: hard
+  subcategory: concurrency
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program with a rate-limiter
+    channel: a `ticks: chan of int` that gets a value every 100ms (use a goroutine
+    that sleeps + sends). `init` consumes 3 ticks and prints `tick N` on each.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\nticker(c: chan of int, n: int)\n{\n\tfor (i := 1; i <= n; i++)\
+      \ {\n\t\tsys->sleep(100);\n\t\tc <-= i;\n\t}\n}\ninit(nil: ref Draw->Context,\
+      \ nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\tticks := chan\
+      \ of int;\n\tspawn ticker(ticks, 3);\n\tfor (i := 0; i < 3; i++) {\n\
+      \t\tv := <- ticks;\n\t\tsys->print(\"tick %d\\n\", v);\n\t}\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_done_chan_v1
+  category: limbo_authoring
+  difficulty: medium
+  subcategory: concurrency
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program that demonstrates the
+    done-channel pattern: a worker reads from `jobs: chan of int` until it
+    sees nil-equivalent (use the channel close sentinel -1), then sends 1
+    on `done: chan of int`. `init` sends 1, 2, 3 then -1 to jobs, waits for
+    done, prints `worker finished`.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\nworker(jobs: chan of int, done: chan of int)\n{\n\tfor (;;) {\n\
+      \t\tj := <- jobs;\n\t\tif (j < 0) { done <-= 1; return; }\n\t}\n}\n\
+      init(nil: ref Draw->Context, nil: list of string)\n{\n\tsys = load Sys\
+      \ Sys->PATH;\n\tjobs := chan of int;\n\tdone := chan of int;\n\tspawn\
+      \ worker(jobs, done);\n\tjobs <-= 1; jobs <-= 2; jobs <-= 3; jobs <-=\
+      \ -1;\n\t<- done;\n\tsys->print(\"worker finished\\n\");\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_bugfix_module_load_v1
+  category: limbo_authoring
+  difficulty: easy
+  subcategory: bugfix
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program that loads the `string`
+    module and prints whether the call `str->prefix("in", "input")` returns
+    nonzero. Common bug: forgetting to call `load String String->PATH` causes
+    a nil-module crash. Make sure the load happens before any str-> method
+    call.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\ninclude\
+      \ \"string.m\";\nsys: Sys;\nstr: String;\nL: module { init: fn(nil:\
+      \ ref Draw->Context, argv: list of string); };\ninit(nil: ref Draw->Context,\
+      \ nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\tstr = load\
+      \ String String->PATH;\n\tif (str->prefix(\"in\", \"input\"))\n\t\t\
+      sys->print(\"yes\\n\");\n\telse\n\t\tsys->print(\"no\\n\");\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_bugfix_array_len_v1
+  category: limbo_authoring
+  difficulty: easy
+  subcategory: bugfix
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that creates an `array[5]
+    of int`, fills it with 1..5, sums it via a loop bounded by `len a` (NOT
+    a hardcoded 5 — that's a common bug), and prints the sum.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\ta := array[5] of int;\n\tfor (i := 0; i < len\
+      \ a; i++)\n\t\ta[i] = i + 1;\n\ts := 0;\n\tfor (i = 0; i < len a; i++)\n\
+      \t\ts += a[i];\n\tsys->print(\"%d\\n\", s);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_bugfix_open_check_v1
+  category: limbo_authoring
+  difficulty: easy
+  subcategory: bugfix
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program that opens `/etc/profile`
+    for reading. Common bug: forgetting to check for nil after open. Your
+    golden must check for nil and exit cleanly if open failed, otherwise read
+    up to 100 bytes and print them.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\tfd := sys->open(\"/etc/profile\", Sys->OREAD);\n\
+      \tif (fd == nil) {\n\t\tsys->fprint(sys->fildes(2), \"open: %r\\n\"\
+      );\n\t\treturn;\n\t}\n\tbuf := array[100] of byte;\n\tn := sys->read(fd,\
+      \ buf, len buf);\n\tif (n > 0)\n\t\tsys->print(\"%s\", string buf[:n]);\n\
+      }\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_styx_header_v1
+  category: limbo_authoring
+  difficulty: medium
+  subcategory: styx
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo module declaration for a tiny
+    Styx-server-style program. The module should: include sys.m, draw.m, and
+    styx.m; declare a `StyxSrv: module { init: fn(...); }`; and define init
+    that loads Styx (Styx->PATH), prints `styx loaded`, and exits.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement StyxSrv;\ninclude \"sys.m\";\ninclude \"draw.m\";\n\
+      include \"styx.m\";\nsys: Sys;\nstyx: Styx;\nStyxSrv: module { init:\
+      \ fn(nil: ref Draw->Context, argv: list of string); };\ninit(nil: ref\
+      \ Draw->Context, nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\
+      \tstyx = load Styx Styx->PATH;\n\tstyx->init();\n\tsys->print(\"styx\
+      \ loaded\\n\");\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_styxservers_root_v1
+  category: limbo_authoring
+  difficulty: hard
+  subcategory: styx
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo module that imports both styx
+    and styxservers. The module''s init: load both, print `styxservers loaded`.
+    This tests that the modules'' interface contracts in infernode/module/styxservers.m
+    can be referenced from a fresh implementation.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement StyxSrvRoot;\ninclude \"sys.m\";\ninclude \"draw.m\"\
+      ;\ninclude \"styx.m\";\ninclude \"styxservers.m\";\nsys: Sys;\nstyx:\
+      \ Styx;\nstyxservers: Styxservers;\nStyxSrvRoot: module { init: fn(nil:\
+      \ ref Draw->Context, argv: list of string); };\ninit(nil: ref Draw->Context,\
+      \ nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\tstyx = load\
+      \ Styx Styx->PATH;\n\tstyxservers = load Styxservers Styxservers->PATH;\n\
+      \tstyx->init();\n\tstyxservers->init(styx);\n\tsys->print(\"styxservers\
+      \ loaded\\n\");\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate

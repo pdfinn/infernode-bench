@@ -35,6 +35,9 @@ licenses:  ## emit LICENSES/MANIFEST.json (per-item SPDX summary)
 decontamination:  ## run n-gram overlap check against configured corpora
 	$(PY) -m infernode_bench.decontamination.overlap_check
 
+leaderboard:  ## re-render LEADERBOARD.md from runs/*.jsonl
+	$(PY) -m infernode_bench.leaderboard render
+
 subset-hashes:  ## print the resolved hash for every subset
 	$(PY) -m infernode_bench subset hashes
 
