@@ -88,21 +88,28 @@ _FENCED_TRACE_RE = re.compile(
 
 
 def _blank_string_literals(source: str) -> str:
-    """Return ``source`` with the *contents* of "..." and '...' literals
-    replaced by spaces, preserving overall offsets. Backslash-escaped
-    quotes inside literals are handled.
+    """Return ``source`` with the *contents* of double-quoted string
+    literals replaced by spaces, preserving overall offsets. Backslash-
+    escaped quotes inside the literal are handled.
 
     Stripping string contents lets the static scanners safely ignore
     paths that appear only inside error-message format strings — these
     are I/O of text *about* the path, not I/O *against* it.
+
+    Single quotes are intentionally NOT treated as string delimiters:
+    in Limbo `'x'` is a single-character literal, never a string; and
+    in code comments / prose, apostrophes ("Veltro's tool") would
+    otherwise blank everything between the apostrophe and end-of-input.
+    rc shell does use `'…'` for strings, but paths inside rc strings
+    are rare enough that we accept the rare false positive over the
+    everything-after-an-apostrophe false negative.
     """
     chars = list(source)
     i = 0
     n = len(chars)
     while i < n:
         c = chars[i]
-        if c == '"' or c == "'":
-            quote = c
+        if c == '"':
             j = i + 1
             while j < n:
                 if chars[j] == "\\" and j + 1 < n:
@@ -110,7 +117,7 @@ def _blank_string_literals(source: str) -> str:
                     chars[j + 1] = " "
                     j += 2
                     continue
-                if chars[j] == quote:
+                if chars[j] == '"':
                     break
                 chars[j] = " "
                 j += 1
@@ -118,6 +125,51 @@ def _blank_string_literals(source: str) -> str:
         else:
             i += 1
     return "".join(chars)
+
+
+def _extract_write_data(
+    orig_call_tail: str,
+    blanked_rest: str,
+    var_strings: dict,
+    inline_str_re: "re.Pattern",
+    format_spec_re: "re.Pattern",
+) -> str:
+    """Reconstruct the ``data`` field of a write op from a Limbo call's
+    argument tail. Three cases are recognised, in order:
+
+    1.  ``fprint(fd, "%s", args)`` — first inline literal is a format
+        string (matches ``%[type]``); the data is the *next* argument.
+        If that arg is a bareword and we saw ``args := "..."`` earlier,
+        substitute the literal.
+    2.  ``write(fd, "literal")`` / ``fprint(fd, "literal\\n")`` — first
+        inline literal contains no format specifier; treat the literal
+        itself as the data.
+    3.  ``write(fd, args, len args)`` — no inline literal; data comes
+        from the bareword if it's in the assignment map. Otherwise the
+        data is unknown — leave empty for ``data_wildcard`` items to
+        accept.
+    """
+    inline_strings = list(inline_str_re.finditer(orig_call_tail))
+    if inline_strings:
+        first = inline_strings[0].group("data")
+        if format_spec_re.search(first):
+            # Format string. Find the bareword after it in the blanked rest.
+            after = blanked_rest[blanked_rest.find(",") + 1:]  # skip first arg
+            after = after[after.find(",") + 1:]  # skip format-string arg
+            bare = re.match(r"\s*\b(\w+)\b\s*$", after.strip(", \t)"))
+            if bare and bare.group(1) in var_strings:
+                return var_strings[bare.group(1)]
+            return ""
+        # Not a format string — first literal IS the data.
+        return first
+    # No inline literal. Try bareword → literal-assignment substitution.
+    rest = blanked_rest.strip(", \t")
+    if rest:
+        last = rest.split(",")[-1].strip()
+        bare = re.match(r"\b(\w+)\b\s*$", last)
+        if bare and bare.group(1) in var_strings:
+            return var_strings[bare.group(1)]
+    return ""
 
 
 def extract_trace(response: str) -> list[dict]:
@@ -161,33 +213,43 @@ def extract_trace(response: str) -> list[dict]:
 
     events: list[tuple[int, dict]] = []  # (start_offset, op_dict)
 
-    # Pass 3: fd-based ops. We need the *trailing* args (data var) for
-    # writes, so re-scan the blanked source greedily up to a newline or
-    # closing paren.
+    # Pass 3: fd-based ops. Two surface forms are accepted:
+    #
+    #   sys->read(fd, …)  /  sys->write(fd, …)  /  sys->fprint(fd, …)
+    #   fd.read(…)        /  fd.write(…)        /  fd.fprint(…)
+    #
+    # The second form is the Limbo Sys.FD method-call style — `fd` is a
+    # ref Sys->FD and has read/write methods. Both forms denote real I/O
+    # against the path bound to `fd` by an earlier open(). For writes,
+    # we recover the `data` field by inspecting the call's argument tail
+    # against the *original* response (the blanker strips string-literal
+    # bodies — so inline literal data has to be matched off-blanked).
     _FD_OP_TAIL_RE = re.compile(
-        r"""(?:sys\s*->\s*)?(?P<op>read|write|fprint)\s*\(\s*(?P<fd>\b\w+\b)\s*(?P<rest>[^\n)]*)""",
-        re.IGNORECASE,
+        r"""(?:(?:sys\s*->\s*)?(?P<op_a>read|write|fprint)\s*\(\s*(?P<fd_a>\b\w+\b)
+            |  (?P<fd_b>\b\w+\b)\s*\.\s*(?P<op_b>read|write|fprint)\s*\(
+            )\s*(?P<rest>[^\n)]*)""",
+        re.IGNORECASE | re.VERBOSE,
     )
+    # Inline double-quoted string literal in the call tail (off-blanked
+    # so we get the actual content).
+    _INLINE_STR_RE = re.compile(r'"(?P<data>[^"\n]*)"')
+    _FORMAT_SPEC_RE = re.compile(r"%[-+# 0]*\d*\.?\d*[diouxXfFeEgGsScCr]")
     for mf in _FD_OP_TAIL_RE.finditer(code):
-        fd = mf.group("fd")
-        if fd not in bindings:
+        fd = mf.group("fd_a") or mf.group("fd_b")
+        if fd is None or fd not in bindings:
             continue
-        op_name = mf.group("op").lower()
+        op_name = (mf.group("op_a") or mf.group("op_b") or "").lower()
         # fprint(fd, …) is a write semantically
         op = "write" if op_name in ("write", "fprint") else "read"
         entry: dict = {"op": op, "path": bindings[fd]}
         if op == "write":
-            data = ""
-            # data is the last token of `rest` (often the last comma-arg);
-            # if it's a bareword that maps to a known string literal,
-            # substitute. Otherwise leave empty.
-            rest = mf.group("rest").strip(", \t")
-            if rest:
-                last = rest.split(",")[-1].strip()
-                # bare identifier → look up
-                bare = re.match(r"\b(\w+)\b\s*$", last)
-                if bare and bare.group(1) in var_strings:
-                    data = var_strings[bare.group(1)]
+            data = _extract_write_data(
+                response[mf.start():mf.end()],
+                mf.group("rest"),
+                var_strings,
+                _INLINE_STR_RE,
+                _FORMAT_SPEC_RE,
+            )
             entry["data"] = data
         events.append((mf.start(), entry))
 
@@ -234,6 +296,16 @@ def _step_key(step: dict) -> tuple:
 def _apply_equivalences(trace: list[dict], classes: Iterable[str]) -> list[dict]:
     out = list(trace)
     for cls in classes or ():
+        if cls == "data_wildcard":
+            # Strip the `data` field from every step. Use this for items
+            # whose write payload is runtime-determined (e.g. comes from
+            # argv or a computed string) — the bench has no way to know
+            # what the value should be statically, and demanding it
+            # under `max_edit_distance: 0` makes every such item
+            # uninstrumentable. Apply both to `out` and to the golden in
+            # `grade_trace_match` so the comparison is symmetric.
+            out = [{k: v for k, v in s.items() if k != "data"} for s in out]
+            continue
         if cls == "drop_redundant_read":
             collapsed: list[dict] = []
             for step in out:

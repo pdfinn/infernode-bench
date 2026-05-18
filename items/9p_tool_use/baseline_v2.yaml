@@ -49,6 +49,7 @@ items:
     kind: trace_match
     config:
       max_edit_distance: 0
+      equivalence_classes: [data_wildcard]
   needs_golden: false
   provenance:
     authored_by: human
@@ -107,6 +108,7 @@ items:
     kind: trace_match
     config:
       max_edit_distance: 0
+      equivalence_classes: [data_wildcard]
   needs_golden: false
   provenance:
     authored_by: human
@@ -198,6 +200,7 @@ items:
     kind: trace_match
     config:
       max_edit_distance: 0
+      equivalence_classes: [data_wildcard]
   needs_golden: false
   provenance:
     authored_by: human

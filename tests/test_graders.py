@@ -122,6 +122,80 @@ def test_trace_match_extract_skips_error_string_paths():
     assert trace == []
 
 
+def test_trace_match_extract_fd_method_call():
+    """Limbo Sys.FD method-call style: `fd.read(...)` / `fd.write(...)` —
+    must be recognised the same as `sys->read(fd, ...)`."""
+    response = """```limbo
+fd := sys->open("/tool/_registry", Sys->OREAD);
+n := fd.read(buf, len buf);
+```"""
+    ops = [(t["op"], t["path"]) for t in extract_trace(response)]
+    assert ("read", "/tool/_registry") in ops
+
+
+def test_trace_match_format_string_vs_data():
+    """`sys->fprint(fd, "%s", args)` — the inline `"%s"` is the format,
+    not the data. Data must come from the bareword `args` via the
+    `args := "literal"` lookup."""
+    response = """```limbo
+fd := sys->open("/tool/find/ctl", Sys->ORDWR);
+args := "*.b /appl";
+sys->fprint(fd, "%s", args);
+```"""
+    trace = extract_trace(response)
+    writes = [t for t in trace if t["op"] == "write"]
+    assert writes and writes[0].get("data") == "*.b /appl"
+
+
+def test_trace_match_inline_literal_as_data():
+    """`sys->fprint(fd, "literal")` with no format specifier — the
+    literal IS the data."""
+    response = """```limbo
+fd := sys->open("/tool/grep/ctl", Sys->OWRITE);
+sys->fprint(fd, "implement\\n");
+```"""
+    trace = extract_trace(response)
+    writes = [t for t in trace if t["op"] == "write"]
+    assert writes and writes[0].get("data") == "implement\\n"
+
+
+def test_trace_match_blanker_handles_apostrophe_in_comment():
+    """IOL-39-adjacent regression: the string-literal blanker must NOT
+    treat `'` as a delimiter. Comments like `# Veltro's tool` would
+    otherwise blank everything from the apostrophe to EOF, killing the
+    fd-binding scan downstream."""
+    response = """```limbo
+# Drive Veltro's find tool.
+fd := sys->open("/tool/find/ctl", Sys->ORDWR);
+sys->read(fd, buf, len buf);
+```"""
+    ops = [(t["op"], t["path"]) for t in extract_trace(response)]
+    assert ("read", "/tool/find/ctl") in ops
+
+
+def test_trace_match_data_wildcard_equivalence_class():
+    """`equivalence_classes: [data_wildcard]` drops the data field
+    before comparison — for items where the write payload is
+    runtime-determined (argv, computed strings, etc.)."""
+    item = {
+        "id": "x_v1", "category": "9p_tool_use",
+        "grader": {"kind": "trace_match", "config": {
+            "max_edit_distance": 0,
+            "equivalence_classes": ["data_wildcard"],
+        }},
+        "golden": {"trace": [
+            {"op": "write", "path": "/tool/X/ctl", "data": "specific-payload"},
+        ]},
+    }
+    # Response writes a runtime variable; extractor finds no inline literal.
+    response = """```limbo
+fd := sys->open("/tool/X/ctl", Sys->OWRITE);
+sys->write(fd, buf, len buf);
+```"""
+    g = grade_trace_match(item, response)
+    assert g.ok, f"data_wildcard should ignore data mismatch; got {g.detail}"
+
+
 def test_trace_match_rc_redirect_still_works():
     """rc-style `echo X > /tool/Y/ctl` write + `cat /tool/Y/ctl` read."""
     response = "echo implement > /tool/grep/ctl\ncat /tool/grep/ctl\n"
