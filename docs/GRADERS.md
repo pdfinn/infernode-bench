@@ -17,6 +17,19 @@ Docker equivalent). Multi-language dispatch via `GATE_LANG`:
 
 The bench repo does NOT duplicate the gate — it shells out. Two backends:
 
+### CI setup
+
+The `verify-goldens` workflow job runs the full gate pipeline against
+every item on every PR. Because it has to clone the (private) IOL
+repo, it requires a PAT with `Contents: read` on
+`pdfinn/infernode-os-llm` stored as repo secret `IOL_PAT` on
+`pdfinn/infernode-bench`. Without the secret the job exits early with
+a warning rather than failing red — the goal is to make the gate run
+opt-in setup, not a blocker for contributors who don't have access to
+IOL.
+
+### Backends
+
 - **subprocess (default).** Set `INFERNODE_OS_LLM` to a checkout path.
   Fast, no Docker, requires that the checkout has been bootstrapped:
 
