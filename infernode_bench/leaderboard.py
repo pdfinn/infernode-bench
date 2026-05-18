@@ -45,8 +45,10 @@ def _aggregate(rows: list[dict]) -> dict:
     head = rows[0]
     n_total = 0
     n_pass = 0
+    n_truncated = 0
     by_cat: dict[str, list[int]] = defaultdict(list)
     by_diff: dict[str, list[int]] = defaultdict(list)
+    by_fresh: dict[str, list[int]] = defaultdict(list)
     for r in rows:
         ok = r.get("ok")
         if ok is None:
@@ -54,10 +56,14 @@ def _aggregate(rows: list[dict]) -> dict:
         n_total += 1
         if ok:
             n_pass += 1
+        if r.get("truncated"):
+            n_truncated += 1
         cat = r.get("category", "?")
         diff = r.get("difficulty", "?")
+        fresh = r.get("context_freshness", "cold")
         by_cat[cat].append(int(bool(ok)))
         by_diff[diff].append(int(bool(ok)))
+        by_fresh[fresh].append(int(bool(ok)))
     rate = (100.0 * n_pass / n_total) if n_total else 0.0
     return {
         "model": head.get("model", "?"),
@@ -70,10 +76,13 @@ def _aggregate(rows: list[dict]) -> dict:
         "run_id": head.get("run_id", "?"),
         "n_pass": n_pass,
         "n_total": n_total,
+        "n_truncated": n_truncated,
         "pass_rate": rate,
         "by_category": {c: f"{sum(v)}/{len(v)}" for c, v in by_cat.items()},
         "by_difficulty": {d: f"{sum(v)}/{len(v)}"
                           for d, v in by_diff.items()},
+        "by_freshness": {f: f"{sum(v)}/{len(v)}"
+                         for f, v in by_fresh.items()},
     }
 
 
@@ -90,8 +99,8 @@ def render_markdown(summaries: list[dict]) -> str:
         "",
         "## Overall",
         "",
-        ("| Run | Model | Subset | Pass | Rate | Bench | Submodule |"),
-        ("|-----|-------|--------|-----:|-----:|-------|-----------|"),
+        ("| Run | Model | Subset | Pass | Rate | Trunc | Bench | Submodule |"),
+        ("|-----|-------|--------|-----:|-----:|------:|-------|-----------|"),
     ]
     for s in summaries:
         lines.append(
@@ -100,6 +109,7 @@ def render_markdown(summaries: list[dict]) -> str:
             f"| {s['subset']} (`{s['subset_hash']}`) "
             f"| {s['n_pass']}/{s['n_total']} "
             f"| {s['pass_rate']:.1f}% "
+            f"| {s.get('n_truncated', 0)} "
             f"| `{s['bench_sha']}` "
             f"| `{s['infernode_sha']}` |"
         )
@@ -123,6 +133,19 @@ def render_markdown(summaries: list[dict]) -> str:
         for d in diffs:
             row.append(s["by_difficulty"].get(d, "—"))
         lines.append("| " + " | ".join(row) + " |")
+    # Per-freshness breakdown (IOL-38). Useful for separating cold-start
+    # capability from primed/follow-on performance.
+    freshness_levels = ["cold", "primed", "concept"]
+    if any(s.get("by_freshness") for s in summaries):
+        lines += ["", "## Per-context-freshness pass rate", ""]
+        header = "| Run | Model | " + " | ".join(freshness_levels) + " |"
+        sep = "|" + ("---|" * (2 + len(freshness_levels)))
+        lines.extend([header, sep])
+        for s in summaries:
+            row = [f"`{s['run_id']}`", f"`{s['model']}`"]
+            for f in freshness_levels:
+                row.append(s.get("by_freshness", {}).get(f, "—"))
+            lines.append("| " + " | ".join(row) + " |")
     lines.append("")
     return "\n".join(lines)
 

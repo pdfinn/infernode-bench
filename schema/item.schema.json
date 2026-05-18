@@ -30,6 +30,11 @@
       "type": "string",
       "enum": ["trivial", "easy", "medium", "hard"]
     },
+    "context_freshness": {
+      "type": "string",
+      "enum": ["cold", "primed", "concept"],
+      "description": "How much context the prompt itself carries. `cold` — the assistant must summon the full scaffold from scratch (the default for every smoke item). `primed` — the prompt explicitly carries a scaffold fragment (e.g. \"Given the following Limbo file, modify …\"). `concept` — non-code answer (MCQ, judge) where scaffold isn't relevant. Missing field defaults to `cold` in the runner."
+    },
     "prompt": {
       "type": "string",
       "minLength": 1
