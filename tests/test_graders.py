@@ -95,6 +95,41 @@ def test_trace_match_grader_needs_golden_when_absent():
     assert "needs_golden" in g.detail.get("reason", "")
 
 
+def test_trace_match_extract_limbo_open_bind():
+    """IOL-35: idiomatic Limbo binds path on `open()` and uses fd later.
+    The extractor must follow the binding and emit read/write against the
+    bound path even when read/write themselves don't carry the path."""
+    response = """```limbo
+fd := sys->open("/tool/find/ctl", Sys->ORDWR);
+args := "*.b /appl/veltro";
+sys->fprint(fd, "%s", args);
+sys->read(fd, buf, len buf);
+```"""
+    trace = extract_trace(response)
+    ops = [(t["op"], t["path"]) for t in trace]
+    assert ("write", "/tool/find/ctl") in ops
+    assert ("read",  "/tool/find/ctl") in ops
+    # data field should pick up the string-literal var
+    writes = [t for t in trace if t["op"] == "write"]
+    assert writes and writes[0].get("data") == "*.b /appl/veltro"
+
+
+def test_trace_match_extract_skips_error_string_paths():
+    """IOL-36: paths inside string literals (notably error printfs) must
+    not be scored as real I/O ops."""
+    response = '''sys->fprint(sys->fildes(2), "cannot read /tool/find/ctl: %r\\n");'''
+    trace = extract_trace(response)
+    assert trace == []
+
+
+def test_trace_match_rc_redirect_still_works():
+    """rc-style `echo X > /tool/Y/ctl` write + `cat /tool/Y/ctl` read."""
+    response = "echo implement > /tool/grep/ctl\ncat /tool/grep/ctl\n"
+    ops = [(t["op"], t["path"]) for t in extract_trace(response)]
+    assert ("write", "/tool/grep/ctl") in ops
+    assert ("read",  "/tool/grep/ctl") in ops
+
+
 def test_edit_distance_basic():
     a = [{"op": "write", "path": "/tool/find/ctl", "data": "x"}]
     b = [{"op": "write", "path": "/tool/find/ctl", "data": "x"}]

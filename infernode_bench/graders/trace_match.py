@@ -33,23 +33,99 @@ from infernode_bench.graders import GradeResult
 # Static-scan patterns for code that drives /tool/<name>/ctl. These are
 # best-effort — production-grade trace extraction needs an in-process
 # Veltro tool mock (IB-8a).
-_WRITE_CTL_RE = re.compile(
-    r"""(?:write|fprint|put)\s*\(?\s*['"]?(?P<path>/tool/[\w./-]+)['"]?\s*[,)]\s*['"]?(?P<data>[^'")\n]*)""",
+#
+# Two extraction modes are stacked:
+#   - Limbo idiom: `fd := sys->open("/tool/X/ctl", MODE)` binds the path
+#     to fd, then later `sys->read(fd, …)` / `sys->write(fd, …)` /
+#     `sys->fprint(fd, …)` use the binding (IOL-35).
+#   - rc / inline idiom: `echo args > /tool/X/ctl` or
+#     `cat /tool/X/ctl` carries the path inline with the verb.
+#
+# Before either pass, string-literal contents are blanked out so paths
+# inside `sys->fprint(…, "cannot read /tool/X/ctl: %r\n")` error messages
+# don't get scored as real I/O (IOL-36).
+
+# Path that appears with the verb inline. Two forms covered:
+#   - Function call:  write("/tool/X/ctl", data) / fprint(.../path) / put("/path")
+#   - Shell redirect: ... > /tool/X/ctl  (rc append `>>` also)
+_WRITE_CALL_RE = re.compile(
+    r"""(?:write|fprint|put)\s*\(\s*['"](?P<path>/tool/[\w./-]+)['"]\s*[,)]\s*['"]?(?P<data>[^'")\n]*)""",
     re.IGNORECASE,
 )
-_READ_CTL_RE = re.compile(
-    r"""(?:read|cat|getb|gets)\s*\(?\s*['"]?(?P<path>/tool/[\w./-]+)['"]?""",
+_WRITE_REDIR_RE = re.compile(
+    r""">+\s*['"]?(?P<path>/tool/[\w./-]+)['"]?""",
+)
+_READ_INLINE_RE = re.compile(
+    r"""(?:read|cat|getb|gets)\s+['"]?(?P<path>/tool/[\w./-]+)['"]?""",
     re.IGNORECASE,
 )
+_READ_REDIR_RE = re.compile(
+    r"""<\s*['"]?(?P<path>/tool/[\w./-]+)['"]?""",
+)
+
+# Limbo `open()` binding: `lhs := (sys->)?open("/tool/…", MODE)`
+_OPEN_BIND_RE = re.compile(
+    r"""(?P<lhs>\b\w+\b)\s*:?=\s*(?:sys\s*->\s*)?open\s*\(\s*['"](?P<path>/tool/[\w./-]+)['"]""",
+    re.IGNORECASE,
+)
+# Op against a previously-bound fd. Covers:
+#   sys->read(fd, …) / sys->write(fd, …) / sys->fprint(fd, fmt, …)
+_FD_OP_RE = re.compile(
+    r"""(?:sys\s*->\s*)?(?P<op>read|write|fprint)\s*\(\s*(?P<fd>\b\w+\b)\s*[,)]""",
+    re.IGNORECASE,
+)
+# Limbo string-literal variable assignment: `name := "literal"`. Used to
+# fill in `data` for fd-based writes whose payload is a variable that was
+# assigned a literal somewhere in scope (e.g. `args := "*.b /appl/veltro"`).
+_STR_ASSIGN_RE = re.compile(
+    r"""(?P<lhs>\b\w+\b)\s*:?=\s*['"](?P<val>[^'"\n]+)['"]""",
+)
+
 _FENCED_TRACE_RE = re.compile(
     r"```(?:trace|json)\s*\n(.*?)```",
     re.DOTALL | re.IGNORECASE,
 )
 
 
+def _blank_string_literals(source: str) -> str:
+    """Return ``source`` with the *contents* of "..." and '...' literals
+    replaced by spaces, preserving overall offsets. Backslash-escaped
+    quotes inside literals are handled.
+
+    Stripping string contents lets the static scanners safely ignore
+    paths that appear only inside error-message format strings — these
+    are I/O of text *about* the path, not I/O *against* it.
+    """
+    chars = list(source)
+    i = 0
+    n = len(chars)
+    while i < n:
+        c = chars[i]
+        if c == '"' or c == "'":
+            quote = c
+            j = i + 1
+            while j < n:
+                if chars[j] == "\\" and j + 1 < n:
+                    chars[j] = " "
+                    chars[j + 1] = " "
+                    j += 2
+                    continue
+                if chars[j] == quote:
+                    break
+                chars[j] = " "
+                j += 1
+            i = j + 1
+        else:
+            i += 1
+    return "".join(chars)
+
+
 def extract_trace(response: str) -> list[dict]:
     """Pull a trace out of the model output. Prefers a fenced JSON block;
-    falls back to static scan."""
+    falls back to a static scan that recognises both rc-style inline-path
+    I/O and Limbo open-bind-then-fd-op I/O, while ignoring matches that
+    fall inside string literals (so error-message paths don't count).
+    """
     if not response:
         return []
     m = _FENCED_TRACE_RE.search(response)
@@ -62,11 +138,92 @@ def extract_trace(response: str) -> list[dict]:
                 return data
         except json.JSONDecodeError:
             pass
+
+    code = _blank_string_literals(response)
+
+    # Pass 1: collect fd → path bindings from open() calls. Run against
+    # the *original* response — the path argument is itself a string
+    # literal, so it gets blanked in `code` and we lose it there.
+    # Open() calls don't appear inside string literals in legitimate
+    # code, so over-matching from error messages isn't a real concern.
+    bindings: dict[str, str] = {}
+    for mb in _OPEN_BIND_RE.finditer(response):
+        bindings[mb.group("lhs")] = mb.group("path")
+
+    # Pass 2: collect string-literal assignments so fd writes that hand
+    # off a variable (e.g. `args := "*.b /appl/veltro"; sys->fprint(fd,
+    # "%s", args)`) can reconstruct the data field. We have to read the
+    # *original* response here, before string-blanking removed the
+    # literal contents.
+    var_strings: dict[str, str] = {}
+    for ms in _STR_ASSIGN_RE.finditer(response):
+        var_strings.setdefault(ms.group("lhs"), ms.group("val"))
+
+    events: list[tuple[int, dict]] = []  # (start_offset, op_dict)
+
+    # Pass 3: fd-based ops. We need the *trailing* args (data var) for
+    # writes, so re-scan the blanked source greedily up to a newline or
+    # closing paren.
+    _FD_OP_TAIL_RE = re.compile(
+        r"""(?:sys\s*->\s*)?(?P<op>read|write|fprint)\s*\(\s*(?P<fd>\b\w+\b)\s*(?P<rest>[^\n)]*)""",
+        re.IGNORECASE,
+    )
+    for mf in _FD_OP_TAIL_RE.finditer(code):
+        fd = mf.group("fd")
+        if fd not in bindings:
+            continue
+        op_name = mf.group("op").lower()
+        # fprint(fd, …) is a write semantically
+        op = "write" if op_name in ("write", "fprint") else "read"
+        entry: dict = {"op": op, "path": bindings[fd]}
+        if op == "write":
+            data = ""
+            # data is the last token of `rest` (often the last comma-arg);
+            # if it's a bareword that maps to a known string literal,
+            # substitute. Otherwise leave empty.
+            rest = mf.group("rest").strip(", \t")
+            if rest:
+                last = rest.split(",")[-1].strip()
+                # bare identifier → look up
+                bare = re.match(r"\b(\w+)\b\s*$", last)
+                if bare and bare.group(1) in var_strings:
+                    data = var_strings[bare.group(1)]
+            entry["data"] = data
+        events.append((mf.start(), entry))
+
+    # Pass 4: inline-path ops (covers function-call I/O with an inline
+    # path AND rc-style shell redirection like `echo X > /tool/Y/ctl`).
+    for mw in _WRITE_CALL_RE.finditer(code):
+        events.append((
+            mw.start(),
+            {"op": "write", "path": mw.group("path"),
+             "data": mw.group("data").strip()},
+        ))
+    for mw in _WRITE_REDIR_RE.finditer(code):
+        # rc data is whatever came before the `>` — too noisy to extract
+        # reliably, leave it empty.
+        events.append((mw.start(),
+                       {"op": "write", "path": mw.group("path"),
+                        "data": ""}))
+    for mr in _READ_INLINE_RE.finditer(code):
+        events.append((
+            mr.start(),
+            {"op": "read", "path": mr.group("path")},
+        ))
+    for mr in _READ_REDIR_RE.finditer(code):
+        events.append((mr.start(),
+                       {"op": "read", "path": mr.group("path")}))
+
+    # Deduplicate ops that map to the same (op, path, start-region) since
+    # the fd-pass and inline-pass occasionally fire on the same line.
+    seen: set[tuple[int, str, str]] = set()
     out: list[dict] = []
-    for m in _WRITE_CTL_RE.finditer(response):
-        out.append({"op": "write", "path": m.group("path"), "data": m.group("data").strip()})
-    for m in _READ_CTL_RE.finditer(response):
-        out.append({"op": "read", "path": m.group("path")})
+    for start, op in sorted(events, key=lambda x: x[0]):
+        key = (start // 32, op["op"], op["path"])
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(op)
     return out
 
 
