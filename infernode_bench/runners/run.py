@@ -30,6 +30,61 @@ DEFAULT_SYSTEM_PROMPT = (
     "add explanation outside the code fence."
 )
 
+# Per-language max_tokens defaults (IOL-32). Limbo programs are wordy
+# (module decl + includes + ADT decls + init body); 800 tokens was tight
+# in the v4-e1 smoke run and clipped ≥4 items mid-construct, causing
+# bogus syntax-error grades. Other languages stay at the older default.
+_MAX_TOKENS_PER_LANGUAGE: dict[str, int] = {
+    "limbo": 1500,
+}
+_MAX_TOKENS_FALLBACK = 800
+
+
+def _max_tokens_for(item: dict, explicit: int | None) -> int:
+    """Resolve max_tokens for one item.
+
+    - If the CLI passed an explicit `--max-tokens`, that wins.
+    - Otherwise fall back to the per-language default, then to a generic
+      cap. The `language` field on the item is authoritative; categories
+      like `9p_tool_use` whose response *language* is Limbo use the Limbo
+      cap correctly.
+    """
+    if explicit is not None:
+        return explicit
+    return _MAX_TOKENS_PER_LANGUAGE.get(
+        (item.get("language") or "").lower(), _MAX_TOKENS_FALLBACK,
+    )
+
+
+def _looks_truncated(completion: str, item: dict) -> bool:
+    """Heuristic: did the model run out of tokens mid-response?
+
+    Triggers if either:
+      - the completion ends inside an unclosed fenced code block, OR
+      - the last non-empty source line is mid-expression (no terminator
+        and no closing brace), suggesting clipped output rather than a
+        natural stop.
+
+    Used only to *flag* a row (`truncated: true`); doesn't change the
+    grade verdict.
+    """
+    if not completion:
+        return False
+    # Unclosed fenced block: odd number of ``` fences
+    if completion.count("```") % 2 == 1:
+        return True
+    tail = completion.rstrip()
+    if not tail:
+        return False
+    last_line = tail.splitlines()[-1].rstrip()
+    if not last_line:
+        return False
+    if last_line.endswith(("```", "}", ";", ")", "]", "'", '"')):
+        return False
+    # Limbo / C / sh statements normally close with one of the chars
+    # above. Anything else at the very end of the response is suspicious.
+    return True
+
 
 def _chat_completion(base_url: str, model: str, system: str, user: str, *,
                      temperature: float, max_tokens: int, timeout_s: float,
@@ -73,7 +128,7 @@ def run_subset(
     out_dir: Path,
     system_prompt: str = DEFAULT_SYSTEM_PROMPT,
     temperature: float = 0.0,
-    max_tokens: int = 2048,
+    max_tokens: int | None = None,
     num_ctx: int = 8192,
     timeout_s: float = 600.0,
     dry_run: bool = False,
@@ -122,6 +177,7 @@ def run_subset(
                 f_out.flush()
                 continue
 
+            item_max_tokens = _max_tokens_for(item, max_tokens)
             t0 = time.monotonic()
             if dry_run:
                 completion = "```limbo\nimplement Snippet;\n```"
@@ -129,7 +185,7 @@ def run_subset(
                 try:
                     resp = _chat_completion(
                         base_url, model, system_prompt, item["prompt"],
-                        temperature=temperature, max_tokens=max_tokens,
+                        temperature=temperature, max_tokens=item_max_tokens,
                         timeout_s=timeout_s, num_ctx=num_ctx,
                     )
                     completion = resp["choices"][0]["message"]["content"]
@@ -137,6 +193,7 @@ def run_subset(
                     completion = ""
                     print(f"  {sid}: chat error: {e}", file=sys.stderr)
             chat_ms = int((time.monotonic() - t0) * 1000)
+            truncated = _looks_truncated(completion, item)
 
             try:
                 gr = grade(item, completion)
@@ -161,11 +218,14 @@ def run_subset(
                 "item_id": sid,
                 "category": item["category"],
                 "difficulty": item.get("difficulty"),
+                "context_freshness": item.get("context_freshness") or "cold",
                 "model": model,
                 "endpoint": base_url,
                 "completion": completion[:4000],   # cap for storage
                 "completion_chars": len(completion),
                 "chat_elapsed_ms": chat_ms,
+                "max_tokens": item_max_tokens,
+                "truncated": truncated,
                 "run_id": run_id,
                 "bench_sha": bench_sha,
                 "subset_name": subset_name,

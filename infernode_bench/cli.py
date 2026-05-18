@@ -185,7 +185,9 @@ def build_parser() -> argparse.ArgumentParser:
     pr.add_argument("--base-url", default="http://localhost:11434/v1")
     pr.add_argument("--out-dir", default=str(REPO_ROOT / "runs"))
     pr.add_argument("--temperature", type=float, default=0.0)
-    pr.add_argument("--max-tokens", type=int, default=2048)
+    pr.add_argument("--max-tokens", type=int, default=None,
+                    help="override per-item max-token cap; default is "
+                         "per-language (Limbo 1500, others 800)")
     pr.add_argument("--num-ctx", type=int, default=8192)
     pr.add_argument("--timeout", type=float, default=600.0)
     pr.add_argument("--dry-run", action="store_true")
