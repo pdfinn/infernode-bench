@@ -1,0 +1,317 @@
+# 9p_tool_use — expansion_v2
+# 12 items authored fresh; goldens validated.
+
+items:
+- id: tool_alt_dispatch_v1
+  category: 9p_tool_use
+  difficulty: hard
+  subcategory: concurrent
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program that fires three Veltro
+    tool invocations in parallel: `find`, `grep`, and `read`, each in its
+    own goroutine. As each completes, print `<tool>: done`. Use `alt` to demux
+    completion channels.'
+  grader:
+    kind: trace_match
+    config:
+      equivalence_classes:
+      - reorder_writes
+  golden:
+    trace:
+    - op: write
+      path: /tool/find/ctl
+    - op: read
+      path: /tool/find/ctl
+    - op: write
+      path: /tool/grep/ctl
+    - op: read
+      path: /tool/grep/ctl
+    - op: write
+      path: /tool/read/ctl
+    - op: read
+      path: /tool/read/ctl
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_concurrent_grep_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: concurrent
+  language: inferno_sh
+  prompt: Use Veltro's `grep` tool to search for two patterns concurrently
+    — `error` and `warning` — over the same path `/n/log/messages`. Submit
+    both requests, read both results.
+  grader:
+    kind: trace_match
+    config:
+      equivalence_classes:
+      - reorder_writes
+  golden:
+    trace:
+    - op: write
+      path: /tool/grep/ctl
+      data: error /n/log/messages
+    - op: write
+      path: /tool/grep/ctl
+      data: warning /n/log/messages
+    - op: read
+      path: /tool/grep/ctl
+    - op: read
+      path: /tool/grep/ctl
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_ctl_then_data_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: ctl_data
+  language: inferno_sh
+  prompt: Veltro's `safeexec` tool decomposes into `/tool/safeexec/ctl` (command)
+    and `/tool/safeexec/data` (streaming output). Write an Inferno sh sequence
+    that writes the command `ls /usr/me` to ctl, then reads the streaming
+    output from data.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/safeexec/ctl
+      data: ls /usr/me
+    - op: read
+      path: /tool/safeexec/data
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_data_streaming_v1
+  category: 9p_tool_use
+  difficulty: hard
+  subcategory: ctl_data
+  language: inferno_sh
+  prompt: 'Use Veltro''s `editor` tool to load a file via the editor''s ctl/data
+    interface: write `load /usr/me/draft` to `/tool/editor/ctl`, then read
+    the file''s contents from `/tool/editor/data` repeatedly until EOF.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/editor/ctl
+      data: load /usr/me/draft
+    - op: read
+      path: /tool/editor/data
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_status_check_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: ctl_data
+  language: inferno_sh
+  prompt: Veltro's `launch` tool, when launching a subprocess, exposes /tool/launch/{ctl,data,status}.
+    Write a sequence that writes `run hello` to ctl, then reads status until
+    it reports `done`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/launch/ctl
+      data: run hello
+    - op: read
+      path: /tool/launch/status
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_run_json_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: Use Veltro's `json` tool to validate the JSON string `{"a":1,"b":2}`.
+    The tool is at `/tool/json/ctl`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/json/ctl
+      data: '{"a":1,"b":2}'
+    - op: read
+      path: /tool/json/ctl
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_run_http_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: Use Veltro's `http` tool to fetch the URL `https://example.com/`.
+    The tool is at `/tool/http/ctl`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/http/ctl
+      data: https://example.com/
+    - op: read
+      path: /tool/http/ctl
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_run_mail_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: 'Use Veltro''s `mail` tool to send a message: to=user@host, subject=hi,
+    body=hello. Tool: `/tool/mail/ctl`. Args one per line: `to: user@host\nsubject:
+    hi\nbody: hello`.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/mail/ctl
+      data: |-
+        to: user@host
+        subject: hi
+        body: hello
+    - op: read
+      path: /tool/mail/ctl
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_run_present_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: 'Use Veltro''s `present` tool to display the file `/usr/me/slides.md`.
+    Tool: `/tool/present/ctl`.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/present/ctl
+      data: /usr/me/slides.md
+    - op: read
+      path: /tool/present/ctl
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_limbo_capture_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: limbo_driven
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program that drives Veltro''s
+    `list` tool against `/appl`, captures the result in an array of byte,
+    and prints the byte count to stdout in the form `bytes: N`. Open /tool/list/ctl
+    ORDWR, write args, read result.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/list/ctl
+      data: /appl
+    - op: read
+      path: /tool/list/ctl
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_limbo_two_tools_v1
+  category: 9p_tool_use
+  difficulty: hard
+  subcategory: limbo_driven
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program that calls Veltro''s
+    `find` tool with args `*.b /appl/cmd`, then for each result (split on
+    newlines), calls `read` to get the file''s first line. Print the path
+    and the first line, separated by `: `.'
+  grader:
+    kind: trace_match
+    config:
+      equivalence_classes:
+      - drop_redundant_read
+  golden:
+    trace:
+    - op: write
+      path: /tool/find/ctl
+      data: '*.b /appl/cmd'
+    - op: read
+      path: /tool/find/ctl
+    - op: write
+      path: /tool/read/ctl
+    - op: read
+      path: /tool/read/ctl
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_limbo_paths_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: limbo_driven
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that reads `/tool/paths`
+    to discover where Veltro tools live in the filesystem, then reads `/tool/_registry`
+    for the tool list. Print both contents.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: read
+      path: /tool/paths
+    - op: read
+      path: /tool/_registry
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []

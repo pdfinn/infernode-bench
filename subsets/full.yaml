@@ -1,0 +1,21 @@
+# full — every non-deprecated public item. Excludes hold-out items
+# (the hold-out lives in `pdfinn/infernode-bench-private`, see IB-19).
+
+name: full
+description: |
+  Every non-deprecated, non-hold-out item in items/. The benchmark's
+  public test set. Grows as IB-11..IB-15 author per-category items.
+seed: 42
+strata:
+  - category: limbo_authoring
+    n: all
+  - category: 9p_tool_use
+    n: all
+  - category: inferno_sh
+    n: all
+  - category: plan9_c
+    n: all
+  - category: fs_concepts
+    n: all
+pin_ids: []
+exclude_ids: []

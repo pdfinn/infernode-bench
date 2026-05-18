@@ -1,0 +1,479 @@
+# Items migrated from infernode-os-llm/eval/scenarios/baseline_v2.yaml
+# Source repo SHA: 801df94d0b83b6146e839016c19049ff96f1edf8
+# Source file last-commit SHA: 35a89fe31945063b5b53aa808db0d2eda3f8cd78
+#
+# Every item is marked needs_golden: true — IB-11..IB-15 will
+# fill in goldens per category.
+
+items:
+- id: hello_world_v1
+  category: limbo_authoring
+  difficulty: trivial
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo source file for a command
+    named "Hello" whose `init` function prints `hello, limbo`
+    followed by a newline to stdout, then exits. Use the `sys` module.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "implement Hello;\n\ninclude \"sys.m\";\ninclude \"draw.m\";\n\
+      \nsys: Sys;\n\nHello: module\n{\n\tinit: fn(nil: ref Draw->Context,\
+      \ argv: list of string);\n};\n\ninit(nil: ref Draw->Context, nil: list\
+      \ of string)\n{\n\tsys = load Sys Sys->PATH;\n\tsys->print(\"hello,\
+      \ limbo\\n\");\n}\n"
+- id: line_count_v1
+  category: limbo_authoring
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo command "Wcl" (word-count
+    lines). It reads from stdin via bufio and prints the number of
+    lines, followed by a newline. Use the canonical
+    `init(nil: ref Draw->Context, argv: list of string)` entry point.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "implement Wcl;\n\ninclude \"sys.m\";\ninclude \"draw.m\";\ninclude\
+      \ \"bufio.m\";\n\nsys: Sys;\nbufio: Bufio;\nIobuf: import bufio;\n\n\
+      Wcl: module\n{\n\tinit: fn(nil: ref Draw->Context, argv: list of string);\n\
+      };\n\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\tbufio = load Bufio Bufio->PATH;\n\n\tstdin\
+      \ := bufio->fopen(sys->fildes(0), Bufio->OREAD);\n\tn := 0;\n\twhile\
+      \ ((line := stdin.gets('\\n')) != nil) {\n\t\tn++;\n\t}\n\tsys->print(\"\
+      %d\\n\", n);\n}\n"
+- id: cat_v1
+  category: limbo_authoring
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo command "Cat" that
+    concatenates each file named in argv to stdout. If argv is
+    empty, copy stdin to stdout. Use sys->open and sys->read /
+    sys->write for the copy.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "implement Cat;\n\ninclude \"sys.m\";\ninclude \"draw.m\";\n\n\
+      sys: Sys;\n\nCat: module\n{\n\tinit: fn(nil: ref Draw->Context, argv:\
+      \ list of string);\n};\n\ncopy(fd: ref Sys->FD)\n{\n\tbuf := array[8192]\
+      \ of byte;\n\tfor (;;) {\n\t\tn := sys->read(fd, buf, len buf);\n\t\t\
+      if (n <= 0)\n\t\t\tbreak;\n\t\tsys->write(sys->fildes(1), buf, n);\n\
+      \t}\n}\n\ninit(nil: ref Draw->Context, argv: list of string)\n{\n\t\
+      sys = load Sys Sys->PATH;\n\tif (argv != nil)\n\t\targv = tl argv;\n\
+      \tif (argv == nil) {\n\t\tcopy(sys->fildes(0));\n\t\treturn;\n\t}\n\t\
+      while (argv != nil) {\n\t\tname := hd argv;\n\t\tfd := sys->open(name,\
+      \ Sys->OREAD);\n\t\tif (fd != nil)\n\t\t\tcopy(fd);\n\t\targv = tl argv;\n\
+      \t}\n}\n"
+- id: alt_demux_v1
+  category: limbo_authoring
+  difficulty: medium
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo source file that defines
+    an `init` function which:
+      - creates two `chan of string` named `a` and `b`
+      - spawns a worker that sends "from a" on `a`
+      - spawns another worker that sends "from b" on `b`
+      - in the main thread, uses an `alt` block to receive from
+        whichever arrives first and print it to stdout
+      - exits after one such receive
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "implement AltDemux;\n\ninclude \"sys.m\";\ninclude \"draw.m\"\
+      ;\n\nsys: Sys;\n\nAltDemux: module\n{\n\tinit: fn(nil: ref Draw->Context,\
+      \ argv: list of string);\n};\n\nsender(c: chan of string, s: string)\n\
+      {\n\tc <-= s;\n}\n\ninit(nil: ref Draw->Context, nil: list of string)\n\
+      {\n\tsys = load Sys Sys->PATH;\n\ta := chan of string;\n\tb := chan\
+      \ of string;\n\tspawn sender(a, \"from a\");\n\tspawn sender(b, \"from\
+      \ b\");\n\talt {\n\t\tx := <- a =>\n\t\t\tsys->print(\"%s\\n\", x);\n\
+      \t\ty := <- b =>\n\t\t\tsys->print(\"%s\\n\", y);\n\t}\n}\n"
+- id: list_traverse_v1
+  category: limbo_authoring
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo source file with an `init`
+    function that constructs a `list of int` containing 1, 2, 3,
+    4, 5 and prints each element on its own line using sys->print.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "implement ListTraverse;\n\ninclude \"sys.m\";\ninclude \"draw.m\"\
+      ;\n\nsys: Sys;\n\nListTraverse: module\n{\n\tinit: fn(nil: ref Draw->Context,\
+      \ argv: list of string);\n};\n\ninit(nil: ref Draw->Context, nil: list\
+      \ of string)\n{\n\tsys = load Sys Sys->PATH;\n\tl: list of int = 1 ::\
+      \ 2 :: 3 :: 4 :: 5 :: nil;\n\twhile (l != nil) {\n\t\tsys->print(\"\
+      %d\\n\", hd l);\n\t\tl = tl l;\n\t}\n}\n"
+- id: array_sum_v1
+  category: limbo_authoring
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo source file with an `init`
+    function that allocates an `array of int` of length 10 with
+    values 1..10, computes the sum, and prints the sum followed
+    by a newline.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "implement ArraySum;\n\ninclude \"sys.m\";\ninclude \"draw.m\"\
+      ;\n\nsys: Sys;\n\nArraySum: module\n{\n\tinit: fn(nil: ref Draw->Context,\
+      \ argv: list of string);\n};\n\ninit(nil: ref Draw->Context, nil: list\
+      \ of string)\n{\n\tsys = load Sys Sys->PATH;\n\ta := array[10] of int;\n\
+      \tfor (i := 0; i < 10; i++)\n\t\ta[i] = i + 1;\n\ts := 0;\n\tfor (i\
+      \ = 0; i < len a; i++)\n\t\ts += a[i];\n\tsys->print(\"%d\\n\", s);\n\
+      }\n"
+- id: module_interface_only_v1
+  category: limbo_authoring
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo MODULE INTERFACE FILE
+    (`.m`) for a module named `Counter` exposing:
+      - a `PATH` constant pointing to the canonical install path
+        for a Counter module
+      - a function `inc: fn(by: int): int`
+      - a function `reset: fn()`
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "implement Counter;\n\ninclude \"sys.m\";\ninclude \"draw.m\"\
+      ;\n\nCounter: module\n{\n\tPATH:\tcon \"/dis/lib/counter.dis\";\n\n\t\
+      inc:\tfn(by: int): int;\n\treset:\tfn();\n};\n\ncount: int;\n\ninc(by:\
+      \ int): int\n{\n\tcount += by;\n\treturn count;\n}\n\nreset()\n{\n\t\
+      count = 0;\n}\n"
+- id: adt_point_v1
+  category: limbo_authoring
+  difficulty: medium
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo source file that defines an
+    ADT `Point` with `int` fields `x` and `y`, and an `init`
+    function that creates a `ref Point` with x=3 y=4 and prints
+    the two fields in the form `x=3 y=4` followed by a newline.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "implement AdtPoint;\n\ninclude \"sys.m\";\ninclude \"draw.m\"\
+      ;\n\nsys: Sys;\n\nAdtPoint: module\n{\n\tinit: fn(nil: ref Draw->Context,\
+      \ argv: list of string);\n};\n\nPoint: adt\n{\n\tx, y: int;\n};\n\n\
+      init(nil: ref Draw->Context, nil: list of string)\n{\n\tsys = load Sys\
+      \ Sys->PATH;\n\tp := ref Point(3, 4);\n\tsys->print(\"x=%d y=%d\\n\"\
+      , p.x, p.y);\n}\n"
+- id: pick_message_v1
+  category: limbo_authoring
+  difficulty: medium
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo source file that defines an
+    ADT `Msg` with two pick alternatives `Hello` (carrying a
+    `string` name) and `Goodbye`. The `init` function constructs
+    one `ref Msg.Hello("world")` and uses `pick` to print
+    `hello, world` for Hello or `bye` for Goodbye.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "implement PickMessage;\n\ninclude \"sys.m\";\ninclude \"draw.m\"\
+      ;\n\nsys: Sys;\n\nPickMessage: module\n{\n\tinit: fn(nil: ref Draw->Context,\
+      \ argv: list of string);\n};\n\nMsg: adt\n{\n\tpick {\n\t\tHello =>\
+      \ name: string;\n\t\tGoodbye =>\n\t}\n};\n\ninit(nil: ref Draw->Context,\
+      \ nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\tm: ref Msg\
+      \ = ref Msg.Hello(\"world\");\n\tpick mm := m {\n\t\tHello =>\n\t\t\t\
+      sys->print(\"hello, %s\\n\", mm.name);\n\t\tGoodbye =>\n\t\t\tsys->print(\"\
+      bye\\n\");\n\t}\n}\n"
+- id: bufio_read_lines_v1
+  category: limbo_authoring
+  difficulty: medium
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo command "Numlines" that
+    opens a single filename from argv (the first non-program
+    argument) using bufio->open with `bufio->OREAD`, reads it line
+    by line via gets/getb, and prints each line prefixed with its
+    1-based line number followed by a tab and the line content.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "implement Numlines;\n\ninclude \"sys.m\";\ninclude \"draw.m\"\
+      ;\ninclude \"bufio.m\";\n\nsys: Sys;\nbufio: Bufio;\nIobuf: import bufio;\n\
+      \nNumlines: module\n{\n\tinit: fn(nil: ref Draw->Context, argv: list\
+      \ of string);\n};\n\ninit(nil: ref Draw->Context, argv: list of string)\n\
+      {\n\tsys = load Sys Sys->PATH;\n\tbufio = load Bufio Bufio->PATH;\n\n\
+      \targv = tl argv;\n\tif (argv == nil)\n\t\treturn;\n\tname := hd argv;\n\
+      \tf := bufio->open(name, Bufio->OREAD);\n\tif (f == nil)\n\t\treturn;\n\
+      \tn := 1;\n\twhile ((line := f.gets('\\n')) != nil) {\n\t\tsys->print(\"\
+      %d\\t%s\", n, line);\n\t\tn++;\n\t}\n}\n"
+- id: tuple_minmax_v1
+  category: limbo_authoring
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo source file containing a
+    function `minmax(a: array of int): (int, int)` that returns
+    the (min, max) of the array as a tuple, and an `init`
+    function that calls it on `array of int { 7, 2, 9, 4 }` and
+    prints `min=2 max=9` followed by a newline.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "implement TupleMinmax;\n\ninclude \"sys.m\";\ninclude \"draw.m\"\
+      ;\n\nsys: Sys;\n\nTupleMinmax: module\n{\n\tinit: fn(nil: ref Draw->Context,\
+      \ argv: list of string);\n};\n\nminmax(a: array of int): (int, int)\n\
+      {\n\tmn := a[0];\n\tmx := a[0];\n\tfor (i := 1; i < len a; i++) {\n\t\
+      \tif (a[i] < mn)\n\t\t\tmn = a[i];\n\t\tif (a[i] > mx)\n\t\t\tmx = a[i];\n\
+      \t}\n\treturn (mn, mx);\n}\n\ninit(nil: ref Draw->Context, nil: list\
+      \ of string)\n{\n\tsys = load Sys Sys->PATH;\n\ta := array[] of {7,\
+      \ 2, 9, 4};\n\t(mn, mx) := minmax(a);\n\tsys->print(\"min=%d max=%d\\\
+      n\", mn, mx);\n}\n"
+- id: spawn_done_v1
+  category: limbo_authoring
+  difficulty: medium
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo source file in which `init`
+    creates a `chan of int` named `done`, spawns a worker that
+    sleeps briefly (you can use sys->sleep with 100 ms) then sends
+    0 on `done`, and the main thread blocks on `<-done` before
+    printing `worker done` and exiting.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "implement SpawnDone;\n\ninclude \"sys.m\";\ninclude \"draw.m\"\
+      ;\n\nsys: Sys;\n\nSpawnDone: module\n{\n\tinit: fn(nil: ref Draw->Context,\
+      \ argv: list of string);\n};\n\nworker(done: chan of int)\n{\n\tsys->sleep(100);\n\
+      \tdone <-= 0;\n}\n\ninit(nil: ref Draw->Context, nil: list of string)\n\
+      {\n\tsys = load Sys Sys->PATH;\n\tdone := chan of int;\n\tspawn worker(done);\n\
+      \t<- done;\n\tsys->print(\"worker done\\n\");\n}\n"
+- id: string_split_v1
+  category: limbo_authoring
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo source file whose `init`
+    uses the `string` module's `splitstrl` (or `splitl`) to split
+    `"a:b:c:d"` on `:` and print each segment on its own line.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "implement StringSplit;\n\ninclude \"sys.m\";\ninclude \"draw.m\"\
+      ;\ninclude \"string.m\";\n\nsys: Sys;\nstr: String;\n\nStringSplit:\
+      \ module\n{\n\tinit: fn(nil: ref Draw->Context, argv: list of string);\n\
+      };\n\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\tstr = load String String->PATH;\n\n\trest :=\
+      \ \"a:b:c:d\";\n\twhile (rest != nil) {\n\t\t(seg, more) := str->splitl(rest,\
+      \ \":\");\n\t\tsys->print(\"%s\\n\", seg);\n\t\tif (more == nil)\n\t\
+      \t\tbreak;\n\t\trest = more[1:];\n\t}\n}\n"
+- id: chan_pipeline_v1
+  category: limbo_authoring
+  difficulty: hard
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo source file in which `init`
+    builds a small pipeline of channels: one worker generates the
+    integers 1..5 onto a `chan of int`, a second worker reads
+    them, doubles each, and writes onto a second `chan of int`,
+    and the main thread reads the second channel until EOF
+    (sender closes by sending a sentinel of -1) and prints each
+    doubled value on its own line.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "implement ChanPipeline;\n\ninclude \"sys.m\";\ninclude \"draw.m\"\
+      ;\n\nsys: Sys;\n\nChanPipeline: module\n{\n\tinit: fn(nil: ref Draw->Context,\
+      \ argv: list of string);\n};\n\ngen(out: chan of int)\n{\n\tfor (i :=\
+      \ 1; i <= 5; i++)\n\t\tout <-= i;\n\tout <-= -1;\n}\n\ndouble(in: chan\
+      \ of int, out: chan of int)\n{\n\tfor (;;) {\n\t\tv := <- in;\n\t\t\
+      if (v < 0) {\n\t\t\tout <-= -1;\n\t\t\treturn;\n\t\t}\n\t\tout <-= v\
+      \ * 2;\n\t}\n}\n\ninit(nil: ref Draw->Context, nil: list of string)\n\
+      {\n\tsys = load Sys Sys->PATH;\n\ta := chan of int;\n\tb := chan of\
+      \ int;\n\tspawn gen(a);\n\tspawn double(a, b);\n\tfor (;;) {\n\t\tv\
+      \ := <- b;\n\t\tif (v < 0)\n\t\t\tbreak;\n\t\tsys->print(\"%d\\n\",\
+      \ v);\n\t}\n}\n"
+- id: error_handling_open_v1
+  category: limbo_authoring
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo command "Try" that takes a
+    single filename in argv, attempts to sys->open it for reading,
+    and if open returns nil, prints `cannot open: <name>` to stderr
+    (sys->fprint to sys->fildes(2)) and exits with status "open
+    failed". Otherwise prints `ok` to stdout.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "implement Try;\n\ninclude \"sys.m\";\ninclude \"draw.m\";\n\n\
+      sys: Sys;\n\nTry: module\n{\n\tinit: fn(nil: ref Draw->Context, argv:\
+      \ list of string);\n};\n\ninit(nil: ref Draw->Context, argv: list of\
+      \ string)\n{\n\tsys = load Sys Sys->PATH;\n\targv = tl argv;\n\tif (argv\
+      \ == nil)\n\t\treturn;\n\tname := hd argv;\n\tfd := sys->open(name,\
+      \ Sys->OREAD);\n\tif (fd == nil) {\n\t\tsys->fprint(sys->fildes(2),\
+      \ \"cannot open: %s\\n\", name);\n\t\traise \"fail:open failed\";\n\t\
+      }\n\tsys->print(\"ok\\n\");\n}\n"

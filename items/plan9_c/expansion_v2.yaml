@@ -1,0 +1,194 @@
+# plan9_c — expansion_v2
+# 8 items authored fresh; goldens validated.
+
+items:
+- id: c_atoi_v1
+  category: plan9_c
+  difficulty: easy
+  subcategory: stdlib
+  language: c
+  prompt: Write a Plan 9 C `main()` that takes argv[1], converts it to an
+    integer via `atoi`, multiplies by 2, and prints the result.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int argc, char\
+      \ **argv)\n{\n\tint n;\n\n\tif(argc < 2)\n\t\tsysfatal(\"usage: %s N\"\
+      , argv[0]);\n\tn = atoi(argv[1]);\n\tprint(\"%d\\n\", n * 2);\n\texits(0);\n\
+      }\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_strdup_v1
+  category: plan9_c
+  difficulty: easy
+  subcategory: stdlib
+  language: c
+  prompt: Write a Plan 9 C `main()` that uses `strdup` to duplicate the string
+    `"plan 9"` and prints both the original and the duplicate.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tchar *orig, *dup;\n\n\torig = \"plan 9\";\n\tdup = strdup(orig);\n\
+      \tif(dup == nil)\n\t\tsysfatal(\"strdup: %r\");\n\tprint(\"orig: %s\\\
+      n\", orig);\n\tprint(\"dup:  %s\\n\", dup);\n\tfree(dup);\n\texits(0);\n\
+      }\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_postnote_self_v1
+  category: plan9_c
+  difficulty: hard
+  subcategory: process
+  language: c
+  prompt: Write a Plan 9 C `main()` that posts the note `interrupt` to itself
+    using `postnote(PNPROC, getpid(), "interrupt")` and prints `note posted`.
+    Don't actually handle the note — just demonstrate the call signature.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tpostnote(PNPROC, getpid(), \"interrupt\");\n\tprint(\"note posted\\\
+      n\");\n\texits(0);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_rfork_v1
+  category: plan9_c
+  difficulty: hard
+  subcategory: process
+  language: c
+  prompt: Write a Plan 9 C `main()` that calls `rfork(RFPROC|RFFDG)` to create
+    a new process. Both halves print `parent` and `child` respectively. The
+    parent then exits.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tswitch(rfork(RFPROC|RFFDG|RFNOWAIT)) {\n\tcase -1:\n\t\tsysfatal(\"\
+      rfork: %r\");\n\tcase 0:\n\t\tprint(\"child\\n\");\n\t\texits(0);\n\t\
+      default:\n\t\tprint(\"parent\\n\");\n\t}\n\texits(0);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_str_dup_then_split_v1
+  category: plan9_c
+  difficulty: medium
+  subcategory: stdlib
+  language: c
+  prompt: Write a Plan 9 C function `count_segs(char *s, char sep)` that uses
+    `strdup` + `strtok` to count the number of separated segments in `s`.
+    main() calls it on `"a:b:c:d"` with `:` and prints the count.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nint\ncount_segs(char *s,\
+      \ char sep)\n{\n\tchar *dup, *p, sepbuf[2];\n\tint n;\n\n\tdup = strdup(s);\n\
+      \tif(dup == nil)\n\t\treturn -1;\n\tsepbuf[0] = sep;\n\tsepbuf[1] =\
+      \ 0;\n\tn = 0;\n\tfor(p = strtok(dup, sepbuf); p != nil; p = strtok(nil,\
+      \ sepbuf))\n\t\tn++;\n\tfree(dup);\n\treturn n;\n}\n\nvoid\nmain(int,\
+      \ char**)\n{\n\tprint(\"%d\\n\", count_segs(\"a:b:c:d\", ':'));\n\t\
+      exits(0);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_getuser_v1
+  category: plan9_c
+  difficulty: easy
+  subcategory: system
+  language: c
+  prompt: 'Write a Plan 9 C `main()` that prints `user: <name>` using `getuser()`
+    from lib9.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tprint(\"user: %s\\n\", getuser());\n\texits(0);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_time_seconds_v1
+  category: plan9_c
+  difficulty: easy
+  subcategory: system
+  language: c
+  prompt: Write a Plan 9 C `main()` that prints the current Unix timestamp
+    via `time(0)` (or `time(nil)` for the Plan 9 variant), formatted with
+    `%ld`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tprint(\"%ld\\n\", time(0));\n\texits(0);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_seek_v1
+  category: plan9_c
+  difficulty: medium
+  subcategory: io
+  language: c
+  prompt: Write a Plan 9 C `main()` that opens argv[1], seeks to offset 5
+    (from start, mode 0), reads 10 bytes, and prints them.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int argc, char\
+      \ **argv)\n{\n\tint fd, n;\n\tchar buf[16];\n\n\tif(argc < 2)\n\t\t\
+      sysfatal(\"usage: %s file\", argv[0]);\n\tfd = open(argv[1], OREAD);\n\
+      \tif(fd < 0)\n\t\tsysfatal(\"open: %r\");\n\tif(seek(fd, 5, 0) < 0)\n\
+      \t\tsysfatal(\"seek: %r\");\n\tn = read(fd, buf, sizeof buf - 1);\n\t\
+      if(n > 0) {\n\t\tbuf[n] = 0;\n\t\tprint(\"%s\\n\", buf);\n\t}\n\tclose(fd);\n\
+      \texits(0);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate

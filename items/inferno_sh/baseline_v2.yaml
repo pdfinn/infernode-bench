@@ -1,0 +1,206 @@
+# Items migrated from infernode-os-llm/eval/scenarios/baseline_v2.yaml
+# Source repo SHA: 801df94d0b83b6146e839016c19049ff96f1edf8
+# Source file last-commit SHA: 35a89fe31945063b5b53aa808db0d2eda3f8cd78
+#
+# Every item is marked needs_golden: true — IB-11..IB-15 will
+# fill in goldens per category.
+
+items:
+- id: rc_for_loop_v1
+  category: inferno_sh
+  difficulty: trivial
+  language: inferno_sh
+  prompt: |
+    Write an rc shell for-loop that iterates over the words
+    `red green blue` and prints each one prefixed with
+    `colour: `.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: |
+      for x in red green blue { echo colour: $x }
+- id: rc_function_v1
+  category: inferno_sh
+  difficulty: easy
+  language: inferno_sh
+  prompt: |
+    Write an rc shell function named `greet` that takes one
+    argument (a name) and prints `hello, <name>`. Then call it
+    with `world`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: |
+      fn greet { echo hello, $1 }
+      greet world
+- id: rc_redirect_v1
+  category: inferno_sh
+  difficulty: easy
+  language: inferno_sh
+  prompt: |
+    Write a one-line rc command that runs `mk all`, sends
+    stderr to `build.err`, stdout to `build.log`, and uses
+    Inferno's `>[2]` redirect syntax (NOT `2>`).
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: |
+      mk all >[2] build.err > build.log
+- id: rc_pipe_count_v1
+  category: inferno_sh
+  difficulty: trivial
+  language: inferno_sh
+  prompt: |
+    Write an rc one-liner that pipes `cat /n/sensors/readings`
+    through `grep temperature` then `wc -l`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: |
+      cat /n/sensors/readings | grep temperature | wc -l
+- id: rc_match_v1
+  category: inferno_sh
+  difficulty: easy
+  language: inferno_sh
+  prompt: |
+    Write an rc snippet that reads the username from
+    `/dev/user`, then uses `~` (rc's pattern-match operator)
+    to test whether it equals `inferno`, printing
+    `welcome inferno` if so or `unknown user $user` otherwise.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: |
+      user=`{cat /dev/user}
+      if {~ $user inferno} { echo welcome inferno } { echo unknown user $user }
+- id: rc_bind_v1
+  category: inferno_sh
+  difficulty: medium
+  language: inferno_sh
+  prompt: |
+    Write an rc snippet that binds the directory `/n/local`
+    after the existing contents of `/usr/me/tmp`, and binds
+    the device `'#m'` (mouse) at the start of `/dev`. Use
+    `bind` with the `-a` (after) and `-c` (create) flags.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: |
+      bind -a /n/local /usr/me/tmp
+      bind -c '#m' /dev
+- id: rc_tool_chain_v1
+  category: inferno_sh
+  difficulty: medium
+  language: inferno_sh
+  prompt: |
+    Write an rc snippet that drives Veltro's 9P tools to
+    find every `.b` file under `/appl/veltro`, then for each
+    one, count its lines via the `read` tool and print
+    `<path>: <count>`. Use a for-loop over backquote
+    capture of `cat /tool/find/ctl`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: |
+      for x in `{cat /tool/find/ctl} { echo $x: `{echo $x | cat /tool/read/ctl} }
+- id: rc_alt_run_v1
+  category: inferno_sh
+  difficulty: easy
+  language: inferno_sh
+  prompt: |
+    Write an rc snippet that uses the `||` (alt-run, "execute
+    next on failure") operator to: test for `config.ini` and,
+    if missing, copy `default.ini` to `config.ini`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: |
+      test -f config.ini || cp default.ini config.ini

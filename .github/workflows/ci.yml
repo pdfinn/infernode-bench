@@ -1,0 +1,109 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev]
+      - name: Schema-validate items
+        run: python -m infernode_bench validate
+      - name: Subset hashes
+        run: python -m infernode_bench subset hashes
+      - name: Tests
+        run: python -m pytest tests/ -v
+      - name: Lint
+        run: python -m ruff check infernode_bench tests
+      - name: License manifest
+        run: python -m infernode_bench.licenses
+
+  verify-goldens:
+    # Gate-validate every item's golden through IOL's compile gate.
+    # This needs to clone pdfinn/infernode-os-llm — a private repo. The
+    # default GITHUB_TOKEN's scope is the bench repo only, so the job
+    # gates itself on a separately-provisioned PAT (`secrets.IOL_PAT`)
+    # with read access to IOL. Without the PAT the job exits early
+    # with a warning rather than failing red.
+    #
+    # To enable: create a PAT with `Contents: read` on
+    # pdfinn/infernode-os-llm and add it as repo secret IOL_PAT on
+    # pdfinn/infernode-bench. The job auto-enables on the next run.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for IOL_PAT
+        id: pat
+        env:
+          IOL_PAT: ${{ secrets.IOL_PAT }}
+        run: |
+          if [ -z "$IOL_PAT" ]; then
+            echo "::warning::secrets.IOL_PAT not set. Skipping cross-repo gate validation. Add a PAT with read access to pdfinn/infernode-os-llm as repo secret IOL_PAT to enable."
+            echo "have_pat=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "have_pat=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout bench
+        if: steps.pat.outputs.have_pat == 'true'
+        uses: actions/checkout@v4
+        with:
+          path: infernode-bench
+
+      - name: Checkout IOL (private, needs PAT)
+        if: steps.pat.outputs.have_pat == 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: pdfinn/infernode-os-llm
+          token: ${{ secrets.IOL_PAT }}
+          path: infernode-os-llm
+          submodules: recursive
+
+      - name: Setup Python
+        if: steps.pat.outputs.have_pat == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install build deps
+        if: steps.pat.outputs.have_pat == 'true'
+        run: sudo apt-get update && sudo apt-get install -y bison byacc
+
+      - name: Install bench
+        if: steps.pat.outputs.have_pat == 'true'
+        working-directory: infernode-bench
+        run: pip install -e .
+
+      - name: Bootstrap limbo + headless emu
+        if: steps.pat.outputs.have_pat == 'true'
+        working-directory: infernode-os-llm
+        run: |
+          bash tools/bootstrap-limbo.sh
+          ( cd infernode && bash build-linux-amd64.sh headless )
+          cp infernode/emu/Linux/o.emu infernode/Linux/amd64/bin/emu
+
+      - name: Clone plan9port
+        if: steps.pat.outputs.have_pat == 'true'
+        run: git clone --depth 1 https://github.com/9fans/plan9port.git "$HOME/plan9port"
+
+      - name: Verify goldens
+        if: steps.pat.outputs.have_pat == 'true'
+        working-directory: infernode-bench
+        env:
+          INFERNODE_OS_LLM: ${{ github.workspace }}/infernode-os-llm
+        # P9_9C / PLAN9 set inside the shell so $HOME expands correctly
+        # (the workflow `env:` block doesn't expand $HOME — only literal
+        # values + ${{...}} expressions).
+        run: |
+          export P9_9C="$HOME/plan9port/bin/9c"
+          export PLAN9="$HOME/plan9port"
+          python -m infernode_bench verify

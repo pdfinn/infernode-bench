@@ -1,0 +1,521 @@
+# Phase-0 calibration set (IB-2).
+# 20 hand-authored items, 4 per category, mixed difficulty.
+# Goldens validated through IOL's compile gate.
+# NOT included in any public subset — empirical input to IB-3 sizing.
+
+items:
+- id: calib_limbo_count_to_n_v1
+  category: limbo_authoring
+  difficulty: trivial
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo program whose `init` prints the integers 1 through 5, one per line, each followed by a newline.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement Calib;\n\ninclude \"sys.m\";\ninclude \"draw.m\";\n\
+      \nsys: Sys;\n\nCalib: module\n{\n\tinit: fn(nil: ref Draw->Context,\
+      \ argv: list of string);\n};\n\ninit(nil: ref Draw->Context, nil: list\
+      \ of string)\n{\n\tsys = load Sys Sys->PATH;\n\tfor (i := 1; i <= 5;\
+      \ i++)\n\t\tsys->print(\"%d\\n\", i);\n}\n"
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  tags:
+  - calibration_v0
+  - golden_validated_via_iol_gate
+  notes: Trivial sanity check — `for` loop + print.
+- id: calib_limbo_string_reverse_v1
+  category: limbo_authoring
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo program with a function `reverse(s: string): string` that returns its argument reversed. `init` should call it on "limbo" and print the result followed by a newline.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement Calib;\n\ninclude \"sys.m\";\ninclude \"draw.m\";\n\
+      \nsys: Sys;\n\nCalib: module\n{\n\tinit: fn(nil: ref Draw->Context,\
+      \ argv: list of string);\n};\n\nreverse(s: string): string\n{\n\tn :=\
+      \ len s;\n\tr := array[n] of byte;\n\tfor (i := 0; i < n; i++)\n\t\t\
+      r[n-1-i] = byte s[i];\n\treturn string r;\n}\n\ninit(nil: ref Draw->Context,\
+      \ nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\tsys->print(\"\
+      %s\\n\", reverse(\"limbo\"));\n}\n"
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  tags:
+  - calibration_v0
+  - golden_validated_via_iol_gate
+  notes: Tests string→byte-array indexing, a common Go-vs-Limbo trap.
+- id: calib_limbo_memo_v1
+  category: limbo_authoring
+  difficulty: medium
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo program that implements a memoising counter. Define an ADT `Memo` with: a method `get(k: string): int` that returns the previously-stored value for `k`, or 0 if unseen, and a method `put(k: string, v: int)` that stores `v` under `k`. Use a `list of (string, int)` for storage. `init` should put two keys, then get them, and print the two values one per line.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement Calib;\n\ninclude \"sys.m\";\ninclude \"draw.m\";\n\
+      \nsys: Sys;\n\nCalib: module\n{\n\tinit: fn(nil: ref Draw->Context,\
+      \ argv: list of string);\n};\n\nMemo: adt\n{\n\tentries: list of (string,\
+      \ int);\n\n\tget: fn(m: self ref Memo, k: string): int;\n\tput: fn(m:\
+      \ self ref Memo, k: string, v: int);\n};\n\nMemo.get(m: self ref Memo,\
+      \ k: string): int\n{\n\tfor (l := m.entries; l != nil; l = tl l) {\n\
+      \t\t(kk, vv) := hd l;\n\t\tif (kk == k)\n\t\t\treturn vv;\n\t}\n\treturn\
+      \ 0;\n}\n\nMemo.put(m: self ref Memo, k: string, v: int)\n{\n\tm.entries\
+      \ = (k, v) :: m.entries;\n}\n\ninit(nil: ref Draw->Context, nil: list\
+      \ of string)\n{\n\tsys = load Sys Sys->PATH;\n\tm := ref Memo(nil);\n\
+      \tm.put(\"a\", 1);\n\tm.put(\"b\", 2);\n\tsys->print(\"%d\\n\", m.get(\"\
+      a\"));\n\tsys->print(\"%d\\n\", m.get(\"b\"));\n}\n"
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  tags:
+  - calibration_v0
+  - golden_validated_via_iol_gate
+  notes: Tests ADT methods with `self ref` receivers + list of tuples.
+- id: calib_limbo_alt_state_machine_v1
+  category: limbo_authoring
+  difficulty: hard
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo program that implements a tiny state machine. It has three channels: `start` (chan of int), `tick` (chan of int), `stop` (chan of int). The state machine runs in its own thread. It begins in IDLE; on receiving from `start`, it transitions to RUNNING and prints `running`. On each `tick` it prints `tick N` where N counts from 1. On `stop`, it prints `done` and exits the loop. `init` spawns the state machine, sends to `start`, three `tick`s, and `stop`. Use `alt` to demux the three channels.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement Calib;\n\ninclude \"sys.m\";\ninclude \"draw.m\";\n\
+      \nsys: Sys;\n\nCalib: module\n{\n\tinit: fn(nil: ref Draw->Context,\
+      \ argv: list of string);\n};\n\nmachine(start, tick, stop: chan of int)\n\
+      {\n\trunning := 0;\n\tn := 0;\n\tfor (;;) {\n\t\talt {\n\t\t<- start\
+      \ =>\n\t\t\trunning = 1;\n\t\t\tsys->print(\"running\\n\");\n\t\t<-\
+      \ tick =>\n\t\t\tif (running) {\n\t\t\t\tn++;\n\t\t\t\tsys->print(\"\
+      tick %d\\n\", n);\n\t\t\t}\n\t\t<- stop =>\n\t\t\tsys->print(\"done\\\
+      n\");\n\t\t\treturn;\n\t\t}\n\t}\n}\n\ninit(nil: ref Draw->Context,\
+      \ nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\tstart := chan\
+      \ of int;\n\ttick := chan of int;\n\tstop := chan of int;\n\tspawn machine(start,\
+      \ tick, stop);\n\tstart <-= 1;\n\ttick <-= 1;\n\ttick <-= 1;\n\ttick\
+      \ <-= 1;\n\tstop <-= 1;\n}\n"
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  tags:
+  - calibration_v0
+  - golden_validated_via_iol_gate
+  notes: Tests alt-driven state machine + spawn + multi-channel demux.
+- id: calib_c_print_args_v1
+  category: plan9_c
+  difficulty: trivial
+  language: c
+  prompt: |
+    Write a Plan 9 C `main()` that prints each argv element on its own line, then exits 0. Use lib9 (`print`, no stdio.h).
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int argc, char\
+      \ **argv)\n{\n\tint i;\n\n\tfor(i = 0; i < argc; i++)\n\t\tprint(\"\
+      %s\\n\", argv[i]);\n\texits(0);\n}\n"
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  tags:
+  - calibration_v0
+  - golden_validated_via_iol_gate
+  notes: Tests bare-bones Plan 9 C `main` signature + lib9 print.
+- id: calib_c_smprint_v1
+  category: plan9_c
+  difficulty: easy
+  language: c
+  prompt: |
+    Write a Plan 9 C `main()` that uses `smprint` to build the string "hello, plan 9" with the `"plan %d"` format applied to 9, prints the result, and frees the buffer.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tchar *s;\n\n\ts = smprint(\"hello, plan %d\", 9);\n\tif(s == nil)\n\
+      \t\tsysfatal(\"smprint: %r\");\n\tprint(\"%s\\n\", s);\n\tfree(s);\n\
+      \texits(0);\n}\n"
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  tags:
+  - calibration_v0
+  - golden_validated_via_iol_gate
+  notes: Tests smprint and free conventions.
+- id: calib_c_dirread_v1
+  category: plan9_c
+  difficulty: medium
+  language: c
+  prompt: |
+    Write a Plan 9 C `main()` that opens the directory named in argv[1], calls `dirreadall` to read every entry, and prints each entry's name on its own line. On error use `sysfatal("… %r")`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int argc, char\
+      \ **argv)\n{\n\tint fd, i;\n\tlong n;\n\tDir *d;\n\n\tif(argc < 2)\n\
+      \t\tsysfatal(\"usage: %s dir\", argv[0]);\n\tfd = open(argv[1], OREAD);\n\
+      \tif(fd < 0)\n\t\tsysfatal(\"open %s: %r\", argv[1]);\n\tn = dirreadall(fd,\
+      \ &d);\n\tif(n < 0)\n\t\tsysfatal(\"dirreadall %s: %r\", argv[1]);\n\
+      \tfor(i = 0; i < n; i++)\n\t\tprint(\"%s\\n\", d[i].name);\n\tfree(d);\n\
+      \tclose(fd);\n\texits(0);\n}\n"
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  tags:
+  - calibration_v0
+  - golden_validated_via_iol_gate
+  notes: Tests `Dir`/`dirreadall` — the Plan 9 directory I/O idiom.
+- id: calib_c_pipe_thread_v1
+  category: plan9_c
+  difficulty: hard
+  language: c
+  prompt: |
+    Write a Plan 9 C `main()` that creates a pipe with `pipe(p)`, writes `"hi\n"` to `p[1]`, reads it back from `p[0]` into a buffer, prints the buffer to stdout, and exits. Use `pipe`, `write`, `read`, and `print` from lib9.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tint p[2];\n\tchar buf[64];\n\tlong n;\n\n\tif(pipe(p) < 0)\n\t\t\
+      sysfatal(\"pipe: %r\");\n\tif(write(p[1], \"hi\\n\", 3) != 3)\n\t\t\
+      sysfatal(\"write: %r\");\n\tn = read(p[0], buf, sizeof buf - 1);\n\t\
+      if(n < 0)\n\t\tsysfatal(\"read: %r\");\n\tbuf[n] = 0;\n\tprint(\"%s\"\
+      , buf);\n\texits(0);\n}\n"
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  tags:
+  - calibration_v0
+  - golden_validated_via_iol_gate
+  notes: Tests Plan 9 pipe(2) usage — distinct from POSIX pipe.
+- id: calib_sh_echo_pid_v1
+  category: inferno_sh
+  difficulty: trivial
+  language: inferno_sh
+  prompt: |
+    Write an Inferno sh snippet that prints `pid: $apid` (`$apid` is the current shell's pid).
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      echo pid: $apid
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  tags:
+  - calibration_v0
+  - golden_validated_via_iol_gate
+  notes: Trivial — `$apid` is Inferno-sh specific (vs Plan 9 rc `$pid`).
+- id: calib_sh_for_files_v1
+  category: inferno_sh
+  difficulty: easy
+  language: inferno_sh
+  prompt: |
+    Write an Inferno sh snippet that iterates over every file matching `*.b` in `/appl/cmd` and prints `found: <path>` for each.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      for f in /appl/cmd/*.b { echo found: $f }
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  tags:
+  - calibration_v0
+  - golden_validated_via_iol_gate
+  notes: Tests Inferno-sh's curly-brace `for var in ... { ... }` form.
+- id: calib_sh_retry_v1
+  category: inferno_sh
+  difficulty: medium
+  language: inferno_sh
+  prompt: |
+    Write an Inferno sh function `retry` that takes a command in its arguments, runs it, and if it fails, prints `retry 1` and runs it once more. If both fail, print `gave up`. Then call `retry echo hello`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: "fn retry {\n\t$* || { echo retry 1 ; $* || echo gave up }\n}\n\
+      retry echo hello\n"
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  tags:
+  - calibration_v0
+  - golden_validated_via_iol_gate
+  notes: Tests fn-definitions + `||` + `$*` argument forwarding.
+- id: calib_sh_namespace_run_v1
+  category: inferno_sh
+  difficulty: hard
+  language: inferno_sh
+  prompt: |
+    Write an Inferno sh snippet that does the following in order: bind `/n/local` after `/usr/me/tmp`; run the command `ls /usr/me/tmp`; unmount `/n/local`. Use the `-a` flag on bind for after-mount.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      bind -a /n/local /usr/me/tmp
+      ls /usr/me/tmp
+      unmount /n/local
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  tags:
+  - calibration_v0
+  - golden_validated_via_iol_gate
+  notes: Tests namespace manipulation as a sequence — bind/run/unmount.
+- id: calib_9p_registry_v1
+  category: 9p_tool_use
+  difficulty: trivial
+  language: inferno_sh
+  prompt: |
+    Write an Inferno sh one-liner that lists every Veltro tool in the tool namespace. Tools live under `/tool/` and the registry is at `/tool/_registry`.
+  grader:
+    kind: trace_match
+    config:
+      max_edit_distance: 0
+  golden:
+    trace:
+    - op: read
+      path: /tool/_registry
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  tags:
+  - calibration_v0
+  - golden_validated_via_iol_gate
+  notes: Trivial — pure read of the registry file.
+- id: calib_9p_search_v1
+  category: 9p_tool_use
+  difficulty: easy
+  language: inferno_sh
+  prompt: |
+    Write an Inferno sh one-liner that uses Veltro's `search` tool via 9P to search for the term `bind semantics`. The tool is at `/tool/search/ctl`; write the args, then read the result.
+  grader:
+    kind: trace_match
+    config:
+      max_edit_distance: 0
+  golden:
+    trace:
+    - op: write
+      path: /tool/search/ctl
+      data: bind semantics
+    - op: read
+      path: /tool/search/ctl
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  tags:
+  - calibration_v0
+  - golden_validated_via_iol_gate
+  notes: Standard write-then-read invocation.
+- id: calib_9p_doc_then_use_v1
+  category: 9p_tool_use
+  difficulty: medium
+  language: inferno_sh
+  prompt: |
+    Write an Inferno sh sequence that first reads `/tool/edit/doc` to learn how to invoke the `edit` tool, then writes the args `/usr/me/notes.txt` to `/tool/edit/ctl` and reads back the result.
+  grader:
+    kind: trace_match
+    config:
+      max_edit_distance: 0
+  golden:
+    trace:
+    - op: read
+      path: /tool/edit/doc
+    - op: write
+      path: /tool/edit/ctl
+      data: /usr/me/notes.txt
+    - op: read
+      path: /tool/edit/ctl
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  tags:
+  - calibration_v0
+  - golden_validated_via_iol_gate
+  notes: Tests doc-then-invoke pattern.
+- id: calib_9p_chain_three_v1
+  category: 9p_tool_use
+  difficulty: hard
+  language: inferno_sh
+  prompt: |
+    Write an Inferno sh sequence that chains three Veltro tools: `find` to list `.b` files under `/appl/cmd`, then for each result, `grep` to find `"implement"` in that file, then `read` to print the matching line. Use the canonical write→read pattern against each tool's `/tool/<name>/ctl`.
+  grader:
+    kind: trace_match
+    config:
+      max_edit_distance: 0
+  golden:
+    trace:
+    - op: write
+      path: /tool/find/ctl
+      data: '*.b /appl/cmd'
+    - op: read
+      path: /tool/find/ctl
+    - op: write
+      path: /tool/grep/ctl
+    - op: read
+      path: /tool/grep/ctl
+    - op: write
+      path: /tool/read/ctl
+    - op: read
+      path: /tool/read/ctl
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  tags:
+  - calibration_v0
+  - golden_validated_via_iol_gate
+  notes: Hard chained-tool flow — discriminates models that can plan three
+    steps.
+- id: calib_fs_proc_pid_v1
+  category: fs_concepts
+  difficulty: trivial
+  language: none
+  prompt: |
+    Which file in `/proc/<pid>/` contains the current namespace? Choose A) ctl  B) status  C) ns  D) text
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: C
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  tags:
+  - calibration_v0
+  - golden_validated_via_iol_gate
+  notes: Trivial MCQ — namespace at /proc/<pid>/ns is a Plan 9/Inferno canon.
+- id: calib_fs_ctl_data_status_v1
+  category: fs_concepts
+  difficulty: easy
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo program that opens the canonical ctl/data/status decomposition for a device at `/dev/sample` — that is: open `/dev/sample/ctl` for writing, `/dev/sample/data` for read/write, `/dev/sample/status` for reading. Print `ctl=<n> data=<n> status=<n>` where each <n> is sys->fildes-style fd number (or -1 if open failed). Then close everything.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement Calib;\n\ninclude \"sys.m\";\ninclude \"draw.m\";\n\
+      \nsys: Sys;\n\nCalib: module\n{\n\tinit: fn(nil: ref Draw->Context,\
+      \ argv: list of string);\n};\n\nfdnum(fd: ref Sys->FD): int\n{\n\tif\
+      \ (fd == nil)\n\t\treturn -1;\n\treturn 0;   # we don't expose the raw\
+      \ fd; treat non-nil as 0 for the print\n}\n\ninit(nil: ref Draw->Context,\
+      \ nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\tctl := sys->open(\"\
+      /dev/sample/ctl\", Sys->OWRITE);\n\tdata := sys->open(\"/dev/sample/data\"\
+      , Sys->ORDWR);\n\tstatus := sys->open(\"/dev/sample/status\", Sys->OREAD);\n\
+      \tsys->print(\"ctl=%d data=%d status=%d\\n\",\n\t\tfdnum(ctl), fdnum(data),\
+      \ fdnum(status));\n}\n"
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  tags:
+  - calibration_v0
+  - golden_validated_via_iol_gate
+  notes: Tests ctl/data/status decomposition + correct open modes.
+- id: calib_fs_clone_session_v1
+  category: fs_concepts
+  difficulty: medium
+  language: limbo
+  prompt: |
+    Write a complete, compilable Limbo program that uses Inferno's clone-file pattern: open `/srv/cs/clone`, read the session id from it (a small text-line integer), construct the per-session path `/srv/cs/<id>/data`, open that, write a query to it, read the answer, and print the answer. Do NOT close the clone fd — that would free the session.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement Calib;\n\ninclude \"sys.m\";\ninclude \"draw.m\";\n\
+      \nsys: Sys;\n\nCalib: module\n{\n\tinit: fn(nil: ref Draw->Context,\
+      \ argv: list of string);\n};\n\ninit(nil: ref Draw->Context, nil: list\
+      \ of string)\n{\n\tsys = load Sys Sys->PATH;\n\tclone := sys->open(\"\
+      /srv/cs/clone\", Sys->ORDWR);\n\tif (clone == nil)\n\t\treturn;\n\t\
+      buf := array[64] of byte;\n\tn := sys->read(clone, buf, len buf);\n\t\
+      if (n <= 0)\n\t\treturn;\n\tid := string buf[:n];\n\twhile (len id >\
+      \ 0 && id[len id - 1] == '\\n')\n\t\tid = id[:len id - 1];\n\tdata :=\
+      \ sys->open(\"/srv/cs/\" + id + \"/data\", Sys->ORDWR);\n\tif (data\
+      \ == nil)\n\t\treturn;\n\tq := array of byte \"tcp!example.com!9\";\n\
+      \tsys->write(data, q, len q);\n\tsys->seek(data, big 0, Sys->SEEKSTART);\n\
+      \trep := array[4096] of byte;\n\tnn := sys->read(data, rep, len rep);\n\
+      \tif (nn > 0)\n\t\tsys->print(\"%s\\n\", string rep[:nn]);\n}\n"
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  tags:
+  - calibration_v0
+  - golden_validated_via_iol_gate
+  notes: 'Tests clone-pattern subtleties: don''t-close-clone, seek-back-before-read.'
+- id: calib_fs_union_bind_v1
+  category: fs_concepts
+  difficulty: hard
+  language: none
+  prompt: |
+    In Inferno, what is the effect of `bind -b /a /b` when `/b` is already a union directory containing `/x`? Choose:
+    A) `/b` becomes a copy of `/a`; `/x` is hidden.
+    B) Files in `/b` are union-mounted with `/a` searched BEFORE `/x`.
+    C) Files in `/b` are union-mounted with `/a` searched AFTER `/x`.
+    D) `bind -b` is a syntax error; the correct flag is `-a`.
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+  tags:
+  - calibration_v0
+  - golden_validated_via_iol_gate
+  notes: Hard MCQ — the -b (before) flag, union directory semantics.

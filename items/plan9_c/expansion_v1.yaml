@@ -1,0 +1,340 @@
+# plan9_c — expansion_v1
+# 14 items authored fresh; goldens validated.
+
+items:
+- id: c_fprint_stderr_v1
+  category: plan9_c
+  difficulty: easy
+  subcategory: print
+  language: c
+  prompt: 'Write a Plan 9 C `main()` that prints `error: something\n` to stderr
+    using `fprint(2, ...)`. Do NOT use stdio.h.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tfprint(2, \"error: something\\n\");\n\texits(0);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_fmtprint_buffer_v1
+  category: plan9_c
+  difficulty: medium
+  subcategory: print
+  language: c
+  prompt: Write a Plan 9 C `main()` that uses `Fmt` to format the string `x=42`
+    into a fixed buffer (use `fmtfdinit` against fd 1, then `fmtprint(&fmt,
+    "x=%d\n", 42)`). Use lib9, no stdio.h.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tFmt fmt;\n\tchar buf[64];\n\n\tfmtfdinit(&fmt, 1, buf, sizeof buf);\n\
+      \tfmtprint(&fmt, \"x=%d\\n\", 42);\n\tfmtfdflush(&fmt);\n\texits(0);\n\
+      }\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_print_two_lines_v1
+  category: plan9_c
+  difficulty: trivial
+  subcategory: print
+  language: c
+  prompt: 'Write a Plan 9 C `main()` that prints two lines: `line one\n` and
+    `line two\n`, then exits 0. Use lib9 `print`.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tprint(\"line one\\n\");\n\tprint(\"line two\\n\");\n\texits(0);\n\
+      }\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_bio_stdin_v1
+  category: plan9_c
+  difficulty: easy
+  subcategory: bio
+  language: c
+  prompt: 'Write a Plan 9 C `main()` that wraps standard input with `Binit(&bin,
+    0, OREAD)`, reads one line via `Brdstr(&bin, ''\n'', 0)`, prints `got:
+    <line>`, and frees the returned string with `free()`.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n#include <bio.h>\n\nvoid\n\
+      main(int, char**)\n{\n\tBiobuf bin;\n\tchar *s;\n\n\tBinit(&bin, 0,\
+      \ OREAD);\n\ts = Brdstr(&bin, '\\n', 0);\n\tif(s == nil)\n\t\tsysfatal(\"\
+      Brdstr: %r\");\n\tprint(\"got: %s\\n\", s);\n\tfree(s);\n\texits(0);\n\
+      }\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_bio_write_v1
+  category: plan9_c
+  difficulty: medium
+  subcategory: bio
+  language: c
+  prompt: Write a Plan 9 C `main()` that wraps stdout with `Binit(&bout, 1,
+    OWRITE)`, writes `hello\nworld\n` using `Bprint(&bout, ...)`, and flushes
+    with `Bterm(&bout)`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n#include <bio.h>\n\nvoid\n\
+      main(int, char**)\n{\n\tBiobuf bout;\n\n\tBinit(&bout, 1, OWRITE);\n\
+      \tBprint(&bout, \"hello\\n\");\n\tBprint(&bout, \"world\\n\");\n\tBterm(&bout);\n\
+      \texits(0);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_bio_brdline_v1
+  category: plan9_c
+  difficulty: medium
+  subcategory: bio
+  language: c
+  prompt: Write a Plan 9 C `main()` that reads stdin via `Bopen("/dev/stdin",
+    OREAD)` (use `0` if Bopen of /dev/stdin doesn't apply — `Bfdopen(0, OREAD)`)
+    and prints each line with its line number, then exits.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n#include <bio.h>\n\nvoid\n\
+      main(int, char**)\n{\n\tBiobuf *bp;\n\tchar *line;\n\tint n;\n\n\tbp\
+      \ = Bfdopen(0, OREAD);\n\tif(bp == nil)\n\t\tsysfatal(\"Bfdopen: %r\"\
+      );\n\tn = 1;\n\twhile((line = Brdstr(bp, '\\n', 1)) != nil) {\n\t\t\
+      print(\"%d: %s\\n\", n++, line);\n\t\tfree(line);\n\t}\n\tBterm(bp);\n\
+      \texits(0);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_werrstr_v1
+  category: plan9_c
+  difficulty: easy
+  subcategory: errstr
+  language: c
+  prompt: Write a Plan 9 C function `must_be_positive(int n)` that, if `n`
+    is not positive, calls `werrstr("must be positive, got %d", n)` and returns
+    -1. Otherwise returns n. main() calls it with -3, checks the return value,
+    and on -1 prints the errstr via `fprint(2, "%r\n")`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nint\nmust_be_positive(int\
+      \ n)\n{\n\tif(n <= 0) {\n\t\twerrstr(\"must be positive, got %d\", n);\n\
+      \t\treturn -1;\n\t}\n\treturn n;\n}\n\nvoid\nmain(int, char**)\n{\n\t\
+      if(must_be_positive(-3) < 0)\n\t\tfprint(2, \"%r\\n\");\n\texits(0);\n\
+      }\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_rerrstr_v1
+  category: plan9_c
+  difficulty: medium
+  subcategory: errstr
+  language: c
+  prompt: 'Write a Plan 9 C function `peek_errstr(char *buf, int n)` that
+    uses `rerrstr(buf, n)` to read the current error string without clearing
+    it, and returns its length. main() calls open on a missing file, then
+    peeks errstr and prints `err: <buf>`.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nint\npeek_errstr(char *buf,\
+      \ int n)\n{\n\trerrstr(buf, n);\n\treturn strlen(buf);\n}\n\nvoid\n\
+      main(int, char**)\n{\n\tchar buf[ERRMAX];\n\n\topen(\"/no/such/file\"\
+      , OREAD);\n\tpeek_errstr(buf, sizeof buf);\n\tprint(\"err: %s\\n\",\
+      \ buf);\n\texits(0);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_thread_chan_v1
+  category: plan9_c
+  difficulty: hard
+  subcategory: thread
+  language: c
+  prompt: Write a Plan 9 C `threadmain()` (using libthread) that creates a
+    `Channel` of int with `chancreate(sizeof(int), 0)`, spawns a thread that
+    sends 42 on it, receives the value with `recv`, prints it, and `threadexitsall(nil)`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n#include <thread.h>\n\nstatic\
+      \ void\nsender(void *aux)\n{\n\tChannel *c;\n\tint v;\n\n\tc = aux;\n\
+      \tv = 42;\n\tsend(c, &v);\n\tthreadexits(nil);\n}\n\nvoid\nthreadmain(int,\
+      \ char**)\n{\n\tChannel *c;\n\tint v;\n\n\tc = chancreate(sizeof(int),\
+      \ 0);\n\tthreadcreate(sender, c, 8192);\n\trecv(c, &v);\n\tprint(\"\
+      got %d\\n\", v);\n\tthreadexitsall(nil);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_uses_exits_not_exit_v1
+  category: plan9_c
+  difficulty: easy
+  subcategory: anti_posix
+  language: c
+  prompt: Write a Plan 9 C `main()` that does ABSOLUTELY NOTHING except exit
+    successfully — using `exits(0)` (not `exit(0)` or `return 0`). Use u.h
+    + libc.h.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\texits(0);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_open_oread_v1
+  category: plan9_c
+  difficulty: easy
+  subcategory: anti_posix
+  language: c
+  prompt: Write a Plan 9 C `main()` that opens `/dev/null` for reading using
+    the Plan 9 `OREAD` flag (NOT POSIX `O_RDONLY`), then closes it.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tint fd;\n\n\tfd = open(\"/dev/null\", OREAD);\n\tif(fd < 0)\n\t\
+      \tsysfatal(\"open: %r\");\n\tclose(fd);\n\texits(0);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_no_stdio_v1
+  category: plan9_c
+  difficulty: medium
+  subcategory: anti_posix
+  language: c
+  prompt: Write a Plan 9 C `main()` that prints the integer 7 using lib9 `print`
+    and exits. Do NOT include stdio.h; do NOT use printf or puts.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tprint(\"%d\\n\", 7);\n\texits(0);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_dirstat_v1
+  category: plan9_c
+  difficulty: medium
+  subcategory: dir
+  language: c
+  prompt: Write a Plan 9 C `main()` that calls `dirstat(argv[1])`, prints
+    `name=<name> size=<size>` from the Dir result, frees the Dir, and exits.
+    On dirstat failure use sysfatal.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int argc, char\
+      \ **argv)\n{\n\tDir *d;\n\n\tif(argc < 2)\n\t\tsysfatal(\"usage: %s\
+      \ file\", argv[0]);\n\td = dirstat(argv[1]);\n\tif(d == nil)\n\t\tsysfatal(\"\
+      dirstat: %r\");\n\tprint(\"name=%s size=%lld\\n\", d->name, d->length);\n\
+      \tfree(d);\n\texits(0);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_dirread_loop_v1
+  category: plan9_c
+  difficulty: medium
+  subcategory: dir
+  language: c
+  prompt: Write a Plan 9 C `main()` that opens argv[1], reads entries via
+    `dirread(fd, &dir)` in a loop (which returns count or 0 at end), and prints
+    each entry's name. Free each batch.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int argc, char\
+      \ **argv)\n{\n\tint fd, i;\n\tlong n;\n\tDir *d;\n\n\tif(argc < 2)\n\
+      \t\tsysfatal(\"usage: %s dir\", argv[0]);\n\tfd = open(argv[1], OREAD);\n\
+      \tif(fd < 0)\n\t\tsysfatal(\"open: %r\");\n\twhile((n = dirread(fd,\
+      \ &d)) > 0) {\n\t\tfor(i = 0; i < n; i++)\n\t\t\tprint(\"%s\\n\", d[i].name);\n\
+      \t\tfree(d);\n\t}\n\tclose(fd);\n\texits(0);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate

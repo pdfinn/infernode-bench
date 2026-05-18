@@ -1,0 +1,175 @@
+# Items migrated from infernode-os-llm/eval/scenarios/baseline_v2.yaml
+# Source repo SHA: 801df94d0b83b6146e839016c19049ff96f1edf8
+# Source file last-commit SHA: 35a89fe31945063b5b53aa808db0d2eda3f8cd78
+#
+# Every item is marked needs_golden: true — IB-11..IB-15 will
+# fill in goldens per category.
+
+items:
+- id: c_print_helloworld_v1
+  category: plan9_c
+  difficulty: trivial
+  language: c
+  prompt: |
+    Write a Plan 9 C `main()` that uses `print()` (from
+    `lib9`) to write `hello, plan 9\n` to stdout and exits 0.
+    Use the canonical `#include <u.h>` and `#include <libc.h>`
+    headers.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tprint(\"hello, plan 9\\n\");\n\texits(0);\n}\n"
+- id: c_sysfatal_v1
+  category: plan9_c
+  difficulty: easy
+  language: c
+  prompt: |
+    Write a Plan 9 C `main()` that opens the file given as
+    argv[1] for reading using `open()`, and on failure calls
+    `sysfatal("open %s: %r", argv[1])`. On success it prints
+    `ok\n` and exits.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int argc, char\
+      \ **argv)\n{\n\tint fd;\n\n\tif(argc < 2)\n\t\tsysfatal(\"usage: %s\
+      \ file\", argv[0]);\n\tfd = open(argv[1], OREAD);\n\tif(fd < 0)\n\t\t\
+      sysfatal(\"open %s: %r\", argv[1]);\n\tprint(\"ok\\n\");\n\tclose(fd);\n\
+      \texits(0);\n}\n"
+- id: c_dev_stub_v1
+  category: plan9_c
+  difficulty: hard
+  language: c
+  prompt: |
+    Write the skeleton of a Plan 9 9P device driver in C
+    named `devhello`. Provide the `Dev hellodevtab`, a small
+    `Dirtab`, and stubs for `helloreset`, `helloinit`,
+    `helloattach`, `hellowalk`, `hellostat`, `helloopen`,
+    `helloclose`, `helloread`, `hellowrite`. Use the
+    conventions from `infernode/emu/port/devXXX.c`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  needs_golden: true
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  deprecated: true
+  notes: InferNode kernel-style 9P device driver; not testable via plan9port
+    `9c -c` (kernel headers absent). Needs an InferNode-side gate variant
+    — tracked separately.
+- id: c_bio_read_v1
+  category: plan9_c
+  difficulty: medium
+  language: c
+  prompt: |
+    Write a Plan 9 C `main()` that uses `Bopen` from libbio
+    to open argv[1] for reading, calls `Brdline` in a loop,
+    and prints each line. Free the `Biobuf` with `Bterm`
+    when done.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n#include <bio.h>\n\nvoid\n\
+      main(int argc, char **argv)\n{\n\tBiobuf *bp;\n\tchar *line;\n\n\tif(argc\
+      \ < 2)\n\t\tsysfatal(\"usage: %s file\", argv[0]);\n\tbp = Bopen(argv[1],\
+      \ OREAD);\n\tif(bp == nil)\n\t\tsysfatal(\"Bopen: %r\");\n\twhile((line\
+      \ = Brdline(bp, '\\n')) != nil)\n\t\twrite(1, line, Blinelen(bp));\n\
+      \tBterm(bp);\n\texits(0);\n}\n"
+- id: c_fmt_install_v1
+  category: plan9_c
+  difficulty: medium
+  language: c
+  prompt: |
+    Write a Plan 9 C function `mypoint_fmt(Fmt *f)` that
+    implements the lib9 print/fmt protocol for a struct
+    `Point { int x; int y; }`. Show how it would be
+    registered with `fmtinstall('P', mypoint_fmt)`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\ntypedef struct Point Point;\n\
+      struct Point {\n\tint x;\n\tint y;\n};\n\nint\nmypoint_fmt(Fmt *f)\n\
+      {\n\tPoint p;\n\n\tp = va_arg(f->args, Point);\n\treturn fmtprint(f,\
+      \ \"(%d,%d)\", p.x, p.y);\n}\n\nvoid\nmain(int, char**)\n{\n\tPoint\
+      \ p;\n\n\tfmtinstall('P', mypoint_fmt);\n\tp.x = 3;\n\tp.y = 4;\n\t\
+      print(\"%P\\n\", p);\n\texits(0);\n}\n"
+- id: c_errstr_pattern_v1
+  category: plan9_c
+  difficulty: easy
+  language: c
+  prompt: |
+    Write a Plan 9 C function `safe_open(char *name, int mode)`
+    that calls `open(name, mode)`, and on failure preserves the
+    errstr by calling `errstr(buf, sizeof buf)` then `werrstr`
+    with extra context, returning -1.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  needs_golden: false
+  provenance:
+    authored_by: human
+    spdx: MIT
+    source_repo: infernode-os-llm@801df94d0b83
+    derived_from: eval/scenarios/baseline_v2.yaml
+  tags:
+  - baseline_v2_migration
+  - golden_validated_via_iol_gate
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nint\nsafe_open(char *name,\
+      \ int mode)\n{\n\tint fd;\n\tchar buf[ERRMAX];\n\n\tfd = open(name,\
+      \ mode);\n\tif(fd < 0) {\n\t\terrstr(buf, sizeof buf);\n\t\twerrstr(\"\
+      safe_open %s: %s\", name, buf);\n\t\treturn -1;\n\t}\n\treturn fd;\n\
+      }\n\nvoid\nmain(int, char**)\n{\n\tsafe_open(\"/no/such/file\", OREAD);\n\
+      \texits(0);\n}\n"

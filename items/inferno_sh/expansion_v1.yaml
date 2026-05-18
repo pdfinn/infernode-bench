@@ -1,0 +1,411 @@
+# inferno_sh — expansion_v1
+# 18 items authored fresh; goldens validated.
+
+items:
+- id: sh_var_assign_print_v1
+  category: inferno_sh
+  difficulty: trivial
+  subcategory: vars
+  language: inferno_sh
+  prompt: Write an Inferno sh snippet that sets `greeting` to `hello, world`
+    and prints it with `echo $greeting`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      greeting='hello, world'
+      echo $greeting
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_command_substitution_v1
+  category: inferno_sh
+  difficulty: easy
+  subcategory: vars
+  language: inferno_sh
+  prompt: 'Write an Inferno sh snippet that captures the current user from
+    `/dev/user` into a variable `u` using backquote substitution (`u=`{...}`),
+    then prints `user: $u`.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      u=`{cat /dev/user}
+      echo user: $u
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_list_quoting_v1
+  category: inferno_sh
+  difficulty: easy
+  subcategory: vars
+  language: inferno_sh
+  prompt: Write an Inferno sh snippet that sets `paths` to the list `/bin
+    /dis /env` (use sh list syntax with parentheses), then iterates with a
+    for-loop and prints each path.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      paths=(/bin /dis /env)
+      for p in $paths { echo $p }
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_while_v1
+  category: inferno_sh
+  difficulty: medium
+  subcategory: control
+  language: inferno_sh
+  prompt: 'Write an Inferno sh snippet that counts down from 3 to 1 using
+    `while`, printing each value. Use Inferno''s curly-brace form: `while
+    {cond} { body }`.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      i=3
+      while {test $i -gt 0} { echo $i ; i=`{echo $i ^ -1 | math} }
+  notes: Tests Inferno's `while {cond} { body }` form vs Plan 9 rc's `while(cond)
+    cmd`.
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_if_else_v1
+  category: inferno_sh
+  difficulty: easy
+  subcategory: control
+  language: inferno_sh
+  prompt: Write an Inferno sh snippet that tests if `/dev/user` exists. If
+    yes, prints `user available`; otherwise prints `no user`. Use Inferno's
+    `if {cond} { yes } { no }` triple-block form.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      if {test -f /dev/user} { echo user available } { echo no user }
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_switch_pattern_v1
+  category: inferno_sh
+  difficulty: medium
+  subcategory: control
+  language: inferno_sh
+  prompt: 'Write an Inferno sh snippet that dispatches on `$service`: if it''s
+    `dns` print `name service`; if `cs` print `connection server`; otherwise
+    print `unknown: $service`. Pre-set `service=dns`. Use `if {~ ...} { ...
+    } { ... }` chains.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      service=dns
+      if {~ $service dns} { echo name service } { if {~ $service cs} { echo connection server } { echo unknown: $service } }
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_case_match_v1
+  category: inferno_sh
+  difficulty: hard
+  subcategory: control
+  language: inferno_sh
+  prompt: 'Write an Inferno sh snippet that takes the FIRST argument from
+    `$1` and dispatches: `start` echoes `starting`, `stop` echoes `stopping`,
+    anything else echoes `unknown command: $1`. Use `if {~ ...}` clauses with
+    the triple-block else form.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      cmd=start
+      if {~ $cmd start} { echo starting } { if {~ $cmd stop} { echo stopping } { echo unknown command: $cmd } }
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_redirect_in_out_v1
+  category: inferno_sh
+  difficulty: easy
+  subcategory: redirect
+  language: inferno_sh
+  prompt: Write an Inferno sh snippet that reads from `/dev/null` and writes
+    to `/dev/null`, redirecting stdin from the former and stdout to the latter
+    (use `<` and `>`).
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      cat < /dev/null > /dev/null
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_pipe_three_v1
+  category: inferno_sh
+  difficulty: medium
+  subcategory: redirect
+  language: inferno_sh
+  prompt: Write an Inferno sh snippet that pipes `echo hello` through `tr
+    a-z A-Z` and then through `cat`. Plain three-stage pipeline.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      echo hello | tr a-z A-Z | cat
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_fn_with_args_v1
+  category: inferno_sh
+  difficulty: easy
+  subcategory: fn
+  language: inferno_sh
+  prompt: Write an Inferno sh function `add` that takes two args and prints
+    their sum using the `math` filter (`echo $1 ^ $2 | math`). Then call `add
+    3 4`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      fn add { echo $1 ^ + ^ $2 | math }
+      add 3 4
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_fn_local_v1
+  category: inferno_sh
+  difficulty: medium
+  subcategory: fn
+  language: inferno_sh
+  prompt: Write an Inferno sh function `inenv` that, given an env-var name
+    as its argument, prints the value of that variable (use indirection via
+    the `$"$1"` form). Then call `inenv home` after setting `home=/usr/me`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      fn inenv { echo $$1 }
+      home=/usr/me
+      inenv home
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_fn_recursive_v1
+  category: inferno_sh
+  difficulty: hard
+  subcategory: fn
+  language: inferno_sh
+  prompt: Write an Inferno sh function `countdown` that, given a number argument,
+    prints it and calls itself with N-1 unless N is 0. Then call `countdown
+    3`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: "fn countdown {\n\techo $1\n\tif {test $1 -gt 0} { countdown `{echo\
+      \ $1 ^ -1 | math} }\n}\ncountdown 3\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_bind_basic_v1
+  category: inferno_sh
+  difficulty: easy
+  subcategory: builtin
+  language: inferno_sh
+  prompt: Write an Inferno sh snippet that binds `/n/local` over `/tmp` (replacing
+    /tmp), then runs `ls /tmp`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      bind /n/local /tmp
+      ls /tmp
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_pwd_cd_v1
+  category: inferno_sh
+  difficulty: trivial
+  subcategory: builtin
+  language: inferno_sh
+  prompt: Write an Inferno sh snippet that cd's to `/usr/me`, prints the current
+    directory via `pwd`, and then cd's back to `/`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      cd /usr/me
+      pwd
+      cd /
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_no_for_paren_v1
+  category: inferno_sh
+  difficulty: easy
+  subcategory: anti_rc
+  language: inferno_sh
+  prompt: 'Write an Inferno sh for-loop that iterates over `a b c` and echoes
+    each. Note: Inferno sh uses `for x in ... { ... }` — NOT Plan 9 rc''s
+    `for(x in ...) ...` form.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      for x in a b c { echo $x }
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_no_if_paren_v1
+  category: inferno_sh
+  difficulty: easy
+  subcategory: anti_rc
+  language: inferno_sh
+  prompt: 'Write an Inferno sh snippet that, if `$user` equals `root`, echoes
+    `welcome`. Note: Inferno sh uses `if {~ $user root} { echo welcome }`
+    — NOT Plan 9 rc''s `if(~ $user root) echo welcome` form.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      user=root
+      if {~ $user root} { echo welcome }
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_check_status_v1
+  category: inferno_sh
+  difficulty: medium
+  subcategory: error
+  language: inferno_sh
+  prompt: 'Write an Inferno sh snippet that runs `false`, checks the exit
+    status via `$status`, and if non-empty prints `failed: $status`.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      false
+      if {! ~ $status ''} { echo failed: $status }
+  notes: '`$status` carries the last exit status. Empty == success.'
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_or_fallback_v1
+  category: inferno_sh
+  difficulty: easy
+  subcategory: error
+  language: inferno_sh
+  prompt: Write an Inferno sh snippet that runs `mkdir /tmp/x` and, if it
+    fails, prints `mkdir failed` to stderr. Use `||`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      mkdir /tmp/x || echo mkdir failed >[1=2]
+  notes: '`>[1=2]` redirects stdout to stderr in Inferno sh.'
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate

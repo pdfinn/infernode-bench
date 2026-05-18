@@ -1,0 +1,363 @@
+# 9p_tool_use — expansion_v4
+# 15 items authored fresh; goldens validated.
+
+items:
+- id: tool_safeexec_run_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: 'Use Veltro''s `safeexec` tool to run the command `echo hi` in a
+    sandboxed context. Tool: `/tool/safeexec/ctl`.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/safeexec/ctl
+      data: echo hi
+    - op: read
+      path: /tool/safeexec/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_spawn_run_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: 'Use Veltro''s `spawn` tool to spawn a long-running task: `"build
+    all"`. Tool: `/tool/spawn/ctl`.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/spawn/ctl
+      data: build all
+    - op: read
+      path: /tool/spawn/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_wallet_balance_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: 'Use Veltro''s `wallet` tool to read the current balance. Tool:
+    `/tool/wallet/ctl`. Args: `balance`.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/wallet/ctl
+      data: balance
+    - op: read
+      path: /tool/wallet/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_payfetch_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: 'Use Veltro''s `payfetch` tool (paid HTTP fetch) on the URL `https://api.example.com/data`.
+    Tool: `/tool/payfetch/ctl`.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/payfetch/ctl
+      data: https://api.example.com/data
+    - op: read
+      path: /tool/payfetch/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_webfetch_with_headers_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: 'Use Veltro''s `webfetch` tool to fetch the URL `https://example.com/page`
+    with the header `User-Agent: veltro`. Tool: `/tool/webfetch/ctl`. Args:
+    `https://example.com/page User-Agent: veltro`.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/webfetch/ctl
+      data: 'https://example.com/page User-Agent: veltro'
+    - op: read
+      path: /tool/webfetch/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_vision_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: 'Use Veltro''s `vision` tool to describe the image at `/usr/me/photo.png`.
+    Tool: `/tool/vision/ctl`.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/vision/ctl
+      data: /usr/me/photo.png
+    - op: read
+      path: /tool/vision/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_gpu_v1
+  category: 9p_tool_use
+  difficulty: hard
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: 'Use Veltro''s `gpu` tool to run a kernel `add_vectors` with input
+    size 1024. Tool: `/tool/gpu/ctl`. Args: `add_vectors 1024`.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/gpu/ctl
+      data: add_vectors 1024
+    - op: read
+      path: /tool/gpu/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_fractal_render_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: 'Use Veltro''s `fractal` tool to render a Mandelbrot at depth 100.
+    Tool: `/tool/fractal/ctl`. Args: `mandelbrot 100`.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/fractal/ctl
+      data: mandelbrot 100
+    - op: read
+      path: /tool/fractal/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_gap_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: 'Use Veltro''s `gap` tool to time a 1-second pause. Tool: `/tool/gap/ctl`.
+    Args: `1`.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/gap/ctl
+      data: '1'
+    - op: read
+      path: /tool/gap/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_mount_then_unmount_v1
+  category: 9p_tool_use
+  difficulty: hard
+  subcategory: chained
+  language: inferno_sh
+  prompt: Use Veltro's `mount` tool to mount `/srv/test` at `/n/test`, then
+    list the new mount via `list`, then unmount via `mount` with the `unmount`
+    subcommand.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/mount/ctl
+      data: /srv/test /n/test
+    - op: read
+      path: /tool/mount/ctl
+    - op: write
+      path: /tool/list/ctl
+      data: /n/test
+    - op: read
+      path: /tool/list/ctl
+    - op: write
+      path: /tool/mount/ctl
+      data: unmount /n/test
+    - op: read
+      path: /tool/mount/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_concurrent_three_v1
+  category: 9p_tool_use
+  difficulty: hard
+  subcategory: concurrent
+  language: inferno_sh
+  prompt: 'Concurrently invoke three Veltro tools: `find` for `*.b /appl`,
+    `grep` for `panic /n/log`, `man` for `bind(1)`. Read all three results.'
+  grader:
+    kind: trace_match
+    config:
+      equivalence_classes:
+      - reorder_writes
+  golden:
+    trace:
+    - op: write
+      path: /tool/find/ctl
+      data: '*.b /appl'
+    - op: write
+      path: /tool/grep/ctl
+      data: panic /n/log
+    - op: write
+      path: /tool/man/ctl
+      data: bind(1)
+    - op: read
+      path: /tool/find/ctl
+    - op: read
+      path: /tool/grep/ctl
+    - op: read
+      path: /tool/man/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_register_check_then_invoke_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: discovery
+  language: inferno_sh
+  prompt: Read `/tool/_registry`, then invoke the first tool the registry
+    is presumed to list — `find` — with args `*.m /module`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: read
+      path: /tool/_registry
+    - op: write
+      path: /tool/find/ctl
+      data: '*.m /module'
+    - op: read
+      path: /tool/find/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_doc_then_doc_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: discovery
+  language: inferno_sh
+  prompt: Read the docs for both `read` and `write` tools in sequence.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: read
+      path: /tool/read/doc
+    - op: read
+      path: /tool/write/doc
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_help_then_invoke_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: discovery
+  language: inferno_sh
+  prompt: Use `/tool/help` to look up the `shell` tool's usage, then invoke
+    `/tool/shell/ctl` with args `pwd`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/help
+      data: shell
+    - op: read
+      path: /tool/help
+    - op: write
+      path: /tool/shell/ctl
+      data: pwd
+    - op: read
+      path: /tool/shell/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_memory_get_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: 'Use Veltro''s `memory` tool to retrieve the value at key `last_task`.
+    Tool: `/tool/memory/ctl`. Args: `get last_task`.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/memory/ctl
+      data: get last_task
+    - op: read
+      path: /tool/memory/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []

@@ -1,0 +1,462 @@
+# fs_concepts — expansion_v3
+# 17 items authored fresh; goldens validated.
+
+items:
+- id: fs_chan_file_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    Inferno's `sys-file2chan(2)` allows a Limbo program to:
+    A) Convert a file descriptor to a channel
+    B) Synthesise a 9P file backed by Limbo channels — reads of the file become receives on a chan, writes become sends
+    C) Read a file into memory as a single chunk
+    D) Convert a chan of byte to a writable file in /tmp
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_create_perm_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    When opening a file with 9P `Tcreate`, the `perm` argument is:
+    A) The user-id of the file's owner
+    B) The new file's permission bits (rwx for owner/group/other)
+    C) The flag for whether to overwrite an existing file
+    D) The cache lifetime in seconds
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_oexec_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    The 9P open mode `OEXEC` means:
+    A) Open for execution as a script
+    B) Open for reading with execute permissions verified
+    C) Open for reading, but tells the server the client intends to execute the file's contents
+    D) An alias for OREAD
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: C
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_otrunc_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    The 9P open mode flag `OTRUNC` combined with OWRITE causes:
+    A) The fid to be closed before opening
+    B) The file's contents to be truncated to zero on open
+    C) The Twalk to be truncated to one name component
+    D) The server to reject the request
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_orclose_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    The 9P open mode flag `ORCLOSE` requests that:
+    A) The file be opened for read and closed in one step
+    B) The file be removed when the fid is clunked
+    C) The file be opened only if not already open elsewhere
+    D) The remote server close any held cache
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_aname_default_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: namespace
+  language: none
+  prompt: |-
+    When connecting a 9P client to an unspecified file tree (empty aname in Tattach), the server typically:
+    A) Rejects the attach
+    B) Serves its default / primary file tree
+    C) Serves a per-user home tree
+    D) Serves nothing — only listing is permitted
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_kfs_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: services
+  language: none
+  prompt: |-
+    Inferno's `kfs` is:
+    A) The kernel filesystem on local disk — a venti-style block filesystem packaged as a 9P file server
+    B) A kernel-keychain file
+    C) A namespace export utility
+    D) A keyring file server
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: A
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_logfs_v1
+  category: fs_concepts
+  difficulty: hard
+  subcategory: services
+  language: none
+  prompt: |-
+    In Inferno, `logfs` is best described as:
+    A) A daemon that compresses and rotates logs
+    B) A 9P file server that exposes a circular log buffer as a file
+    C) The kernel's syslog interface
+    D) A read-only mirror of /sys/log
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_devssl_v1
+  category: fs_concepts
+  difficulty: hard
+  subcategory: services
+  language: none
+  prompt: |-
+    What does Inferno's `ssl(3)` device provide?
+    A) A TLS terminator for outbound connections
+    B) An interface for layering encrypted/MAC'd streams over a regular fd, exposed as `/net/ssl/<n>/{ctl,data}`
+    C) A keyring sub-service
+    D) An HTTPS proxy
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_oexcl_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    The 9P open mode flag `OEXCL` requests:
+    A) Exclusive use — fail if the file is already open elsewhere
+    B) Exclude this fid from caching
+    C) Atomic exchange semantics on writes
+    D) Excluding the file from directory listings
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: A
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_walk_count_limit_v1
+  category: fs_concepts
+  difficulty: hard
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    The 9P spec limits a single Twalk message to at most:
+    A) 8 name components
+    B) 16 name components — MAXWELEM
+    C) 32 name components
+    D) No limit
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_fid_uniqueness_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    A 9P fid is unique:
+    A) Globally across the file server
+    B) Per-connection — distinct clients can use the same fid value
+    C) Per-file — only one fid per file can exist
+    D) Per-user across all connections
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_clone_session_v1
+  category: fs_concepts
+  difficulty: easy
+  subcategory: patterns
+  language: none
+  prompt: |-
+    A 9P file server can expose 'clone' files. Opening one:
+    A) Copies the file's contents to a new file
+    B) Allocates a new session/subtree, returning its id via read
+    C) Acts as a symlink to the user's home directory
+    D) Creates a deep copy of the entire namespace
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_mountfd_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: services
+  language: none
+  prompt: |-
+    Inferno's `sys-mount` takes an fd. That fd is expected to be:
+    A) An open 9P-speaking connection (server end)
+    B) A regular file on local disk
+    C) A socket fd opened separately
+    D) The fd of a kernel device
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: A
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_oread_meaning_v1
+  category: fs_concepts
+  difficulty: trivial
+  subcategory: 9p_proto
+  language: none
+  prompt: |-
+    The 9P open mode `OREAD` is:
+    A) Reserved (deprecated, do not use)
+    B) Open for reading only
+    C) Open with read-ahead caching
+    D) Open and read in one round-trip
+  grader:
+    kind: mcq
+    config:
+      choices:
+      - a
+      - b
+      - c
+      - d
+  golden:
+    answer: B
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: fs_open_with_orclose_v1
+  category: fs_concepts
+  difficulty: medium
+  subcategory: 9p_proto
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that creates `/tmp/temp-orclose`
+    for writing, opens it with the `Sys->ORCLOSE` flag OR'd in so the file
+    is removed when closed. Print `created with orclose`. The actual removal
+    happens implicitly on fd close.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\tfd := sys->create(\"/tmp/temp-orclose\", Sys->OWRITE\
+      \ | Sys->ORCLOSE, 8r644);\n\tif (fd == nil) {\n\t\tsys->fprint(sys->fildes(2),\
+      \ \"create: %r\\n\");\n\t\treturn;\n\t}\n\tsys->print(\"created with\
+      \ orclose\\n\");\n}\n"
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: fs_namespace_dup_v1
+  category: fs_concepts
+  difficulty: hard
+  subcategory: namespace
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that uses sys->pctl with
+    `Sys->NEWNS` to copy-on-write fork the namespace, then binds `/n/local`
+    over `/tmp`. The subsequent process sees the modified namespace; the caller
+    does not. Print `forked namespace`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\tsys->pctl(Sys->NEWNS, nil);\n\tsys->bind(\"\
+      /n/local\", \"/tmp\", Sys->MREPL);\n\tsys->print(\"forked namespace\\\
+      n\");\n}\n"
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate

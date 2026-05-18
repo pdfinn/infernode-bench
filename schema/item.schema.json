@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/pdfinn/infernode-bench/schema/item.schema.json",
+  "title": "InferBench item",
+  "description": "A single benchmark item: prompt + grader spec + golden + provenance.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "category", "difficulty", "prompt", "grader", "provenance"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_]*(_v[0-9]+)?$",
+      "description": "Globally-unique identifier; lowercase snake_case; optional _vN suffix."
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "limbo_authoring",
+        "plan9_c",
+        "inferno_sh",
+        "9p_tool_use",
+        "fs_concepts"
+      ]
+    },
+    "subcategory": {
+      "type": "string",
+      "description": "Free-form sub-skill tag used by the stratified sampler."
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["trivial", "easy", "medium", "hard"]
+    },
+    "prompt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "type": "string",
+      "enum": ["limbo", "c", "inferno_sh", "none"],
+      "description": "Language of the expected output; `none` for fs_concepts text/MCQ."
+    },
+    "grader": {
+      "type": "object",
+      "required": ["kind"],
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {"const": "compile_gate"},
+            "config": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "gate_lang": {"enum": ["limbo", "rc", "c"]},
+                "require_run": {"type": "boolean", "default": false}
+              },
+              "required": ["gate_lang"]
+            }
+          },
+          "required": ["kind", "config"]
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {"const": "trace_match"},
+            "config": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "max_edit_distance": {"type": "integer", "minimum": 0, "default": 0},
+                "equivalence_classes": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "description": "Named equivalence-class rules (see docs/GRADERS.md)."
+                }
+              }
+            }
+          },
+          "required": ["kind"]
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {"const": "mcq"},
+            "config": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "choices": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "minItems": 2,
+                  "maxItems": 8
+                }
+              },
+              "required": ["choices"]
+            }
+          },
+          "required": ["kind", "config"]
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {"const": "judge"},
+            "config": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "judge_model": {"type": "string"},
+                "criteria": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "minItems": 1
+                }
+              },
+              "required": ["criteria"]
+            }
+          },
+          "required": ["kind", "config"]
+        }
+      ]
+    },
+    "golden": {
+      "description": "The reference answer the grader compares against. Shape depends on grader.kind. May be omitted for items still being authored; CI enforces presence for non-deprecated items via `needs_golden: false`.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "source": {"type": "string", "description": "For compile_gate: golden source code."}
+          },
+          "required": ["source"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "trace": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["op", "path"],
+                "additionalProperties": false,
+                "properties": {
+                  "op": {"enum": ["read", "write", "walk", "open", "stat"]},
+                  "path": {"type": "string"},
+                  "data": {"type": "string"}
+                }
+              }
+            }
+          },
+          "required": ["trace"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "answer": {"type": "string", "description": "For mcq: letter A-H."}
+          },
+          "required": ["answer"]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "exemplar": {"type": "string", "description": "For judge: reference exemplar response."},
+            "rubric": {"type": "string"}
+          },
+          "required": ["exemplar"]
+        }
+      ]
+    },
+    "needs_golden": {
+      "type": "boolean",
+      "default": false,
+      "description": "Set to true while an item is being migrated/authored and lacks a golden. CI flags these but does not fail."
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authored_by", "spdx"],
+      "properties": {
+        "authored_by": {"enum": ["human", "llm-assisted", "synth"]},
+        "contributor": {"type": "string"},
+        "derived_from": {
+          "type": ["string", "null"],
+          "description": "Path in upstream tree if applicable, e.g. 'inferno-os/appl/cmd/cat.b'."
+        },
+        "spdx": {
+          "type": "string",
+          "description": "SPDX license identifier."
+        },
+        "source_repo": {
+          "type": "string",
+          "description": "Repo + ref of the item's pre-migration home (e.g. infernode-os-llm@<sha>)."
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "deprecated": {
+      "type": "boolean",
+      "default": false
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

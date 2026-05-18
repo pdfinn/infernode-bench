@@ -1,0 +1,139 @@
+# inferno_sh — expansion_v2
+# 6 items authored fresh; goldens validated.
+
+items:
+- id: sh_veltro_invoke_v1
+  category: inferno_sh
+  difficulty: easy
+  subcategory: veltro
+  language: inferno_sh
+  prompt: Write an Inferno sh one-liner that invokes Veltro's `grep` tool
+    with the pattern `panic` over `/n/log/messages`. Tool at /tool/grep/ctl.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      echo panic /n/log/messages > /tool/grep/ctl && cat /tool/grep/ctl
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_veltro_chain_v1
+  category: inferno_sh
+  difficulty: medium
+  subcategory: veltro
+  language: inferno_sh
+  prompt: Write an Inferno sh sequence that uses Veltro's `find` tool to list
+    all `.b` files under `/appl/veltro`, then for each, calls Veltro's `read`
+    tool to print the file size in bytes. Use backquote substitution to capture
+    find's output.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      for f in `{echo '*.b /appl/veltro' > /tool/find/ctl && cat /tool/find/ctl} { echo $f > /tool/read/ctl ; cat /tool/read/ctl }
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_apid_in_path_v1
+  category: inferno_sh
+  difficulty: easy
+  subcategory: vars
+  language: inferno_sh
+  prompt: Write an Inferno sh snippet that constructs the path `/proc/$apid/status`
+    and `cat`s it.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      cat /proc/$apid/status
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_cleanup_trap_v1
+  category: inferno_sh
+  difficulty: medium
+  subcategory: error
+  language: inferno_sh
+  prompt: Write an Inferno sh function `cleanup` that prints `cleaning up`
+    and unmounts `/n/work` if it's mounted. Call `cleanup` at the end of a
+    script body that first binds `/n/local` to `/n/work`, runs `ls /n/work`,
+    and then runs cleanup.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      fn cleanup { echo cleaning up ; unmount /n/work }
+      bind /n/local /n/work
+      ls /n/work
+      cleanup
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_pipe_into_var_v1
+  category: inferno_sh
+  difficulty: easy
+  subcategory: vars
+  language: inferno_sh
+  prompt: Write an Inferno sh snippet that captures the output of `cat /dev/user`
+    into a variable `u` (use backquote braces), then prints `you are $u`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      u=`{cat /dev/user}
+      echo you are $u
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: sh_load_module_v1
+  category: inferno_sh
+  difficulty: easy
+  subcategory: builtin
+  language: inferno_sh
+  prompt: Write an Inferno sh snippet that loads the `expr` module via `load
+    expr`, computes `expr 2 + 3`, and prints the result.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: rc
+  golden:
+    source: |
+      load expr
+      expr 2 + 3
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate

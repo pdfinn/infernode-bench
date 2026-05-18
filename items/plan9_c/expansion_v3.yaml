@@ -1,0 +1,143 @@
+# plan9_c — expansion_v3
+# 6 items authored fresh; goldens validated.
+
+items:
+- id: c_sleep_v1
+  category: plan9_c
+  difficulty: trivial
+  subcategory: system
+  language: c
+  prompt: Write a Plan 9 C `main()` that sleeps 100ms via `sleep(100)` (milliseconds
+    in Plan 9), then prints `awake`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tsleep(100);\n\tprint(\"awake\\n\");\n\texits(0);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_chdir_v1
+  category: plan9_c
+  difficulty: easy
+  subcategory: system
+  language: c
+  prompt: Write a Plan 9 C `main()` that calls `chdir("/tmp")` and on failure
+    calls sysfatal. On success prints `chdir ok`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tif(chdir(\"/tmp\") < 0)\n\t\tsysfatal(\"chdir: %r\");\n\tprint(\"\
+      chdir ok\\n\");\n\texits(0);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_create_file_v1
+  category: plan9_c
+  difficulty: easy
+  subcategory: io
+  language: c
+  prompt: Write a Plan 9 C `main()` that creates `/tmp/p9-test` with mode
+    0644 using `create`, writes the string `created\n`, and closes.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tint fd;\n\n\tfd = create(\"/tmp/p9-test\", OWRITE, 0644);\n\tif(fd\
+      \ < 0)\n\t\tsysfatal(\"create: %r\");\n\twrite(fd, \"created\\n\", 8);\n\
+      \tclose(fd);\n\texits(0);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_bigbuf_loop_v1
+  category: plan9_c
+  difficulty: medium
+  subcategory: io
+  language: c
+  prompt: Write a Plan 9 C `main()` that copies stdin to stdout in chunks
+    of 4096 bytes using read+write until read returns 0. On read or write
+    error use sysfatal.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tchar buf[4096];\n\tlong n;\n\n\twhile((n = read(0, buf, sizeof\
+      \ buf)) > 0) {\n\t\tif(write(1, buf, n) != n)\n\t\t\tsysfatal(\"write:\
+      \ %r\");\n\t}\n\tif(n < 0)\n\t\tsysfatal(\"read: %r\");\n\texits(0);\n\
+      }\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_getenv_v1
+  category: plan9_c
+  difficulty: easy
+  subcategory: system
+  language: c
+  prompt: Write a Plan 9 C `main()` that reads the `home` environment variable
+    via `getenv` and prints `home=<value>`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tchar *h;\n\n\th = getenv(\"home\");\n\tif(h == nil)\n\t\th = \"\
+      \";\n\tprint(\"home=%s\\n\", h);\n\tfree(h);\n\texits(0);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_args_parse_v1
+  category: plan9_c
+  difficulty: medium
+  subcategory: system
+  language: c
+  prompt: 'Write a Plan 9 C `main()` that uses the canonical `ARGBEGIN`/`ARGEND`
+    macros to parse flags: `-v` for verbose, `-n N` for a count. Print `verbose=<0|1>
+    count=<N>` then exit.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int argc, char\
+      \ **argv)\n{\n\tint verbose;\n\tint count;\n\n\tverbose = 0;\n\tcount\
+      \ = 0;\n\tARGBEGIN {\n\tcase 'v':\n\t\tverbose = 1;\n\t\tbreak;\n\t\
+      case 'n':\n\t\tcount = atoi(EARGF(sysfatal(\"usage\")));\n\t\tbreak;\n\
+      \t} ARGEND;\n\tprint(\"verbose=%d count=%d\\n\", verbose, count);\n\t\
+      exits(0);\n}\n"
+  notes: ''
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate

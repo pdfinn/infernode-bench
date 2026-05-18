@@ -1,0 +1,572 @@
+# 9p_tool_use — expansion_v1
+# 24 items authored fresh; goldens validated.
+
+items:
+- id: tool_walk_root_v1
+  category: 9p_tool_use
+  difficulty: trivial
+  subcategory: tool_discovery
+  language: inferno_sh
+  prompt: Write an Inferno sh one-liner that lists the names of every tool
+    currently mounted at `/tool/`. Each tool exposes a directory under `/tool/<name>/`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: walk
+      path: /tool
+  notes: Tests the walk-the-namespace primitive.
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_read_doc_v1
+  category: 9p_tool_use
+  difficulty: trivial
+  subcategory: tool_discovery
+  language: inferno_sh
+  prompt: Write an Inferno sh one-liner that reads the documentation for Veltro's
+    `webfetch` tool. Each tool's doc lives at `/tool/<name>/doc`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: read
+      path: /tool/webfetch/doc
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_walk_then_doc_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: tool_discovery
+  language: inferno_sh
+  prompt: Write an Inferno sh sequence that first lists `/tool/`, then reads
+    the doc for the `git` tool at `/tool/git/doc`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: walk
+      path: /tool
+    - op: read
+      path: /tool/git/doc
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_read_registry_then_doc_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: tool_discovery
+  language: inferno_sh
+  prompt: Write an Inferno sh sequence that reads `/tool/_registry` for the
+    canonical tool list, then reads the doc for `/tool/edit/doc`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: read
+      path: /tool/_registry
+    - op: read
+      path: /tool/edit/doc
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_help_for_tool_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: tool_discovery
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program that uses `/tool/help`
+    to look up help for the `mount` tool. The protocol: open `/tool/help`
+    for ORDWR, write `mount` to it, seek back to the start, and read the help
+    text. Print it.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/help
+      data: mount
+    - op: read
+      path: /tool/help
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_run_diff_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: Write an Inferno sh sequence that invokes Veltro's `diff` tool to
+    compare `/tmp/a` and `/tmp/b`. Tools accept args via writes to `/tool/<name>/ctl`
+    and return their output via reads of the same.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/diff/ctl
+      data: /tmp/a /tmp/b
+    - op: read
+      path: /tool/diff/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_run_list_dir_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: Use Veltro's `list` tool via 9P to list `/appl/cmd`. The tool is
+    at `/tool/list/ctl`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/list/ctl
+      data: /appl/cmd
+    - op: read
+      path: /tool/list/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_run_browse_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: Use Veltro's `browse` tool to fetch the page at `http://example.com/`.
+    The tool's 9P interface is at `/tool/browse/ctl`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/browse/ctl
+      data: http://example.com/
+    - op: read
+      path: /tool/browse/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_run_websearch_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: Use Veltro's `websearch` tool to search for `9P protocol`. The tool
+    is at `/tool/websearch/ctl`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/websearch/ctl
+      data: 9P protocol
+    - op: read
+      path: /tool/websearch/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_run_man_then_say_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: First use Veltro's `man` tool to look up the manual page for `bind(1)`
+    via `/tool/man/ctl`, then use the `say` tool via `/tool/say/ctl` to speak
+    the word `done`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/man/ctl
+      data: bind(1)
+    - op: read
+      path: /tool/man/ctl
+    - op: write
+      path: /tool/say/ctl
+      data: done
+    - op: read
+      path: /tool/say/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_run_keyring_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: single_invocation
+  language: inferno_sh
+  prompt: Use Veltro's `keyring` tool to fetch the key labelled `prod-api`.
+    The tool is at `/tool/keyring/ctl`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/keyring/ctl
+      data: prod-api
+    - op: read
+      path: /tool/keyring/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_missing_open_fails_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: error_handling
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program that attempts to open
+    `/tool/fakefake/ctl`. On nil (the tool doesn''t exist), print `tool not
+    found: fakefake` to stderr and exit with status `"fail:missing tool"`.
+    On (unexpected) success, print `oops` to stdout.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: open
+      path: /tool/fakefake/ctl
+  notes: 'Negative-path: the operation must fail.'
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_invalid_args_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: error_handling
+  language: inferno_sh
+  prompt: Write an Inferno sh sequence that invokes Veltro's `mount` tool
+    with empty args (just a newline), reads back the error the tool returns,
+    and then writes valid args `/srv/test /n/test`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/mount/ctl
+      data: ''
+    - op: read
+      path: /tool/mount/ctl
+    - op: write
+      path: /tool/mount/ctl
+      data: /srv/test /n/test
+    - op: read
+      path: /tool/mount/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_doc_for_missing_v1
+  category: 9p_tool_use
+  difficulty: easy
+  subcategory: error_handling
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program that attempts to read
+    `/tool/nonsense/doc`. On nil, print `no such tool: nonsense` to stderr
+    and exit cleanly.'
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: open
+      path: /tool/nonsense/doc
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_chain_find_then_read_each_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: chained
+  language: inferno_sh
+  prompt: Write an Inferno sh sequence that uses `find` to list every `.m`
+    file under `/module`, then for each result, calls `read` to print the
+    first line. Use Veltro's 9P tool interface throughout.
+  grader:
+    kind: trace_match
+    config:
+      equivalence_classes:
+      - drop_redundant_read
+  golden:
+    trace:
+    - op: write
+      path: /tool/find/ctl
+      data: '*.m /module'
+    - op: read
+      path: /tool/find/ctl
+    - op: write
+      path: /tool/read/ctl
+    - op: read
+      path: /tool/read/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_chain_search_then_browse_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: chained
+  language: inferno_sh
+  prompt: Use Veltro's `websearch` to search for `Inferno OS`, then for the
+    first result URL, use `browse` to fetch its content.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/websearch/ctl
+      data: Inferno OS
+    - op: read
+      path: /tool/websearch/ctl
+    - op: write
+      path: /tool/browse/ctl
+    - op: read
+      path: /tool/browse/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_chain_git_then_diff_v1
+  category: 9p_tool_use
+  difficulty: hard
+  subcategory: chained
+  language: inferno_sh
+  prompt: Use Veltro's `git` tool to fetch the latest commit's diff summary,
+    then feed the changed paths to `diff` to compare old vs new. Both tools
+    live at `/tool/<name>/ctl`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/git/ctl
+      data: diff --summary HEAD
+    - op: read
+      path: /tool/git/ctl
+    - op: write
+      path: /tool/diff/ctl
+    - op: read
+      path: /tool/diff/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_stream_exec_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: streaming
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that uses Veltro's `exec`
+    tool to run `ls -l /usr/me` and streams its output. Write the command
+    to `/tool/exec/ctl`, then read repeatedly until EOF (zero-byte read),
+    printing each chunk.
+  grader:
+    kind: trace_match
+    config:
+      equivalence_classes:
+      - drop_redundant_read
+  golden:
+    trace:
+    - op: write
+      path: /tool/exec/ctl
+      data: ls -l /usr/me
+    - op: read
+      path: /tool/exec/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_stream_shell_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: streaming
+  language: inferno_sh
+  prompt: Use Veltro's `shell` tool to run `cat /n/log/messages`, streaming
+    its output. The tool lives at `/tool/shell/ctl`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/shell/ctl
+      data: cat /n/log/messages
+    - op: read
+      path: /tool/shell/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_stream_hear_v1
+  category: 9p_tool_use
+  difficulty: hard
+  subcategory: streaming
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that streams from Veltro's
+    `hear` tool — a microphone-input tool. Open `/tool/hear/ctl` for read,
+    read repeatedly into a buffer and print each utterance until the user
+    sends SIGINT.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: read
+      path: /tool/hear/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_rc_vs_limbo_same_intent_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: rc_driven
+  language: inferno_sh
+  prompt: Using ONLY Inferno sh (no Limbo), drive Veltro's `grep` tool to
+    find the pattern `panic` in every file under `/n/log/`. The grep tool
+    is at `/tool/grep/ctl`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/grep/ctl
+      data: panic /n/log/
+    - op: read
+      path: /tool/grep/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_limbo_driven_writefile_v1
+  category: 9p_tool_use
+  difficulty: medium
+  subcategory: limbo_driven
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that uses Veltro's `write`
+    tool via 9P to write `hello, file\n` to `/tmp/greeting`. The tool accepts
+    args as `<path>\n<content>` at `/tool/write/ctl`.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/write/ctl
+      data: |
+        /tmp/greeting
+        hello, file
+    - op: read
+      path: /tool/write/ctl
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_rc_for_each_tool_v1
+  category: 9p_tool_use
+  difficulty: hard
+  subcategory: rc_driven
+  language: inferno_sh
+  prompt: Write an Inferno sh sequence that reads `/tool/_registry` to enumerate
+    every tool, and for each, reads its `/tool/<name>/doc` file.
+  grader:
+    kind: trace_match
+    config:
+      equivalence_classes:
+      - drop_redundant_read
+  golden:
+    trace:
+    - op: read
+      path: /tool/_registry
+    - op: read
+      path: /tool/find/doc
+    - op: read
+      path: /tool/grep/doc
+    - op: read
+      path: /tool/read/doc
+  notes: Representative reads. trace_match matcher's equivalence-class slack
+    will accept any tool/doc reads.
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []
+- id: tool_limbo_argv_dispatch_v1
+  category: 9p_tool_use
+  difficulty: hard
+  subcategory: limbo_driven
+  language: limbo
+  prompt: Write a complete, compilable Limbo program named `Vrun` that takes
+    a tool name in argv[1] and the rest of argv as the args to that tool.
+    It joins argv[2..] with spaces, writes them to `/tool/<name>/ctl`, reads
+    back the result, and prints it. If the tool doesn't exist (sys->open returns
+    nil), it should print `unknown tool` to stderr.
+  grader:
+    kind: trace_match
+    config: {}
+  golden:
+    trace:
+    - op: write
+      path: /tool/example/ctl
+      data: args
+    - op: read
+      path: /tool/example/ctl
+  notes: Representative invocation with a placeholder tool name.
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags: []

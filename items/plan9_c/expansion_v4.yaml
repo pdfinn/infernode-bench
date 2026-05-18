@@ -1,0 +1,90 @@
+# plan9_c — expansion_v4
+# 4 items authored fresh; goldens validated.
+
+items:
+- id: c_thread_main_basic_v1
+  category: plan9_c
+  difficulty: easy
+  subcategory: thread
+  language: c
+  prompt: 'Write a Plan 9 C program using libthread: a `threadmain(int, char**)`
+    that prints `threaded` and `threadexitsall(nil)`.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n#include <thread.h>\n\nvoid\n\
+      threadmain(int, char**)\n{\n\tprint(\"threaded\\n\");\n\tthreadexitsall(nil);\n\
+      }\n"
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_fmt_int_v1
+  category: plan9_c
+  difficulty: easy
+  subcategory: print
+  language: c
+  prompt: Write a Plan 9 C `main()` that uses `print("%5d\n", 42)` to right-justify
+    42 in a width-5 field.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tprint(\"%5d\\n\", 42);\n\texits(0);\n}\n"
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_smprint_concat_v1
+  category: plan9_c
+  difficulty: easy
+  subcategory: print
+  language: c
+  prompt: 'Write a Plan 9 C `main()` that uses `smprint` to concatenate two
+    strings: `"hello, "` and the current user (via `getuser()`), prints the
+    result, frees it.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tchar *s;\n\ts = smprint(\"hello, %s\", getuser());\n\tif(s == nil)\n\
+      \t\tsysfatal(\"smprint: %r\");\n\tprint(\"%s\\n\", s);\n\tfree(s);\n\
+      \texits(0);\n}\n"
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: c_dial_v1
+  category: plan9_c
+  difficulty: medium
+  subcategory: network
+  language: c
+  prompt: Write a Plan 9 C `main()` that calls `dial("tcp!example.com!80",
+    0, 0, 0)` and prints either `dial ok` (returned fd) or sysfatal on failure.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: c
+  golden:
+    source: "#include <u.h>\n#include <libc.h>\n\nvoid\nmain(int, char**)\n\
+      {\n\tint fd;\n\tfd = dial(\"tcp!example.com!80\", 0, 0, 0);\n\tif(fd\
+      \ < 0)\n\t\tsysfatal(\"dial: %r\");\n\tprint(\"dial ok\\n\");\n\tclose(fd);\n\
+      \texits(0);\n}\n"
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate

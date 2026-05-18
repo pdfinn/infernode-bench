@@ -1,0 +1,230 @@
+# limbo_authoring — expansion_v4
+# 8 items authored fresh; goldens validated.
+
+items:
+- id: limbo_chan_pingpong_v1
+  category: limbo_authoring
+  difficulty: medium
+  subcategory: concurrency
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program with a ping-pong between
+    two goroutines via two channels `ping: chan of int` and `pong: chan of
+    int`. `init` spawns A (sends 1 on ping, receives from pong, prints), and
+    B (receives from ping, sends 2 on pong). After one round, exit.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\na(ping, pong: chan of int)\n{\n\tping <-= 1;\n\tv := <- pong;\n\
+      \tsys->print(\"a got %d\\n\", v);\n}\nb(ping, pong: chan of int)\n{\n\
+      \tv := <- ping;\n\tsys->print(\"b got %d\\n\", v);\n\tpong <-= 2;\n\
+      }\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys = load\
+      \ Sys Sys->PATH;\n\tping := chan of int;\n\tpong := chan of int;\n\t\
+      spawn b(ping, pong);\n\ta(ping, pong);\n}\n"
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_chan_status_struct_v1
+  category: limbo_authoring
+  difficulty: hard
+  subcategory: concurrency
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program with a `Status: adt
+    { ok: int; msg: string; }` shipped through a channel of `ref Status`.
+    `init` spawns a worker that constructs ref Status(1, "all good") and sends
+    it; main receives and prints `ok=%d msg=%s`.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\nStatus: adt { ok: int; msg: string; };\nworker(out: chan of ref\
+      \ Status)\n{\n\tout <-= ref Status(1, \"all good\");\n}\ninit(nil: ref\
+      \ Draw->Context, nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\
+      \tc := chan of ref Status;\n\tspawn worker(c);\n\ts := <- c;\n\tsys->print(\"\
+      ok=%d msg=%s\\n\", s.ok, s.msg);\n}\n"
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_dictionary_v1
+  category: limbo_authoring
+  difficulty: hard
+  subcategory: data_structures
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program implementing a tiny
+    dictionary keyed by string. `Dict: adt { entries: list of (string, string);
+    get: fn(d: self ref Dict, k: string): string; set: fn(d: self ref Dict,
+    k, v: string); }`. The dictionary should replace the value for an existing
+    key rather than duplicating it. `init` sets `name`=`limbo`, `version`=`1`,
+    updates `version` to `2`, then gets and prints both.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\nDict: adt {\n\tentries: list of (string, string);\n\tget: fn(d:\
+      \ self ref Dict, k: string): string;\n\tset: fn(d: self ref Dict, k,\
+      \ v: string);\n};\nDict.get(d: self ref Dict, k: string): string\n{\n\
+      \tfor (l := d.entries; l != nil; l = tl l) {\n\t\t(kk, vv) := hd l;\n\
+      \t\tif (kk == k) return vv;\n\t}\n\treturn \"\";\n}\nDict.set(d: self\
+      \ ref Dict, k, v: string)\n{\n\tout: list of (string, string) = nil;\n\
+      \tfor (l := d.entries; l != nil; l = tl l) {\n\t\t(kk, nil) := hd l;\n\
+      \t\tif (kk != k)\n\t\t\tout = hd l :: out;\n\t}\n\tout = (k, v) :: out;\n\
+      \td.entries = out;\n}\ninit(nil: ref Draw->Context, nil: list of string)\n\
+      {\n\tsys = load Sys Sys->PATH;\n\td := ref Dict(nil);\n\td.set(\"name\"\
+      , \"limbo\");\n\td.set(\"version\", \"1\");\n\td.set(\"version\", \"\
+      2\");\n\tsys->print(\"%s\\n\", d.get(\"name\"));\n\tsys->print(\"%s\\\
+      n\", d.get(\"version\"));\n}\n"
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_byte_array_string_v1
+  category: limbo_authoring
+  difficulty: medium
+  subcategory: data_structures
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program with a function `uppercase(b:
+    array of byte): array of byte` that returns a new byte array with every
+    lowercase ASCII byte converted to its uppercase form. `init` calls it
+    on `array of byte "hello"` and prints the result as a string.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\nuppercase(b: array of byte): array of byte\n{\n\tn := len b;\n\
+      \tr := array[n] of byte;\n\tfor (i := 0; i < n; i++) {\n\t\tc := int\
+      \ b[i];\n\t\tif (c >= 16r61 && c <= 16r7a)\n\t\t\tc -= 16r20;\n\t\t\
+      r[i] = byte c;\n\t}\n\treturn r;\n}\ninit(nil: ref Draw->Context, nil:\
+      \ list of string)\n{\n\tsys = load Sys Sys->PATH;\n\tb := array of byte\
+      \ \"hello\";\n\tsys->print(\"%s\\n\", string uppercase(b));\n}\n"
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_iter_via_chan_v1
+  category: limbo_authoring
+  difficulty: hard
+  subcategory: concurrency
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program that uses a channel
+    to express an iterator. A goroutine sends integers 1..5 on a channel `c:
+    chan of (int, int)` where each tuple is `(value, still_more)` and `still_more`
+    is 1 unless we''ve sent the last value, in which case 0. `init` reads
+    until `still_more==0` and prints each value.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\niter(c: chan of (int, int))\n{\n\tfor (i := 1; i <= 5; i++) {\n\
+      \t\tmore := 1;\n\t\tif (i == 5) more = 0;\n\t\tc <-= (i, more);\n\t\
+      }\n}\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys =\
+      \ load Sys Sys->PATH;\n\tc := chan of (int, int);\n\tspawn iter(c);\n\
+      \tfor (;;) {\n\t\t(v, more) := <- c;\n\t\tsys->print(\"%d\\n\", v);\n\
+      \t\tif (more == 0) return;\n\t}\n}\n"
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_concurrent_collect_v1
+  category: limbo_authoring
+  difficulty: hard
+  subcategory: concurrency
+  language: limbo
+  prompt: Write a complete, compilable Limbo program that runs three concurrent
+    workers, each computing one int and sending it on its own channel. `init`
+    reads from all three channels and sums the results, printing `sum=<n>`.
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\nworker(v: int, c: chan of int)\n{\n\tc <-= v * v;\n}\ninit(nil:\
+      \ ref Draw->Context, nil: list of string)\n{\n\tsys = load Sys Sys->PATH;\n\
+      \ta := chan of int;\n\tb := chan of int;\n\td := chan of int;\n\tspawn\
+      \ worker(2, a);\n\tspawn worker(3, b);\n\tspawn worker(4, d);\n\ts :=\
+      \ <- a + <- b + <- d;\n\tsys->print(\"sum=%d\\n\", s);\n}\n"
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_mod_func_v1
+  category: limbo_authoring
+  difficulty: easy
+  subcategory: control
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program with a function `is_leap(year:
+    int): int` that returns 1 if the year is a leap year (divisible by 4,
+    except centuries not divisible by 400), 0 otherwise. `init` prints results
+    for 2000, 1900, 2024, 2023.'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\nis_leap(y: int): int\n{\n\tif (y % 400 == 0) return 1;\n\tif (y\
+      \ % 100 == 0) return 0;\n\tif (y % 4 == 0) return 1;\n\treturn 0;\n\
+      }\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\tsys = load\
+      \ Sys Sys->PATH;\n\tsys->print(\"%d\\n\", is_leap(2000));\n\tsys->print(\"\
+      %d\\n\", is_leap(1900));\n\tsys->print(\"%d\\n\", is_leap(2024));\n\t\
+      sys->print(\"%d\\n\", is_leap(2023));\n}\n"
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
+- id: limbo_recursive_fact_v1
+  category: limbo_authoring
+  difficulty: easy
+  subcategory: control
+  language: limbo
+  prompt: 'Write a complete, compilable Limbo program with a recursive function
+    `fact(n: int): int` returning n!. `init` prints fact(5).'
+  grader:
+    kind: compile_gate
+    config:
+      gate_lang: limbo
+  golden:
+    source: "implement L;\ninclude \"sys.m\";\ninclude \"draw.m\";\nsys: Sys;\n\
+      L: module { init: fn(nil: ref Draw->Context, argv: list of string);\
+      \ };\nfact(n: int): int\n{\n\tif (n <= 1) return 1;\n\treturn n * fact(n\
+      \ - 1);\n}\ninit(nil: ref Draw->Context, nil: list of string)\n{\n\t\
+      sys = load Sys Sys->PATH;\n\tsys->print(\"%d\\n\", fact(5));\n}\n"
+  provenance:
+    authored_by: human
+    spdx: MIT
+  needs_golden: false
+  tags:
+  - golden_validated_via_iol_gate
