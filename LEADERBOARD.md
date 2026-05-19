@@ -15,6 +15,7 @@ Auto-rendered from `runs/*.jsonl`. Each row pins the model, subset hash, bench S
 | [`20260519-103311`](docs/runs/20260519-103311_mini_sonnet.md) | `sonnet` | mini (`02a3a7e02846`) | 105/150 | 70.0% | 68 | `a13e77a88591` | `c0a33b08c0b8` |
 | [`20260519-105425`](docs/runs/20260519-105425_mini_devstral_latest.md) | `devstral:latest` | mini (`02a3a7e02846`) | 40/150 | 26.7% | 1 | `ac6275650211` | `c0a33b08c0b8` |
 | [`20260519-112330`](docs/runs/20260519-112330_mini_haiku.md) | `haiku` | mini (`02a3a7e02846`) | 69/150 | 46.0% | 47 | `ac6275650211` | `c0a33b08c0b8` |
+| [`20260519-112335`](docs/runs/20260519-112335_mini_devstral-limbo-v3_latest.md) | `devstral-limbo-v3:latest` | mini (`02a3a7e02846`) | 57/150 | 38.0% | 83 | `ac6275650211` | `c0a33b08c0b8` |
 | [`20260519-125255`](docs/runs/20260519-125255_mini_gpt-5.5.md) | `gpt-5.5` | mini (`02a3a7e02846`) | 105/150 | 70.0% | 35 | `706b668c6e6b` | `c0a33b08c0b8` |
 
 ## Per-category pass rate
@@ -30,6 +31,7 @@ Auto-rendered from `runs/*.jsonl`. Each row pins the model, subset hash, bench S
 | `20260519-103311` | `sonnet` | 3/39 | 26/26 | 25/26 | 33/40 | 18/19 |
 | `20260519-105425` | `devstral:latest` | 1/39 | 7/26 | 17/26 | 0/40 | 15/19 |
 | `20260519-112330` | `haiku` | 3/39 | 23/26 | 22/26 | 3/40 | 18/19 |
+| `20260519-112335` | `devstral-limbo-v3:latest` | 2/39 | 6/26 | 18/26 | 19/40 | 12/19 |
 | `20260519-125255` | `gpt-5.5` | 3/39 | 25/26 | 24/26 | 34/40 | 19/19 |
 
 ## Per-difficulty pass rate
@@ -45,6 +47,7 @@ Auto-rendered from `runs/*.jsonl`. Each row pins the model, subset hash, bench S
 | `20260519-103311` | `sonnet` | 8/10 | 41/59 | 43/61 | 13/20 |
 | `20260519-105425` | `devstral:latest` | 5/10 | 20/59 | 12/61 | 3/20 |
 | `20260519-112330` | `haiku` | 7/10 | 30/59 | 25/61 | 7/20 |
+| `20260519-112335` | `devstral-limbo-v3:latest` | 6/10 | 26/59 | 17/61 | 8/20 |
 | `20260519-125255` | `gpt-5.5` | 8/10 | 40/59 | 42/61 | 15/20 |
 
 ## Per-context-freshness pass rate
@@ -60,4 +63,5 @@ Auto-rendered from `runs/*.jsonl`. Each row pins the model, subset hash, bench S
 | `20260519-103311` | `sonnet` | 105/150 | — | — |
 | `20260519-105425` | `devstral:latest` | 40/150 | — | — |
 | `20260519-112330` | `haiku` | 69/150 | — | — |
+| `20260519-112335` | `devstral-limbo-v3:latest` | 57/150 | — | — |
 | `20260519-125255` | `gpt-5.5` | 105/150 | — | — |
