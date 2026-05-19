@@ -88,7 +88,67 @@ def _looks_truncated(completion: str, item: dict) -> bool:
 
 def _chat_completion(base_url: str, model: str, system: str, user: str, *,
                      temperature: float, max_tokens: int, timeout_s: float,
-                     num_ctx: int) -> dict[str, Any]:
+                     num_ctx: int, think: bool | None = None) -> dict[str, Any]:
+    """Issue a chat-completion request. Two endpoints supported:
+
+    - ``base_url`` ending in ``/v1`` (OpenAI-compatible) — used for
+      anything that speaks the OpenAI Chat Completions protocol
+      (Ollama's compat layer, the CLI shim, real OpenAI/Anthropic
+      APIs).
+    - ``base_url`` ending in ``/api`` — Ollama's native chat endpoint.
+      This path is required when ``think=False`` because Ollama's
+      OpenAI-compatibility layer doesn't honour the ``think`` flag,
+      and thinking-capable models (Qwen3, gpt-oss, …) otherwise
+      spend the whole token budget on hidden reasoning and return an
+      empty visible response.
+
+    Returns a dict whose ``choices[0].message.content`` is the visible
+    response and whose top-level shape is OpenAI-compatible (so the
+    runner doesn't care which endpoint was used).
+    """
+    is_ollama_native = base_url.rstrip("/").endswith("/api")
+    if is_ollama_native or think is not None:
+        # Use Ollama's native /api/chat. Honours `think` properly.
+        url = base_url.rstrip("/") + ("/chat" if is_ollama_native else "")
+        if not url.endswith("/chat"):
+            # base_url is /v1; rewrite to /api for the think path.
+            url = base_url.rstrip("/").rsplit("/", 1)[0] + "/api/chat"
+        payload = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
+            "stream": False,
+            "options": {
+                "temperature": temperature,
+                "num_predict": max_tokens,
+                "num_ctx": num_ctx,
+            },
+        }
+        if think is not None:
+            payload["think"] = think
+        headers = {"Content-Type": "application/json"}
+        req = request.Request(url, data=json.dumps(payload).encode(),
+                              method="POST", headers=headers)
+        with request.urlopen(req, timeout=timeout_s) as resp:
+            raw = json.loads(resp.read())
+        # Translate Ollama's /api/chat response into OpenAI shape so the
+        # caller doesn't need to special-case.
+        content = (raw.get("message") or {}).get("content", "")
+        done_reason = raw.get("done_reason") or "stop"
+        return {
+            "choices": [{
+                "index": 0,
+                "message": {"role": "assistant", "content": content},
+                "finish_reason": "length" if done_reason == "length" else "stop",
+            }],
+            "usage": {
+                "prompt_tokens": raw.get("prompt_eval_count", 0),
+                "completion_tokens": raw.get("eval_count", 0),
+            },
+        }
+
     url = base_url.rstrip("/") + "/chat/completions"
     payload = {
         "model": model,
@@ -133,6 +193,7 @@ def run_subset(
     timeout_s: float = 600.0,
     dry_run: bool = False,
     skip_needs_golden: bool = True,
+    think: bool | None = None,
 ) -> dict:
     subset = load_subset(subset_name)
     items = resolve_subset(subset)
@@ -186,7 +247,7 @@ def run_subset(
                     resp = _chat_completion(
                         base_url, model, system_prompt, item["prompt"],
                         temperature=temperature, max_tokens=item_max_tokens,
-                        timeout_s=timeout_s, num_ctx=num_ctx,
+                        timeout_s=timeout_s, num_ctx=num_ctx, think=think,
                     )
                     completion = resp["choices"][0]["message"]["content"]
                 except Exception as e:

@@ -130,6 +130,11 @@ def _cmd_calibration(args: argparse.Namespace) -> int:
 
 def _cmd_run(args: argparse.Namespace) -> int:
     from infernode_bench.runners import run_subset
+    think = None
+    if args.no_think:
+        think = False
+    elif args.think:
+        think = True
     summary = run_subset(
         args.subset,
         model=args.model,
@@ -141,6 +146,7 @@ def _cmd_run(args: argparse.Namespace) -> int:
         timeout_s=args.timeout,
         dry_run=args.dry_run,
         skip_needs_golden=not args.include_needs_golden,
+        think=think,
     )
     return 0 if summary["n_graded"] > 0 else 1
 
@@ -193,6 +199,16 @@ def build_parser() -> argparse.ArgumentParser:
     pr.add_argument("--dry-run", action="store_true")
     pr.add_argument("--include-needs-golden", action="store_true",
                     help="include items lacking goldens (will return needs_golden detail)")
+    pr.add_argument("--no-think", action="store_true",
+                    help="disable thinking-mode (Qwen3, gpt-oss, etc.) — "
+                         "switches to Ollama's native /api/chat with "
+                         "think=false. Use this when a model's visible "
+                         "response is empty because all tokens went to the "
+                         "hidden reasoning channel.")
+    pr.add_argument("--think", action="store_true",
+                    help="explicitly enable thinking-mode via Ollama's "
+                         "/api/chat. Default for thinking models is "
+                         "Ollama's per-model setting.")
     pr.set_defaults(func=_cmd_run)
 
     return p
