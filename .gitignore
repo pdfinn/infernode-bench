@@ -10,8 +10,10 @@ dist/
 .coverage
 htmlcov/
 
-# Run artefacts
+# Run artefacts (the JSONL output dir; the .md per-run reports in
+# docs/runs/ ARE tracked — see docs/runs/README.md).
 runs/
+!docs/runs/
 results/
 *.jsonl
 
