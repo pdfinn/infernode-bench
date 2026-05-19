@@ -6,10 +6,11 @@ Auto-rendered from `runs/*.jsonl`. Each row pins the model, subset hash, bench S
 
 | Run | Model | Subset | Pass | Rate | Trunc | Bench | Submodule |
 |-----|-------|--------|-----:|-----:|------:|-------|-----------|
-| `20260518-232427` | `gptoss-v4-e1` | smoke (`c73efdadd440`) | 18/49 | 36.7% | 2 | `7f10275d41ae` | `c0a33b08c0b8` |
-| `20260518-233753` | `gpt-oss:20b` | smoke (`c73efdadd440`) | 7/49 | 14.3% | 2 | `28ff36d45663` | `` |
-| `20260519-003851` | `gptoss-v4-e1` | mini (`02a3a7e02846`) | 45/150 | 30.0% | 26 | `ddb55fe7157f` | `c0a33b08c0b8` |
-| `20260519-011319` | `gpt-oss:20b` | mini (`02a3a7e02846`) | 49/150 | 32.7% | 28 | `ddb55fe7157f` | `` |
+| [`20260518-232427`](docs/runs/20260518-232427_smoke_gptoss-v4-e1.md) | `gptoss-v4-e1` | smoke (`c73efdadd440`) | 18/49 | 36.7% | 2 | `7f10275d41ae` | `c0a33b08c0b8` |
+| [`20260518-233753`](docs/runs/20260518-233753_smoke_gpt-oss_20b.md) | `gpt-oss:20b` | smoke (`c73efdadd440`) | 7/49 | 14.3% | 2 | `28ff36d45663` | `` |
+| [`20260519-003851`](docs/runs/20260519-003851_mini_gptoss-v4-e1.md) | `gptoss-v4-e1` | mini (`02a3a7e02846`) | 45/150 | 30.0% | 26 | `ddb55fe7157f` | `c0a33b08c0b8` |
+| [`20260519-011319`](docs/runs/20260519-011319_mini_gpt-oss_20b.md) | `gpt-oss:20b` | mini (`02a3a7e02846`) | 49/150 | 32.7% | 28 | `ddb55fe7157f` | `` |
+| [`20260519-100408`](docs/runs/20260519-100408_mini_opus.md) | `opus` | mini (`02a3a7e02846`) | 98/150 | 65.3% | 19 | `a13e77a88591` | `c0a33b08c0b8` |
 
 ## Per-category pass rate
 
@@ -19,6 +20,7 @@ Auto-rendered from `runs/*.jsonl`. Each row pins the model, subset hash, bench S
 | `20260518-233753` | `gpt-oss:20b` | 0/15 | 0/6 | 3/8 | 0/15 | 4/5 |
 | `20260519-003851` | `gptoss-v4-e1` | 6/39 | 18/26 | 6/26 | 14/40 | 1/19 |
 | `20260519-011319` | `gpt-oss:20b` | 1/39 | 21/26 | 11/26 | 0/40 | 16/19 |
+| `20260519-100408` | `opus` | 3/39 | 24/26 | 18/26 | 35/40 | 18/19 |
 
 ## Per-difficulty pass rate
 
@@ -28,6 +30,7 @@ Auto-rendered from `runs/*.jsonl`. Each row pins the model, subset hash, bench S
 | `20260518-233753` | `gpt-oss:20b` | 1/6 | 5/24 | 1/18 | 0/1 |
 | `20260519-003851` | `gptoss-v4-e1` | 6/10 | 14/59 | 16/61 | 9/20 |
 | `20260519-011319` | `gpt-oss:20b` | 4/10 | 20/59 | 20/61 | 5/20 |
+| `20260519-100408` | `opus` | 9/10 | 37/59 | 39/61 | 13/20 |
 
 ## Per-context-freshness pass rate
 
@@ -37,3 +40,4 @@ Auto-rendered from `runs/*.jsonl`. Each row pins the model, subset hash, bench S
 | `20260518-233753` | `gpt-oss:20b` | 7/49 | — | — |
 | `20260519-003851` | `gptoss-v4-e1` | 45/150 | — | — |
 | `20260519-011319` | `gpt-oss:20b` | 49/150 | — | — |
+| `20260519-100408` | `opus` | 98/150 | — | — |
