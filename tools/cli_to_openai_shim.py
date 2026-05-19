@@ -135,7 +135,89 @@ def _err_response(model: str, msg: str) -> dict:
     }
 
 
-_BACKENDS = {"claude": _call_claude}
+def _call_codex(model: str, system: str, user: str, *,
+                timeout_s: float, max_tokens: int | None) -> dict:
+    """Call OpenAI's `codex exec` (one-shot, JSON output) and return an
+    OpenAI-shaped response. Used for benchmarking GPT-5.x via a ChatGPT
+    subscription or an OpenAI Platform API key — whichever `codex
+    login` was authenticated with.
+
+    codex exec speaks a streaming JSON event protocol on stdout:
+      - {"type":"thread.started", …}
+      - {"type":"turn.started"}
+      - {"type":"item.completed","item":{"type":"agent_message","text":…}}
+      - {"type":"turn.completed","usage":{…}}
+
+    The visible response is the concatenation of every agent_message's
+    text. There's no native --system-prompt flag, so we concatenate
+    `<system>\\n\\n<user>` into the stdin prompt.
+    """
+    cmd = [
+        "codex", "exec",
+        "--skip-git-repo-check",
+        "--json",
+        "--sandbox", "read-only",
+        "--model", model,
+    ]
+    stdin_payload = f"{system}\n\n{user}" if system else user
+    t0 = time.monotonic()
+    try:
+        proc = subprocess.run(
+            cmd, input=stdin_payload, capture_output=True, text=True,
+            timeout=timeout_s,
+        )
+    except subprocess.TimeoutExpired:
+        return _err_response(model, "timeout")
+    elapsed = time.monotonic() - t0
+    if proc.returncode != 0:
+        return _err_response(model, f"codex exited {proc.returncode}: "
+                                    f"{proc.stderr.strip()[:200]}")
+    content_parts: list[str] = []
+    usage: dict = {}
+    error_msg: str | None = None
+    for line in proc.stdout.splitlines():
+        line = line.strip()
+        if not line or not line.startswith("{"):
+            continue
+        try:
+            ev = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        t = ev.get("type")
+        if t == "item.completed":
+            item = ev.get("item") or {}
+            if item.get("type") == "agent_message":
+                content_parts.append(item.get("text", ""))
+        elif t == "turn.completed":
+            usage = ev.get("usage") or {}
+        elif t == "error":
+            error_msg = ev.get("message") or "codex stream error"
+        elif t == "turn.failed":
+            error_msg = (ev.get("error") or {}).get("message") or "turn failed"
+    if error_msg and not content_parts:
+        return _err_response(model, f"codex stream: {error_msg}")
+    content = "".join(content_parts)
+    return {
+        "id": f"chatcmpl-{uuid.uuid4().hex[:24]}",
+        "object": "chat.completion",
+        "created": int(time.time()),
+        "model": model,
+        "choices": [{
+            "index": 0,
+            "message": {"role": "assistant", "content": content},
+            "finish_reason": "stop",
+        }],
+        "usage": {
+            "prompt_tokens": usage.get("input_tokens", 0),
+            "completion_tokens": usage.get("output_tokens", 0)
+                + usage.get("reasoning_output_tokens", 0),
+            "total_tokens": 0,
+        },
+        "_x_cli_elapsed_s": elapsed,
+    }
+
+
+_BACKENDS = {"claude": _call_claude, "codex": _call_codex}
 
 
 # --- HTTP server -------------------------------------------------------
